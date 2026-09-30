@@ -1,47 +1,46 @@
 import 'package:go_router/go_router.dart';
 
 import '../navigation/main_shell.dart';
-
-abstract final class AppRoutes {
-  static const home = '/';
-  static const portfolio = '/portfolio';
-  static const booking = '/booking';
-  static const gallery = '/gallery';
-  static const profile = '/profile';
-}
+import '../../features/home/home_screen.dart';
+import '../../features/portfolio/portfolio_screen.dart';
+import '../../features/booking/booking_screen.dart';
+import '../../features/gallery/gallery_screen.dart';
+import '../../features/profile/profile_screen.dart';
 
 final GoRouter appRouter = GoRouter(
-  initialLocation: AppRoutes.home,
+  initialLocation: '/',
   routes: [
-    GoRoute(
-      path: AppRoutes.home,
-      builder: (context, state) {
-        return const MainShell(initialIndex: 0);
+    ShellRoute(
+      builder: (context, state, child) {
+        return MainShell(child: child);
       },
-    ),
-    GoRoute(
-      path: AppRoutes.portfolio,
-      builder: (context, state) {
-        return const MainShell(initialIndex: 1);
-      },
-    ),
-    GoRoute(
-      path: AppRoutes.booking,
-      builder: (context, state) {
-        return const MainShell(initialIndex: 2);
-      },
-    ),
-    GoRoute(
-      path: AppRoutes.gallery,
-      builder: (context, state) {
-        return const MainShell(initialIndex: 3);
-      },
-    ),
-    GoRoute(
-      path: AppRoutes.profile,
-      builder: (context, state) {
-        return const MainShell(initialIndex: 4);
-      },
+      routes: [
+        GoRoute(
+          path: '/',
+          name: 'home',
+          builder: (context, state) => const HomeScreen(),
+        ),
+        GoRoute(
+          path: '/portfolio',
+          name: 'portfolio',
+          builder: (context, state) => const PortfolioScreen(),
+        ),
+        GoRoute(
+          path: '/booking',
+          name: 'booking',
+          builder: (context, state) => const BookingScreen(),
+        ),
+        GoRoute(
+          path: '/gallery',
+          name: 'gallery',
+          builder: (context, state) => const GalleryScreen(),
+        ),
+        GoRoute(
+          path: '/profile',
+          name: 'profile',
+          builder: (context, state) => const ProfileScreen(),
+        ),
+      ],
     ),
   ],
 );

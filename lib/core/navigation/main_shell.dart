@@ -1,113 +1,295 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 import '../constants/app_colors.dart';
-import '../../features/booking/booking_screen.dart';
-import '../../features/gallery/gallery_screen.dart';
-import '../../features/home/home_screen.dart';
-import '../../features/portfolio/portfolio_screen.dart';
-import '../../features/profile/profile_screen.dart';
 
-class MainShell extends StatefulWidget {
-  final int initialIndex;
+class MainShell extends StatelessWidget {
+  const MainShell({required this.child, super.key});
 
-  const MainShell({super.key, this.initialIndex = 0});
-
-  @override
-  State<MainShell> createState() => _MainShellState();
-}
-
-class _MainShellState extends State<MainShell> {
-  late int _currentIndex;
-
-  final List<Widget> _screens = const [
-    HomeScreen(),
-    PortfolioScreen(),
-    BookingScreen(),
-    GalleryScreen(),
-    ProfileScreen(),
-  ];
-
-  @override
-  void initState() {
-    super.initState();
-    _currentIndex = widget.initialIndex;
-  }
-
-  void _onNavigationTap(int index) {
-    if (index == _currentIndex) {
-      return;
-    }
-
-    setState(() {
-      _currentIndex = index;
-    });
-  }
+  final Widget child;
 
   @override
   Widget build(BuildContext context) {
+    final path = GoRouterState.of(context).uri.path;
+    final isHome = path == '/';
+
     return Scaffold(
-      body: IndexedStack(index: _currentIndex, children: _screens),
-      bottomNavigationBar: _KalligraphyNavigationBar(
-        currentIndex: _currentIndex,
-        onTap: _onNavigationTap,
+      backgroundColor: AppColors.cream,
+      body: Stack(
+        fit: StackFit.expand,
+        children: [
+          child,
+
+          // The header has an explicit height so the responsive
+          // LayoutBuilder always receives finite constraints.
+          Positioned(
+            top: 0,
+            left: 0,
+            right: 0,
+            height: 104,
+            child: _WebsiteHeader(isHome: isHome),
+          ),
+        ],
       ),
     );
   }
 }
 
-class _KalligraphyNavigationBar extends StatelessWidget {
-  final int currentIndex;
-  final ValueChanged<int> onTap;
+class _WebsiteHeader extends StatelessWidget {
+  const _WebsiteHeader({required this.isHome});
 
-  const _KalligraphyNavigationBar({
-    required this.currentIndex,
-    required this.onTap,
-  });
+  final bool isHome;
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: const BoxDecoration(
-        color: AppColors.black,
-        border: Border(top: BorderSide(color: AppColors.darkBrown, width: 0.5)),
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final isMobile = constraints.maxWidth < 900;
+
+        return SafeArea(
+          bottom: false,
+          child: Padding(
+            padding: EdgeInsets.symmetric(
+              horizontal: isMobile ? 20 : 48,
+              vertical: 20,
+            ),
+            child: isMobile
+                ? _MobileHeader(isHome: isHome)
+                : _DesktopHeader(isHome: isHome),
+          ),
+        );
+      },
+    );
+  }
+}
+
+class _DesktopHeader extends StatelessWidget {
+  const _DesktopHeader({required this.isHome});
+
+  final bool isHome;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        _BrandMark(color: isHome ? AppColors.ivory : AppColors.espresso),
+        const Spacer(),
+        _NavLink(
+          label: 'WORK',
+          route: '/portfolio',
+          active: GoRouterState.of(context).uri.path == '/portfolio',
+          light: isHome,
+        ),
+        const SizedBox(width: 28),
+        _NavLink(
+          label: 'ABOUT',
+          route: '/profile',
+          active: GoRouterState.of(context).uri.path == '/profile',
+          light: isHome,
+        ),
+        const SizedBox(width: 28),
+        _NavLink(
+          label: 'GALLERIES',
+          route: '/gallery',
+          active: GoRouterState.of(context).uri.path == '/gallery',
+          light: isHome,
+        ),
+        const SizedBox(width: 28),
+        _NavLink(
+          label: 'BOOK',
+          route: '/booking',
+          active: GoRouterState.of(context).uri.path == '/booking',
+          light: isHome,
+        ),
+        const SizedBox(width: 32),
+        _InquireButton(light: isHome),
+      ],
+    );
+  }
+}
+
+class _MobileHeader extends StatelessWidget {
+  const _MobileHeader({required this.isHome});
+
+  final bool isHome;
+
+  @override
+  Widget build(BuildContext context) {
+    final color = isHome ? AppColors.ivory : AppColors.espresso;
+
+    return Row(
+      children: [
+        _BrandMark(color: color),
+        const Spacer(),
+        IconButton(
+          onPressed: () => _showMobileMenu(context),
+          icon: Icon(Icons.menu_rounded, color: color, size: 28),
+          tooltip: 'Open menu',
+        ),
+      ],
+    );
+  }
+
+  void _showMobileMenu(BuildContext context) {
+    showModalBottomSheet<void>(
+      context: context,
+      backgroundColor: AppColors.cream,
+      showDragHandle: true,
+      builder: (context) {
+        return SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(28, 12, 28, 32),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                _MobileMenuItem(
+                  label: 'WORK',
+                  onTap: () => _go(context, '/portfolio'),
+                ),
+                _MobileMenuItem(
+                  label: 'ABOUT',
+                  onTap: () => _go(context, '/profile'),
+                ),
+                _MobileMenuItem(
+                  label: 'GALLERIES',
+                  onTap: () => _go(context, '/gallery'),
+                ),
+                _MobileMenuItem(
+                  label: 'BOOK',
+                  onTap: () => _go(context, '/booking'),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  void _go(BuildContext context, String route) {
+    Navigator.of(context).pop();
+    context.go(route);
+  }
+}
+
+class _BrandMark extends StatelessWidget {
+  const _BrandMark({required this.color});
+
+  final Color color;
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: () => context.go('/'),
+      child: Text(
+        'KALLIGRAPHY',
+        style: TextStyle(
+          color: color,
+          fontSize: 16,
+          fontWeight: FontWeight.w700,
+          letterSpacing: 3.2,
+        ),
       ),
-      child: SafeArea(
-        top: false,
-        child: NavigationBar(
-          selectedIndex: currentIndex,
-          onDestinationSelected: onTap,
-          backgroundColor: AppColors.black,
-          indicatorColor: AppColors.brown,
-          elevation: 0,
-          height: 70,
-          labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
-          destinations: const [
-            NavigationDestination(
-              icon: Icon(Icons.home_outlined),
-              selectedIcon: Icon(Icons.home),
-              label: 'Home',
+    );
+  }
+}
+
+class _NavLink extends StatelessWidget {
+  const _NavLink({
+    required this.label,
+    required this.route,
+    required this.active,
+    required this.light,
+  });
+
+  final String label;
+  final String route;
+  final bool active;
+  final bool light;
+
+  @override
+  Widget build(BuildContext context) {
+    final color = light ? AppColors.ivory : AppColors.espresso;
+
+    return InkWell(
+      onTap: () => context.go(route),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 8),
+        child: Text(
+          label,
+          style: TextStyle(
+            color: color,
+            fontSize: 11,
+            fontWeight: FontWeight.w600,
+            letterSpacing: 1.8,
+            decoration: active ? TextDecoration.underline : null,
+            decorationColor: color,
+            decorationThickness: 1.2,
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _InquireButton extends StatelessWidget {
+  const _InquireButton({required this.light});
+
+  final bool light;
+
+  @override
+  Widget build(BuildContext context) {
+    final foreground = light ? AppColors.espresso : AppColors.ivory;
+    final background = light ? AppColors.ivory : AppColors.espresso;
+
+    return Material(
+      color: background,
+      borderRadius: BorderRadius.circular(999),
+      child: InkWell(
+        borderRadius: BorderRadius.circular(999),
+        onTap: () => context.go('/booking'),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 11),
+          child: Text(
+            'INQUIRE',
+            style: TextStyle(
+              color: foreground,
+              fontSize: 10,
+              fontWeight: FontWeight.w700,
+              letterSpacing: 1.6,
             ),
-            NavigationDestination(
-              icon: Icon(Icons.photo_library_outlined),
-              selectedIcon: Icon(Icons.photo_library),
-              label: 'Portfolio',
-            ),
-            NavigationDestination(
-              icon: Icon(Icons.add_box_outlined),
-              selectedIcon: Icon(Icons.add_box),
-              label: 'Book',
-            ),
-            NavigationDestination(
-              icon: Icon(Icons.collections_outlined),
-              selectedIcon: Icon(Icons.collections),
-              label: 'Gallery',
-            ),
-            NavigationDestination(
-              icon: Icon(Icons.person_outline),
-              selectedIcon: Icon(Icons.person),
-              label: 'Profile',
-            ),
-          ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _MobileMenuItem extends StatelessWidget {
+  const _MobileMenuItem({required this.label, required this.onTap});
+
+  final String label;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: double.infinity,
+      child: TextButton(
+        onPressed: onTap,
+        style: TextButton.styleFrom(
+          alignment: Alignment.centerLeft,
+          padding: const EdgeInsets.symmetric(vertical: 16),
+        ),
+        child: Text(
+          label,
+          style: const TextStyle(
+            color: AppColors.espresso,
+            fontSize: 13,
+            fontWeight: FontWeight.w600,
+            letterSpacing: 2,
+          ),
         ),
       ),
     );
