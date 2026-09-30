@@ -1,10 +1,6 @@
 import 'package:go_router/go_router.dart';
 
-import '../../features/booking/booking_screen.dart';
-import '../../features/gallery/gallery_screen.dart';
-import '../../features/home/home_screen.dart';
-import '../../features/portfolio/portfolio_screen.dart';
-import '../../features/profile/profile_screen.dart';
+import '../navigation/main_shell.dart';
 
 abstract final class AppRoutes {
   static const home = '/';
@@ -19,23 +15,33 @@ final GoRouter appRouter = GoRouter(
   routes: [
     GoRoute(
       path: AppRoutes.home,
-      builder: (context, state) => const HomeScreen(),
+      builder: (context, state) {
+        return const MainShell(initialIndex: 0);
+      },
     ),
     GoRoute(
       path: AppRoutes.portfolio,
-      builder: (context, state) => const PortfolioScreen(),
+      builder: (context, state) {
+        return const MainShell(initialIndex: 1);
+      },
     ),
     GoRoute(
       path: AppRoutes.booking,
-      builder: (context, state) => const BookingScreen(),
+      builder: (context, state) {
+        return const MainShell(initialIndex: 2);
+      },
     ),
     GoRoute(
       path: AppRoutes.gallery,
-      builder: (context, state) => const GalleryScreen(),
+      builder: (context, state) {
+        return const MainShell(initialIndex: 3);
+      },
     ),
     GoRoute(
       path: AppRoutes.profile,
-      builder: (context, state) => const ProfileScreen(),
+      builder: (context, state) {
+        return const MainShell(initialIndex: 4);
+      },
     ),
   ],
 );
