@@ -1,11 +1,15 @@
 import 'package:go_router/go_router.dart';
 
 import '../navigation/main_shell.dart';
-import '../../features/home/home_screen.dart';
-import '../../features/portfolio/portfolio_screen.dart';
+
+import '../../features/auth/auth_gate.dart';
+import '../../features/auth/photographer_shell.dart';
 import '../../features/booking/booking_screen.dart';
 import '../../features/booking/packages_screen.dart';
 import '../../features/gallery/gallery_screen.dart';
+import '../../features/home/home_screen.dart';
+import '../../features/inquiries/inquiries_screen.dart';
+import '../../features/portfolio/portfolio_screen.dart';
 import '../../features/profile/profile_screen.dart';
 
 final GoRouter appRouter = GoRouter(
@@ -47,6 +51,21 @@ final GoRouter appRouter = GoRouter(
           builder: (context, state) => const ProfileScreen(),
         ),
       ],
+    ),
+    GoRoute(
+      path: '/studio',
+      name: 'studio',
+      builder: (context, state) {
+        return AuthGate(
+          builder: (context, session, logout) {
+            return PhotographerShell(
+              session: session,
+              onLogout: logout,
+              child: InquiriesScreen(session: session),
+            );
+          },
+        );
+      },
     ),
   ],
 );

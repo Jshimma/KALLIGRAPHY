@@ -6,12 +6,14 @@ from app.models.gallery import (
     GalleryFavorite,
     GalleryPhoto,
 )
+from app.models.inquiry import Inquiry
 from app.models.portfolio import PortfolioCategory, PortfolioPhoto
 from app.models.user import User
 
 __all__ = [
     "User",
     "Client",
+    "Inquiry",
     "PortfolioCategory",
     "PortfolioPhoto",
     "Gallery",

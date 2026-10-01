@@ -4,6 +4,7 @@ import 'package:url_launcher/url_launcher.dart';
 
 import '../../core/constants/app_colors.dart';
 import '../../core/constants/app_spacing.dart';
+import '../../services/api/inquiry_api_service.dart';
 
 class BookingScreen extends StatefulWidget {
   const BookingScreen({super.key});
@@ -26,6 +27,7 @@ class _BookingScreenState extends State<BookingScreen> {
   String _service = 'Wedding';
   bool _isSending = false;
   bool _inquirySent = false;
+  String? _inquiryError;
 
   @override
   void dispose() {
@@ -45,24 +47,52 @@ class _BookingScreenState extends State<BookingScreen> {
     setState(() {
       _isSending = true;
       _inquirySent = false;
+      _inquiryError = null;
     });
 
-    await Future<void>.delayed(const Duration(milliseconds: 900));
+    try {
+      await InquiryApiService().submitInquiry(
+        name: _nameController.text,
+        email: _emailController.text,
+        service: _service,
+        preferredDate: _dateController.text,
+        location: _locationController.text,
+        message: _messageController.text,
+      );
 
-    if (!mounted) return;
+      if (!mounted) return;
 
-    setState(() {
-      _isSending = false;
-      _inquirySent = true;
-    });
+      setState(() {
+        _isSending = false;
+        _inquirySent = true;
+        _inquiryError = null;
+      });
 
-    _formKey.currentState!.reset();
-    _nameController.clear();
-    _emailController.clear();
-    _dateController.clear();
-    _locationController.clear();
-    _messageController.clear();
-    _service = 'Wedding';
+      _formKey.currentState!.reset();
+      _nameController.clear();
+      _emailController.clear();
+      _dateController.clear();
+      _locationController.clear();
+      _messageController.clear();
+      _service = 'Wedding';
+    } on InquiryApiException catch (error) {
+      if (!mounted) return;
+
+      setState(() {
+        _isSending = false;
+        _inquirySent = false;
+        _inquiryError = error.message;
+      });
+    } catch (_) {
+      if (!mounted) return;
+
+      setState(() {
+        _isSending = false;
+        _inquirySent = false;
+        _inquiryError =
+            'Something went wrong. Please try again or contact us directly.';
+      });
+    }
   }
 
   Future<void> _openWhatsApp() async {
@@ -101,6 +131,7 @@ class _BookingScreenState extends State<BookingScreen> {
               service: _service,
               isSending: _isSending,
               inquirySent: _inquirySent,
+              inquiryError: _inquiryError,
               nameController: _nameController,
               emailController: _emailController,
               dateController: _dateController,
@@ -194,6 +225,7 @@ class _InquirySection extends StatelessWidget {
     required this.service,
     required this.isSending,
     required this.inquirySent,
+    required this.inquiryError,
     required this.nameController,
     required this.emailController,
     required this.dateController,
@@ -207,6 +239,7 @@ class _InquirySection extends StatelessWidget {
   final String service;
   final bool isSending;
   final bool inquirySent;
+  final String? inquiryError;
 
   final TextEditingController nameController;
   final TextEditingController emailController;
@@ -356,6 +389,56 @@ class _InquirySection extends StatelessWidget {
                       maxLines: 6,
                     ),
                     const SizedBox(height: 30),
+                    if (inquiryError != null) ...[
+                      Container(
+                        width: double.infinity,
+                        padding: const EdgeInsets.all(22),
+                        decoration: BoxDecoration(
+                          color: AppColors.cream,
+                          borderRadius: BorderRadius.circular(18),
+                          border: Border.all(color: AppColors.error),
+                        ),
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Icon(
+                              Icons.error_outline,
+                              color: AppColors.error,
+                              size: 26,
+                            ),
+                            const SizedBox(width: 14),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  const Text(
+                                    'INQUIRY NOT SENT',
+                                    style: TextStyle(
+                                      color: AppColors.espresso,
+                                      fontFamily: 'Manrope',
+                                      fontWeight: FontWeight.w700,
+                                      fontSize: 12,
+                                      letterSpacing: 1.5,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 7),
+                                  Text(
+                                    inquiryError!,
+                                    style: const TextStyle(
+                                      color: AppColors.brown,
+                                      fontFamily: 'Manrope',
+                                      fontSize: 13,
+                                      height: 1.6,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 20),
+                    ],
                     if (inquirySent) ...[
                       Container(
                         width: double.infinity,
