@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 abstract final class AppColors {
-  // KALLIGRAPHY — Brown & Beige
+  // KALLYGRAPHY — Brown & Beige
   static const espresso = Color(0xFF2B1D16);
   static const darkBrown = Color(0xFF3F2A20);
   static const brown = Color(0xFF654936);

@@ -1,6 +1,6 @@
-# KALLIGRAPHY Storage
+# KALLYGRAPHY Storage
 
-KALLIGRAPHY owns and controls its photography storage.
+KALLYGRAPHY owns and controls its photography storage.
 
 ## Directories
 
@@ -13,7 +13,7 @@ KALLIGRAPHY owns and controls its photography storage.
 
 Photos must not depend on third-party image-storage platforms.
 
-The production implementation will store files on infrastructure controlled by KALLIGRAPHY and keep file metadata in PostgreSQL.
+The production implementation will store files on infrastructure controlled by KALLYGRAPHY and keep file metadata in PostgreSQL.
 
 ## Rules
 

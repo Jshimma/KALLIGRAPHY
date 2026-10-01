@@ -1,6 +1,6 @@
-# KALLIGRAPHY Backend
+# KALLYGRAPHY Backend
 
-The KALLIGRAPHY backend will provide the API and business logic for:
+The KALLYGRAPHY backend will provide the API and business logic for:
 
 - Authentication
 - Photographer accounts
@@ -20,8 +20,8 @@ The KALLIGRAPHY backend will provide the API and business logic for:
 
 Flutter
 ↓
-KALLIGRAPHY API
+KALLYGRAPHY API
 ↓
-PostgreSQL + KALLIGRAPHY controlled file storage
+PostgreSQL + KALLYGRAPHY controlled file storage
 
 The backend must not depend on third-party managed photo-storage services.

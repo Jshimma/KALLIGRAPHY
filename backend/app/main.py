@@ -8,7 +8,7 @@ from app.api.routes import (
 
 
 app = FastAPI(
-    title="KALLIGRAPHY API",
+    title="KALLYGRAPHY API",
     version="1.0.0",
 )
 

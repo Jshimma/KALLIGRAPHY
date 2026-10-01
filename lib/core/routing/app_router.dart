@@ -4,6 +4,7 @@ import '../navigation/main_shell.dart';
 import '../../features/home/home_screen.dart';
 import '../../features/portfolio/portfolio_screen.dart';
 import '../../features/booking/booking_screen.dart';
+import '../../features/booking/packages_screen.dart';
 import '../../features/gallery/gallery_screen.dart';
 import '../../features/profile/profile_screen.dart';
 
@@ -29,6 +30,11 @@ final GoRouter appRouter = GoRouter(
           path: '/booking',
           name: 'booking',
           builder: (context, state) => const BookingScreen(),
+        ),
+        GoRoute(
+          path: '/packages',
+          name: 'packages',
+          builder: (context, state) => const PackagesScreen(),
         ),
         GoRoute(
           path: '/gallery',

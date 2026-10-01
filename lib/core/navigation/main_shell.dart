@@ -90,6 +90,13 @@ class _DesktopHeader extends StatelessWidget {
         ),
         const SizedBox(width: 28),
         _NavLink(
+          label: 'PACKAGES',
+          route: '/packages',
+          active: GoRouterState.of(context).uri.path == '/packages',
+          light: isHome,
+        ),
+        const SizedBox(width: 28),
+        _NavLink(
           label: 'GALLERIES',
           route: '/gallery',
           active: GoRouterState.of(context).uri.path == '/gallery',
@@ -152,12 +159,40 @@ class _MobileHeader extends StatelessWidget {
                   onTap: () => _go(context, '/profile'),
                 ),
                 _MobileMenuItem(
+                  label: 'PACKAGES',
+                  onTap: () => _go(context, '/packages'),
+                ),
+                _MobileMenuItem(
                   label: 'GALLERIES',
                   onTap: () => _go(context, '/gallery'),
                 ),
                 _MobileMenuItem(
                   label: 'BOOK',
                   onTap: () => _go(context, '/booking'),
+                ),
+                const SizedBox(height: 8),
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    onPressed: () => _go(context, '/booking'),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppColors.espresso,
+                      foregroundColor: AppColors.ivory,
+                      elevation: 0,
+                      padding: const EdgeInsets.symmetric(vertical: 16),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(999),
+                      ),
+                    ),
+                    child: const Text(
+                      'INQUIRE',
+                      style: TextStyle(
+                        fontSize: 11,
+                        fontWeight: FontWeight.w700,
+                        letterSpacing: 2,
+                      ),
+                    ),
+                  ),
                 ),
               ],
             ),
@@ -183,7 +218,7 @@ class _BrandMark extends StatelessWidget {
     return GestureDetector(
       onTap: () => context.go('/'),
       child: Text(
-        'KALLIGRAPHY',
+        'KALLYGRAPHY',
         style: TextStyle(
           color: color,
           fontSize: 16,

@@ -6,16 +6,16 @@ import 'core/theme/app_theme.dart';
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
 
-  runApp(const KalligraphyApp());
+  runApp(const KallygraphyApp());
 }
 
-class KalligraphyApp extends StatelessWidget {
-  const KalligraphyApp({super.key});
+class KallygraphyApp extends StatelessWidget {
+  const KallygraphyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp.router(
-      title: 'KALLIGRAPHY',
+      title: 'KALLYGRAPHY',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.light(),
       routerConfig: appRouter,
