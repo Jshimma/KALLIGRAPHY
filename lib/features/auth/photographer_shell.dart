@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../core/constants/app_colors.dart';
 import '../../core/constants/app_spacing.dart';
@@ -18,6 +19,9 @@ class PhotographerShell extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final location = GoRouterState.of(context).uri.path;
+    final selectedIndex = location == '/studio/inquiries' ? 1 : 0;
+
     return Scaffold(
       backgroundColor: AppColors.ivory,
       appBar: AppBar(
@@ -45,13 +49,25 @@ class PhotographerShell extends StatelessWidget {
       body: Row(
         children: [
           NavigationRail(
-            selectedIndex: 0,
+            selectedIndex: selectedIndex,
             backgroundColor: AppColors.cream,
             leading: const Padding(
               padding: EdgeInsets.symmetric(vertical: AppSpacing.lg),
               child: Icon(Icons.camera_alt_outlined, color: AppColors.brown),
             ),
+            onDestinationSelected: (index) {
+              if (index == 0) {
+                context.go('/studio');
+              } else if (index == 1) {
+                context.go('/studio/inquiries');
+              }
+            },
             destinations: const [
+              NavigationRailDestination(
+                icon: Icon(Icons.dashboard_outlined),
+                selectedIcon: Icon(Icons.dashboard),
+                label: Text('Overview'),
+              ),
               NavigationRailDestination(
                 icon: Icon(Icons.inbox_outlined),
                 selectedIcon: Icon(Icons.inbox),

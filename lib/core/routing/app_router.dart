@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../navigation/main_shell.dart';
@@ -11,6 +12,7 @@ import '../../features/home/home_screen.dart';
 import '../../features/inquiries/inquiries_screen.dart';
 import '../../features/portfolio/portfolio_screen.dart';
 import '../../features/profile/profile_screen.dart';
+import '../../features/studio/studio_dashboard_screen.dart';
 
 final GoRouter appRouter = GoRouter(
   initialLocation: '/',
@@ -52,20 +54,38 @@ final GoRouter appRouter = GoRouter(
         ),
       ],
     ),
-    GoRoute(
-      path: '/studio',
-      name: 'studio',
-      builder: (context, state) {
+    ShellRoute(
+      builder: (context, state, child) {
         return AuthGate(
           builder: (context, session, logout) {
+            final Widget studioPage;
+
+            if (state.uri.path == '/studio/inquiries') {
+              studioPage = InquiriesScreen(session: session);
+            } else {
+              studioPage = const StudioDashboardScreen();
+            }
+
             return PhotographerShell(
               session: session,
               onLogout: logout,
-              child: InquiriesScreen(session: session),
+              child: studioPage,
             );
           },
         );
       },
+      routes: [
+        GoRoute(
+          path: '/studio',
+          name: 'studio',
+          builder: (context, state) => const SizedBox.shrink(),
+        ),
+        GoRoute(
+          path: '/studio/inquiries',
+          name: 'studio-inquiries',
+          builder: (context, state) => const SizedBox.shrink(),
+        ),
+      ],
     ),
   ],
 );
