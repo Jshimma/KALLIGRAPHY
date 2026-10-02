@@ -2,188 +2,203 @@ import 'package:flutter/material.dart';
 
 import '../../core/constants/app_colors.dart';
 
-class PortfolioScreen extends StatelessWidget {
+class PortfolioScreen extends StatefulWidget {
   const PortfolioScreen({super.key});
 
-  static const _photos = [
-    _PortfolioPhoto(
-      'assets/images/portfolio/portrait_woman.jpg',
-      'Portraits',
-      'Quiet confidence',
-      1,
+  @override
+  State<PortfolioScreen> createState() => _PortfolioScreenState();
+}
+
+class _PortfolioScreenState extends State<PortfolioScreen> {
+  String selectedCategory = 'ALL';
+
+  static const categories = [
+    'ALL',
+    'WEDDINGS',
+    'INTRODUCTIONS',
+    'BABY SHOWERS',
+    'GRADUATIONS',
+    'PHOTOSHOOTS',
+    'MOMENTS',
+  ];
+
+  static const collections = <_Collection>[
+    _Collection(
+      category: 'WEDDINGS',
+      eyebrow: '01 · WEDDINGS',
+      title: 'The beginning\nof forever.',
+      description: 'Emotion, atmosphere and all the little details that make a wedding day yours.',
+      photos: [
+        'Wedding.jpg',
+        'Wedding2.jpg',
+        'Wedding3.jpg',
+        'Wedding4.jpg',
+        'Wedding5.jpg',
+        'Wedding6.jpg',
+        'Wedding7.jpg',
+      ],
     ),
-    _PortfolioPhoto(
-      'assets/images/portfolio/portrait_woman_close.jpg',
-      'Portraits',
-      'In her element',
-      2,
+    _Collection(
+      category: 'INTRODUCTIONS',
+      eyebrow: '02 · INTRODUCTIONS',
+      title: 'A day worth\nremembering.',
+      description: 'Tradition, family and the quiet moments that live between the celebration.',
+      photos: [
+        'Introduction.jpg',
+        'Introduction2.jpg',
+        'Introduction3.jpg',
+        'Introduction4.jpg',
+        'Introduction5.jpg',
+        'Introduction6.jpg',
+        'Introduction7.jpg',
+        'Introduction8.jpg',
+        'Introduction9.jpg',
+        'Introduction10.jpg',
+      ],
     ),
-    _PortfolioPhoto(
-      'assets/images/portfolio/portrait_man_hat.jpg',
-      'Editorial',
-      'The modern muse',
-      3,
+    _Collection(
+      category: 'BABY SHOWERS',
+      eyebrow: '03 · BABY SHOWERS',
+      title: 'New beginnings.',
+      description: 'Soft moments, anticipation and the people gathered around something beautiful.',
+      photos: ['Baby shower.jpg'],
     ),
-    _PortfolioPhoto(
-      'assets/images/portfolio/portrait_man.jpg',
-      'Editorial',
-      'Between moments',
-      4,
+    _Collection(
+      category: 'GRADUATIONS',
+      eyebrow: '04 · GRADUATIONS',
+      title: 'A moment\nof arrival.',
+      description: 'The pride, the people and the celebration behind a milestone earned.',
+      photos: ['graduation.jpg', 'graduation2.jpg', 'graduation3.jpg'],
     ),
-    _PortfolioPhoto(
-      'assets/images/portfolio/couple_wedding.jpg',
-      'Weddings',
-      'A beginning',
-      5,
+    _Collection(
+      category: 'PHOTOSHOOTS',
+      eyebrow: '05 · PHOTOSHOOTS',
+      title: 'In their\nelement.',
+      description: 'Portraits and creative sessions shaped around personality, light and presence.',
+      photos: [
+        'photoshoot.jpg',
+        'photoshoot3.jpg',
+        'photoshoot4.jpg',
+        'photoshoot5.jpg',
+        'photoshoot6.jpg',
+        'photoshoot7.jpg',
+        'photoshoot8.jpg',
+        'photoshoot9.jpg',
+        'photoshoot10.jpg',
+        'photoshoot11.jpg',
+      ],
     ),
-    _PortfolioPhoto(
-      'assets/images/portfolio/wedding_bouquet.jpg',
-      'Weddings',
-      'Details that matter',
-      6,
-    ),
-    _PortfolioPhoto(
-      'assets/images/portfolio/wedding_rings.jpg',
-      'Weddings',
-      'Forever, framed',
-      7,
-    ),
-    _PortfolioPhoto(
-      'assets/images/portfolio/hands_detail.jpg',
-      'Details',
-      'Made by hand',
-      8,
-    ),
-    _PortfolioPhoto(
-      'assets/images/portfolio/woman_landscape.jpg',
-      'Places',
-      'Where light falls',
-      9,
-    ),
-    _PortfolioPhoto(
-      'assets/images/portfolio/lake_boat.jpg',
-      'Places',
-      'Into the distance',
-      10,
-    ),
-    _PortfolioPhoto(
-      'assets/images/portfolio/sunset_lake.jpg',
-      'Places',
-      'Golden hour',
-      11,
-    ),
-    _PortfolioPhoto(
-      'assets/images/portfolio/architecture_door.jpg',
-      'Details',
-      'Lines & light',
-      12,
+    _Collection(
+      category: 'MOMENTS',
+      eyebrow: '06 · MOMENTS',
+      title: 'Life,\nas it felt.',
+      description: 'Unscripted frames, atmosphere and the fleeting moments worth keeping.',
+      photos: [
+        'Moments.jpg',
+        'Moments2.jpg',
+        'Moments3.jpg',
+        'Moments4.jpg',
+        'Moments5.jpg',
+        'Moment6.jpg',
+      ],
     ),
   ];
 
   @override
   Widget build(BuildContext context) {
+    final visibleCollections = selectedCategory == 'ALL'
+        ? collections
+        : collections
+              .where((collection) => collection.category == selectedCategory)
+              .toList();
+
     return Scaffold(
       backgroundColor: AppColors.cream,
       body: CustomScrollView(
         slivers: [
-          const SliverToBoxAdapter(child: _PortfolioIntro()),
-          SliverToBoxAdapter(child: _CategoryBar()),
-          const SliverToBoxAdapter(child: SizedBox(height: 50)),
-          const SliverToBoxAdapter(child: _FeaturedPhoto()),
-          const SliverToBoxAdapter(child: SizedBox(height: 100)),
-          const SliverToBoxAdapter(
-            child: _SectionLabel(
-              number: '01',
-              title: 'PORTRAITS',
-              description: 'People, presence and the quiet moments between.',
-            ),
-          ),
+          const SliverToBoxAdapter(child: _PortfolioHero()),
           SliverToBoxAdapter(
-            child: _PortraitGrid(photos: _photos.sublist(0, 4)),
-          ),
-          const SliverToBoxAdapter(child: SizedBox(height: 130)),
-          const SliverToBoxAdapter(
-            child: _SectionLabel(
-              number: '02',
-              title: 'WEDDINGS',
-              description:
-                  'The emotion, details and atmosphere of a day remembered.',
+            child: _CategoryNavigation(
+              selected: selectedCategory,
+              categories: categories,
+              onSelected: (category) {
+                setState(() => selectedCategory = category);
+              },
             ),
           ),
-          SliverToBoxAdapter(
-            child: _WeddingGrid(photos: _photos.sublist(4, 7)),
+          const SliverToBoxAdapter(child: SizedBox(height: 72)),
+          SliverList(
+            delegate: SliverChildBuilderDelegate((context, index) {
+              final collection = visibleCollections[index];
+
+              return _CollectionSection(
+                collection: collection,
+                number: selectedCategory == 'ALL'
+                    ? index + 1
+                    : collections.indexOf(collection) + 1,
+              );
+            }, childCount: visibleCollections.length),
           ),
-          const SliverToBoxAdapter(child: SizedBox(height: 130)),
-          const SliverToBoxAdapter(
-            child: _SectionLabel(
-              number: '03',
-              title: 'PLACES & DETAILS',
-              description:
-                  'Light, texture and the stories hidden in ordinary places.',
-            ),
-          ),
-          SliverToBoxAdapter(child: _PlacesGrid(photos: _photos.sublist(7))),
-          const SliverToBoxAdapter(child: SizedBox(height: 150)),
-          const SliverToBoxAdapter(child: _PortfolioClosing()),
+          const SliverToBoxAdapter(child: _PortfolioFooter()),
         ],
       ),
     );
   }
 }
 
-class _PortfolioIntro extends StatelessWidget {
-  const _PortfolioIntro();
+class _PortfolioHero extends StatelessWidget {
+  const _PortfolioHero();
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(24, 150, 24, 30),
+      padding: const EdgeInsets.fromLTRB(24, 150, 24, 70),
       child: Center(
         child: ConstrainedBox(
           constraints: const BoxConstraints(maxWidth: 1200),
           child: LayoutBuilder(
             builder: (context, constraints) {
-              final desktop = constraints.maxWidth >= 800;
+              final desktop = constraints.maxWidth >= 850;
 
               return Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    'PORTFOLIO',
+                  const Text(
+                    'THE WORK',
                     style: TextStyle(
                       fontFamily: 'Manrope',
-                      fontSize: 11,
-                      fontWeight: FontWeight.w600,
-                      letterSpacing: 2.5,
+                      fontSize: 10,
+                      fontWeight: FontWeight.w700,
+                      letterSpacing: 3,
                       color: AppColors.brown,
                     ),
                   ),
-                  const SizedBox(height: 28),
+                  const SizedBox(height: 25),
                   if (desktop)
                     Row(
                       crossAxisAlignment: CrossAxisAlignment.end,
                       children: [
-                        Expanded(
+                        const Expanded(
                           child: Text(
-                            'Stories in\nstillness.',
+                            'Stories worth\nremembering.',
                             style: TextStyle(
                               fontFamily: 'CormorantGaramond',
                               fontSize: 82,
-                              height: .9,
+                              height: .88,
                               color: AppColors.espresso,
                             ),
                           ),
                         ),
                         SizedBox(
-                          width: 280,
+                          width: 300,
                           child: Padding(
-                            padding: const EdgeInsets.only(bottom: 8),
+                            padding: const EdgeInsets.only(bottom: 6),
                             child: Text(
-                              'A collection of photographs shaped by light, atmosphere and honest moments.',
+                              'A collection of celebrations, people and moments photographed by KALIISA RYAN.',
                               style: TextStyle(
                                 fontFamily: 'Manrope',
-                                fontSize: 13,
-                                height: 1.8,
+                                fontSize: 12.5,
+                                height: 1.85,
                                 color: AppColors.darkBrown,
                               ),
                             ),
@@ -192,30 +207,55 @@ class _PortfolioIntro extends StatelessWidget {
                       ],
                     )
                   else
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'Stories in\nstillness.',
-                          style: TextStyle(
-                            fontFamily: 'CormorantGaramond',
-                            fontSize: 64,
-                            height: .92,
-                            color: AppColors.espresso,
-                          ),
-                        ),
-                        const SizedBox(height: 28),
-                        Text(
-                          'A collection of photographs shaped by light, atmosphere and honest moments.',
-                          style: TextStyle(
-                            fontFamily: 'Manrope',
-                            fontSize: 13,
-                            height: 1.8,
-                            color: AppColors.darkBrown,
-                          ),
-                        ),
-                      ],
+                    const Text(
+                      'Stories worth\nremembering.',
+                      style: TextStyle(
+                        fontFamily: 'CormorantGaramond',
+                        fontSize: 61,
+                        height: .9,
+                        color: AppColors.espresso,
+                      ),
                     ),
+                  if (!desktop) ...[
+                    const SizedBox(height: 25),
+                    Text(
+                      'A collection of celebrations, people and moments photographed by KALIISA RYAN.',
+                      style: TextStyle(
+                        fontFamily: 'Manrope',
+                        fontSize: 12.5,
+                        height: 1.85,
+                        color: AppColors.darkBrown,
+                      ),
+                    ),
+                  ],
+                  const SizedBox(height: 45),
+                  Container(height: .7, color: AppColors.border),
+                  const SizedBox(height: 15),
+                  const Row(
+                    children: [
+                      Text(
+                        'KALLYGRAPHY',
+                        style: TextStyle(
+                          fontFamily: 'Manrope',
+                          fontSize: 9,
+                          fontWeight: FontWeight.w700,
+                          letterSpacing: 2,
+                          color: AppColors.espresso,
+                        ),
+                      ),
+                      Spacer(),
+                      Text(
+                        'KAMPALA · UGANDA',
+                        style: TextStyle(
+                          fontFamily: 'Manrope',
+                          fontSize: 9,
+                          fontWeight: FontWeight.w600,
+                          letterSpacing: 1.5,
+                          color: AppColors.muted,
+                        ),
+                      ),
+                    ],
+                  ),
                 ],
               );
             },
@@ -226,13 +266,19 @@ class _PortfolioIntro extends StatelessWidget {
   }
 }
 
-class _CategoryBar extends StatelessWidget {
-  const _CategoryBar();
+class _CategoryNavigation extends StatelessWidget {
+  const _CategoryNavigation({
+    required this.selected,
+    required this.categories,
+    required this.onSelected,
+  });
+
+  final String selected;
+  final List<String> categories;
+  final ValueChanged<String> onSelected;
 
   @override
   Widget build(BuildContext context) {
-    const categories = ['ALL', 'PORTRAITS', 'EDITORIAL', 'WEDDINGS', 'PLACES'];
-
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 24),
       child: Center(
@@ -242,32 +288,36 @@ class _CategoryBar extends StatelessWidget {
             scrollDirection: Axis.horizontal,
             child: Row(
               children: [
-                for (var i = 0; i < categories.length; i++) ...[
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 18,
-                      vertical: 10,
-                    ),
-                    decoration: BoxDecoration(
-                      color: i == 0 ? AppColors.brown : Colors.transparent,
-                      borderRadius: BorderRadius.circular(40),
-                      border: Border.all(
-                        color: i == 0 ? AppColors.brown : AppColors.border,
-                      ),
-                    ),
-                    child: Text(
-                      categories[i],
-                      style: TextStyle(
-                        fontFamily: 'Manrope',
-                        fontSize: 9,
-                        fontWeight: FontWeight.w600,
-                        letterSpacing: 1.4,
-                        color: i == 0 ? AppColors.cream : AppColors.darkBrown,
+                for (final category in categories)
+                  Padding(
+                    padding: const EdgeInsets.only(right: 27),
+                    child: InkWell(
+                      onTap: () => onSelected(category),
+                      splashColor: Colors.transparent,
+                      highlightColor: Colors.transparent,
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 8),
+                        child: Text(
+                          category,
+                          style: TextStyle(
+                            fontFamily: 'Manrope',
+                            fontSize: 9.5,
+                            fontWeight: FontWeight.w700,
+                            letterSpacing: 1.6,
+                            color: selected == category
+                                ? AppColors.espresso
+                                : AppColors.muted,
+                            decoration: selected == category
+                                ? TextDecoration.underline
+                                : null,
+                            decorationColor: AppColors.brown,
+                            decorationThickness: 1,
+                            decorationStyle: TextDecorationStyle.solid,
+                          ),
+                        ),
                       ),
                     ),
                   ),
-                  if (i != categories.length - 1) const SizedBox(width: 8),
-                ],
               ],
             ),
           ),
@@ -277,96 +327,26 @@ class _CategoryBar extends StatelessWidget {
   }
 }
 
-class _FeaturedPhoto extends StatelessWidget {
-  const _FeaturedPhoto();
+class _CollectionSection extends StatelessWidget {
+  const _CollectionSection({required this.collection, required this.number});
+
+  final _Collection collection;
+  final int number;
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 24),
+      padding: const EdgeInsets.fromLTRB(20, 0, 20, 120),
       child: Center(
         child: ConstrainedBox(
           constraints: const BoxConstraints(maxWidth: 1200),
-          child: LayoutBuilder(
-            builder: (context, constraints) {
-              final height = constraints.maxWidth >= 800 ? 650.0 : 480.0;
-
-              return ClipRRect(
-                borderRadius: BorderRadius.circular(28),
-                child: SizedBox(
-                  height: height,
-                  width: double.infinity,
-                  child: Stack(
-                    fit: StackFit.expand,
-                    children: [
-                      Image.asset(
-                        'assets/images/portfolio/portrait_woman.jpg',
-                        fit: BoxFit.cover,
-                        alignment: Alignment.center,
-                      ),
-                      DecoratedBox(
-                        decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                            begin: Alignment.topCenter,
-                            end: Alignment.bottomCenter,
-                            colors: [
-                              AppColors.espresso.withValues(alpha: .05),
-                              AppColors.espresso.withValues(alpha: .7),
-                            ],
-                          ),
-                        ),
-                      ),
-                      Positioned(
-                        left: 30,
-                        right: 30,
-                        bottom: 30,
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.end,
-                          children: [
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    '01 / FEATURED',
-                                    style: TextStyle(
-                                      fontFamily: 'Manrope',
-                                      fontSize: 9,
-                                      fontWeight: FontWeight.w600,
-                                      letterSpacing: 2,
-                                      color: AppColors.cream,
-                                    ),
-                                  ),
-                                  const SizedBox(height: 8),
-                                  Text(
-                                    'Quiet confidence',
-                                    style: TextStyle(
-                                      fontFamily: 'CormorantGaramond',
-                                      fontSize: 38,
-                                      color: AppColors.ivory,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            Text(
-                              'PORTRAIT',
-                              style: TextStyle(
-                                fontFamily: 'Manrope',
-                                fontSize: 9,
-                                fontWeight: FontWeight.w600,
-                                letterSpacing: 2,
-                                color: AppColors.cream,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              );
-            },
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _CollectionHeading(collection: collection, number: number),
+              const SizedBox(height: 38),
+              _EditorialGallery(photos: collection.photos),
+            ],
           ),
         ),
       ),
@@ -374,351 +354,305 @@ class _FeaturedPhoto extends StatelessWidget {
   }
 }
 
-class _SectionLabel extends StatelessWidget {
-  const _SectionLabel({
-    required this.number,
-    required this.title,
-    required this.description,
-  });
+class _CollectionHeading extends StatelessWidget {
+  const _CollectionHeading({required this.collection, required this.number});
 
-  final String number;
-  final String title;
-  final String description;
+  final _Collection collection;
+  final int number;
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 24),
-      child: Center(
-        child: ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: 1200),
-          child: LayoutBuilder(
-            builder: (context, constraints) {
-              final desktop = constraints.maxWidth >= 800;
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final desktop = constraints.maxWidth >= 800;
 
-              return Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
+        return Row(
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: [
+            Expanded(
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
                   Text(
-                    number,
-                    style: TextStyle(
+                    number.toString().padLeft(2, '0'),
+                    style: const TextStyle(
                       fontFamily: 'Manrope',
                       fontSize: 10,
-                      fontWeight: FontWeight.w600,
-                      letterSpacing: 2,
-                      color: AppColors.mocha,
+                      fontWeight: FontWeight.w700,
+                      letterSpacing: 1.5,
+                      color: AppColors.brown,
                     ),
                   ),
-                  const SizedBox(width: 25),
-                  Expanded(
-                    child: desktop
-                        ? Row(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Expanded(
-                                child: Text(
-                                  title,
-                                  style: TextStyle(
-                                    fontFamily: 'CormorantGaramond',
-                                    fontSize: 52,
-                                    height: .95,
-                                    color: AppColors.espresso,
-                                  ),
-                                ),
-                              ),
-                              SizedBox(
-                                width: 250,
-                                child: Text(
-                                  description,
-                                  style: TextStyle(
-                                    fontFamily: 'Manrope',
-                                    fontSize: 12,
-                                    height: 1.7,
-                                    color: AppColors.muted,
-                                  ),
-                                ),
-                              ),
-                            ],
-                          )
-                        : Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                title,
-                                style: TextStyle(
-                                  fontFamily: 'CormorantGaramond',
-                                  fontSize: 48,
-                                  height: .95,
-                                  color: AppColors.espresso,
-                                ),
-                              ),
-                              const SizedBox(height: 16),
-                              Text(
-                                description,
-                                style: TextStyle(
-                                  fontFamily: 'Manrope',
-                                  fontSize: 12,
-                                  height: 1.7,
-                                  color: AppColors.muted,
-                                ),
-                              ),
-                            ],
-                          ),
-                  ),
-                ],
-              );
-            },
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _PortraitGrid extends StatelessWidget {
-  const _PortraitGrid({required this.photos});
-
-  final List<_PortfolioPhoto> photos;
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(24, 45, 24, 0),
-      child: Center(
-        child: ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: 1200),
-          child: LayoutBuilder(
-            builder: (context, constraints) {
-              if (constraints.maxWidth < 700) {
-                return Column(
-                  children: [
-                    _PhotoCard(photo: photos[0], height: 430),
-                    const SizedBox(height: 14),
-                    _PhotoCard(photo: photos[1], height: 300),
-                    const SizedBox(height: 14),
-                    _PhotoCard(photo: photos[2], height: 420),
-                    const SizedBox(height: 14),
-                    _PhotoCard(photo: photos[3], height: 300),
-                  ],
-                );
-              }
-
-              return Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Expanded(
-                    flex: 5,
-                    child: _PhotoCard(photo: photos[0], height: 590),
-                  ),
-                  const SizedBox(width: 16),
-                  Expanded(
-                    flex: 3,
-                    child: Column(
-                      children: [
-                        _PhotoCard(photo: photos[1], height: 340),
-                        const SizedBox(height: 16),
-                        _PhotoCard(photo: photos[2], height: 520),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(width: 16),
-                  Expanded(
-                    flex: 3,
-                    child: Padding(
-                      padding: const EdgeInsets.only(top: 150),
-                      child: _PhotoCard(photo: photos[3], height: 350),
+                  const SizedBox(width: 20),
+                  Flexible(
+                    child: Text(
+                      collection.title,
+                      style: TextStyle(
+                        fontFamily: 'CormorantGaramond',
+                        fontSize: desktop ? 55 : 43,
+                        height: .9,
+                        color: AppColors.espresso,
+                      ),
                     ),
                   ),
                 ],
-              );
-            },
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _WeddingGrid extends StatelessWidget {
-  const _WeddingGrid({required this.photos});
-
-  final List<_PortfolioPhoto> photos;
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(24, 45, 24, 0),
-      child: Center(
-        child: ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: 1200),
-          child: LayoutBuilder(
-            builder: (context, constraints) {
-              final desktop = constraints.maxWidth >= 700;
-
-              if (!desktop) {
-                return Column(
-                  children: [
-                    _PhotoCard(photo: photos[0], height: 420),
-                    const SizedBox(height: 14),
-                    _PhotoCard(photo: photos[1], height: 300),
-                    const SizedBox(height: 14),
-                    _PhotoCard(photo: photos[2], height: 360),
-                  ],
-                );
-              }
-
-              return Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Expanded(
-                    flex: 6,
-                    child: _PhotoCard(photo: photos[0], height: 600),
-                  ),
-                  const SizedBox(width: 16),
-                  Expanded(
-                    flex: 4,
-                    child: Column(
-                      children: [
-                        _PhotoCard(photo: photos[1], height: 360),
-                        const SizedBox(height: 16),
-                        _PhotoCard(photo: photos[2], height: 430),
-                      ],
-                    ),
-                  ),
-                ],
-              );
-            },
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _PlacesGrid extends StatelessWidget {
-  const _PlacesGrid({required this.photos});
-
-  final List<_PortfolioPhoto> photos;
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(24, 45, 24, 0),
-      child: Center(
-        child: ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: 1200),
-          child: LayoutBuilder(
-            builder: (context, constraints) {
-              final desktop = constraints.maxWidth >= 700;
-
-              if (!desktop) {
-                return Column(
-                  children: [
-                    for (final photo in photos) ...[
-                      _PhotoCard(photo: photo, height: 340),
-                      const SizedBox(height: 14),
-                    ],
-                  ],
-                );
-              }
-
-              return GridView.builder(
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                itemCount: photos.length,
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 3,
-                  crossAxisSpacing: 16,
-                  mainAxisSpacing: 16,
-                  childAspectRatio: .78,
-                ),
-                itemBuilder: (context, index) {
-                  return _PhotoCard(
-                    photo: photos[index],
-                    height: double.infinity,
-                  );
-                },
-              );
-            },
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _PhotoCard extends StatelessWidget {
-  const _PhotoCard({required this.photo, required this.height});
-
-  final _PortfolioPhoto photo;
-  final double height;
-
-  @override
-  Widget build(BuildContext context) {
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(22),
-      child: SizedBox(
-        height: height,
-        width: double.infinity,
-        child: Stack(
-          fit: StackFit.expand,
-          children: [
-            Image.asset(photo.path, fit: BoxFit.cover),
-            Positioned(
-              left: 0,
-              right: 0,
-              bottom: 0,
-              child: Container(
-                padding: const EdgeInsets.fromLTRB(20, 50, 20, 20),
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                    colors: [
-                      AppColors.espresso.withValues(alpha: 0),
-                      AppColors.espresso.withValues(alpha: .75),
-                    ],
+              ),
+            ),
+            if (desktop)
+              SizedBox(
+                width: 280,
+                child: Text(
+                  collection.description,
+                  style: const TextStyle(
+                    fontFamily: 'Manrope',
+                    fontSize: 11.5,
+                    height: 1.75,
+                    color: AppColors.darkBrown,
                   ),
                 ),
+              ),
+          ],
+        );
+      },
+    );
+  }
+}
+
+class _EditorialGallery extends StatelessWidget {
+  const _EditorialGallery({required this.photos});
+
+  final List<String> photos;
+
+  @override
+  Widget build(BuildContext context) {
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final desktop = constraints.maxWidth >= 850;
+
+        if (!desktop) {
+          return Column(
+            children: [
+              for (var i = 0; i < photos.length; i++) ...[
+                _PhotoCard(filename: photos[i], index: i),
+                if (i != photos.length - 1) const SizedBox(height: 14),
+              ],
+            ],
+          );
+        }
+
+        final children = <Widget>[];
+
+        for (var i = 0; i < photos.length; i += 3) {
+          final remaining = photos.length - i;
+
+          if (remaining >= 3) {
+            children.add(
+              SizedBox(
+                height: 620,
                 child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.end,
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            photo.category.toUpperCase(),
-                            style: TextStyle(
-                              fontFamily: 'Manrope',
-                              fontSize: 8,
-                              fontWeight: FontWeight.w600,
-                              letterSpacing: 1.8,
-                              color: AppColors.cream,
-                            ),
-                          ),
-                          const SizedBox(height: 5),
-                          Text(
-                            photo.title,
-                            style: TextStyle(
-                              fontFamily: 'CormorantGaramond',
-                              fontSize: 25,
-                              color: AppColors.ivory,
-                            ),
-                          ),
-                        ],
-                      ),
+                      flex: 5,
+                      child: _PhotoCard(filename: photos[i], index: i),
                     ),
-                    Text(
-                      photo.number.toString().padLeft(2, '0'),
-                      style: TextStyle(
-                        fontFamily: 'Manrope',
-                        fontSize: 9,
-                        color: AppColors.sand,
-                      ),
+                    const SizedBox(width: 14),
+                    Expanded(
+                      flex: 3,
+                      child: _PhotoCard(filename: photos[i + 1], index: i + 1),
+                    ),
+                    const SizedBox(width: 14),
+                    Expanded(
+                      flex: 4,
+                      child: _PhotoCard(filename: photos[i + 2], index: i + 2),
                     ),
                   ],
                 ),
+              ),
+            );
+          } else if (remaining == 2) {
+            children.add(
+              SizedBox(
+                height: 520,
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: _PhotoCard(filename: photos[i], index: i),
+                    ),
+                    const SizedBox(width: 14),
+                    Expanded(
+                      child: _PhotoCard(filename: photos[i + 1], index: i + 1),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          } else {
+            children.add(
+              SizedBox(
+                height: 620,
+                width: constraints.maxWidth * .62,
+                child: _PhotoCard(filename: photos[i], index: i),
+              ),
+            );
+          }
+
+          if (i + 3 < photos.length) {
+            children.add(const SizedBox(height: 14));
+          }
+        }
+
+        return Column(children: children);
+      },
+    );
+  }
+}
+
+class _PhotoCard extends StatefulWidget {
+  const _PhotoCard({required this.filename, required this.index});
+
+  final String filename;
+  final int index;
+
+  @override
+  State<_PhotoCard> createState() => _PhotoCardState();
+}
+
+class _PhotoCardState extends State<_PhotoCard> {
+  bool hovered = false;
+
+  @override
+  Widget build(BuildContext context) {
+    final path = 'assets/images/ryan/${widget.filename}';
+
+    return MouseRegion(
+      cursor: SystemMouseCursors.click,
+      onEnter: (_) => setState(() => hovered = true),
+      onExit: (_) => setState(() => hovered = false),
+      child: GestureDetector(
+        onTap: () => _openImage(context, path),
+        child: ClipRect(
+          child: Stack(
+            fit: StackFit.expand,
+            children: [
+              AnimatedScale(
+                scale: hovered ? 1.018 : 1,
+                duration: const Duration(milliseconds: 350),
+                curve: Curves.easeOut,
+                child: Image.asset(
+                  path,
+                  fit: BoxFit.cover,
+                  errorBuilder: (context, error, stackTrace) {
+                    return Container(
+                      color: AppColors.sand,
+                      alignment: Alignment.center,
+                      child: const Icon(
+                        Icons.image_not_supported_outlined,
+                        color: AppColors.brown,
+                      ),
+                    );
+                  },
+                ),
+              ),
+              AnimatedOpacity(
+                opacity: hovered ? 1 : 0,
+                duration: const Duration(milliseconds: 250),
+                child: Container(
+                  color: AppColors.espresso.withValues(alpha: .28),
+                  padding: const EdgeInsets.all(20),
+                  alignment: Alignment.bottomLeft,
+                  child: Text(
+                    '${(widget.index + 1).toString().padLeft(2, '0')}  ·  KALLYGRAPHY',
+                    style: const TextStyle(
+                      fontFamily: 'Manrope',
+                      fontSize: 8.5,
+                      fontWeight: FontWeight.w700,
+                      letterSpacing: 1.7,
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  void _openImage(BuildContext context, String path) {
+    showDialog<void>(
+      context: context,
+      barrierColor: AppColors.espresso.withValues(alpha: .95),
+      builder: (context) {
+        return Dialog(
+          backgroundColor: Colors.transparent,
+          insetPadding: const EdgeInsets.all(24),
+          child: Stack(
+            children: [
+              Center(
+                child: InteractiveViewer(
+                  child: Image.asset(path, fit: BoxFit.contain),
+                ),
+              ),
+              Positioned(
+                top: 0,
+                right: 0,
+                child: IconButton(
+                  onPressed: () => Navigator.of(context).pop(),
+                  icon: const Icon(Icons.close, color: Colors.white, size: 28),
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+}
+
+class _PortfolioFooter extends StatelessWidget {
+  const _PortfolioFooter();
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(24, 10, 24, 150),
+      child: Center(
+        child: Column(
+          children: [
+            Container(width: 70, height: .8, color: AppColors.border),
+            const SizedBox(height: 35),
+            const Text(
+              'THE WAY IT FELT.',
+              style: TextStyle(
+                fontFamily: 'Manrope',
+                fontSize: 9,
+                fontWeight: FontWeight.w700,
+                letterSpacing: 3,
+                color: AppColors.brown,
+              ),
+            ),
+            const SizedBox(height: 22),
+            const Text(
+              'Photographs are\nmemories with a pulse.',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontFamily: 'CormorantGaramond',
+                fontSize: 52,
+                height: .95,
+                color: AppColors.espresso,
+              ),
+            ),
+            const SizedBox(height: 25),
+            const Text(
+              'KALLYGRAPHY · KALIISA RYAN · KAMPALA',
+              style: TextStyle(
+                fontFamily: 'Manrope',
+                fontSize: 8.5,
+                fontWeight: FontWeight.w600,
+                letterSpacing: 1.8,
+                color: AppColors.muted,
               ),
             ),
           ],
@@ -728,64 +662,18 @@ class _PhotoCard extends StatelessWidget {
   }
 }
 
-class _PortfolioClosing extends StatelessWidget {
-  const _PortfolioClosing();
+class _Collection {
+  const _Collection({
+    required this.category,
+    required this.eyebrow,
+    required this.title,
+    required this.description,
+    required this.photos,
+  });
 
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      color: AppColors.brown,
-      padding: const EdgeInsets.fromLTRB(24, 100, 24, 110),
-      child: Center(
-        child: ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: 1000),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'KALLYGRAPHY',
-                style: TextStyle(
-                  fontFamily: 'Manrope',
-                  fontSize: 10,
-                  fontWeight: FontWeight.w600,
-                  letterSpacing: 3,
-                  color: AppColors.sand,
-                ),
-              ),
-              const SizedBox(height: 30),
-              Text(
-                'Every photograph\nholds a feeling.',
-                style: TextStyle(
-                  fontFamily: 'CormorantGaramond',
-                  fontSize: 64,
-                  height: .95,
-                  color: AppColors.ivory,
-                ),
-              ),
-              const SizedBox(height: 30),
-              Text(
-                'PORTRAITS  ·  EDITORIAL  ·  WEDDINGS  ·  STORIES',
-                style: TextStyle(
-                  fontFamily: 'Manrope',
-                  fontSize: 9,
-                  fontWeight: FontWeight.w600,
-                  letterSpacing: 1.7,
-                  color: AppColors.beige,
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _PortfolioPhoto {
-  const _PortfolioPhoto(this.path, this.category, this.title, this.number);
-
-  final String path;
   final String category;
+  final String eyebrow;
   final String title;
-  final int number;
+  final String description;
+  final List<String> photos;
 }
