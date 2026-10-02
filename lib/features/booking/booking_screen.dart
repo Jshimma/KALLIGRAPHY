@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:qr_flutter/qr_flutter.dart';
+import 'package:go_router/go_router.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../core/constants/app_colors.dart';
-import '../../core/constants/app_spacing.dart';
 import '../../services/api/inquiry_api_service.dart';
 
 class BookingScreen extends StatefulWidget {
@@ -14,20 +13,29 @@ class BookingScreen extends StatefulWidget {
 }
 
 class _BookingScreenState extends State<BookingScreen> {
-  static const _phone = '+256787758821';
-  static const _email = 'kallygraph01@gmail.com';
-
   final _formKey = GlobalKey<FormState>();
+
   final _nameController = TextEditingController();
   final _emailController = TextEditingController();
   final _dateController = TextEditingController();
   final _locationController = TextEditingController();
   final _messageController = TextEditingController();
 
-  String _service = 'Wedding';
-  bool _isSending = false;
-  bool _inquirySent = false;
-  String? _inquiryError;
+  String _service = 'WEDDINGS';
+  bool _submitting = false;
+  bool _submitted = false;
+
+  final _services = const [
+    'WEDDINGS',
+    'INTRODUCTIONS',
+    'BABY SHOWERS',
+    'GRADUATIONS',
+    'PHOTOSHOOTS',
+    'MOMENTS',
+    'VIDEOGRAPHY',
+    'GRAPHICS DESIGN',
+    'OTHER',
+  ];
 
   @override
   void dispose() {
@@ -39,19 +47,15 @@ class _BookingScreenState extends State<BookingScreen> {
     super.dispose();
   }
 
-  Future<void> _sendInquiry() async {
-    if (!_formKey.currentState!.validate()) {
-      return;
-    }
+  Future<void> _submit() async {
+    if (!_formKey.currentState!.validate()) return;
 
-    setState(() {
-      _isSending = true;
-      _inquirySent = false;
-      _inquiryError = null;
-    });
+    setState(() => _submitting = true);
 
     try {
-      await InquiryApiService().submitInquiry(
+      final api = InquiryApiService();
+
+      await api.submitInquiry(
         name: _nameController.text,
         email: _emailController.text,
         service: _service,
@@ -63,59 +67,20 @@ class _BookingScreenState extends State<BookingScreen> {
       if (!mounted) return;
 
       setState(() {
-        _isSending = false;
-        _inquirySent = true;
-        _inquiryError = null;
-      });
-
-      _formKey.currentState!.reset();
-      _nameController.clear();
-      _emailController.clear();
-      _dateController.clear();
-      _locationController.clear();
-      _messageController.clear();
-      _service = 'Wedding';
-    } on InquiryApiException catch (error) {
-      if (!mounted) return;
-
-      setState(() {
-        _isSending = false;
-        _inquirySent = false;
-        _inquiryError = error.message;
+        _submitting = false;
+        _submitted = true;
       });
     } catch (_) {
       if (!mounted) return;
 
-      setState(() {
-        _isSending = false;
-        _inquirySent = false;
-        _inquiryError =
-            'Something went wrong. Please try again or contact us directly.';
-      });
+      setState(() => _submitting = false);
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Something went wrong. Please try again.'),
+        ),
+      );
     }
-  }
-
-  Future<void> _openWhatsApp() async {
-    final uri = Uri.parse(
-      'https://wa.me/256707266444?text=${Uri.encodeComponent('Hello KALLYGRAPHY, I would like to make an inquiry.')}',
-    );
-
-    await launchUrl(uri, mode: LaunchMode.externalApplication);
-  }
-
-  Future<void> _call() async {
-    final uri = Uri.parse('tel:$_phone');
-    await launchUrl(uri);
-  }
-
-  Future<void> _openEmail() async {
-    final uri = Uri(
-      scheme: 'mailto',
-      path: _email,
-      queryParameters: {'subject': 'Photography Inquiry — KALLYGRAPHY'},
-    );
-
-    await launchUrl(uri);
   }
 
   @override
@@ -126,31 +91,25 @@ class _BookingScreenState extends State<BookingScreen> {
         child: Column(
           children: [
             const _BookingHero(),
-            _InquirySection(
-              formKey: _formKey,
-              service: _service,
-              isSending: _isSending,
-              inquirySent: _inquirySent,
-              inquiryError: _inquiryError,
-              nameController: _nameController,
-              emailController: _emailController,
-              dateController: _dateController,
-              locationController: _locationController,
-              messageController: _messageController,
-              onServiceChanged: (value) {
-                if (value != null) {
-                  setState(() => _service = value);
-                }
-              },
-              onSubmit: _sendInquiry,
-            ),
-            _ContactSection(
-              onWhatsApp: _openWhatsApp,
-              onCall: _call,
-              onEmail: _openEmail,
-            ),
-            const _QrSection(),
-            const _BookingClosing(),
+            _submitted
+                ? const _SuccessSection()
+                : _InquirySection(
+                    formKey: _formKey,
+                    nameController: _nameController,
+                    emailController: _emailController,
+                    dateController: _dateController,
+                    locationController: _locationController,
+                    messageController: _messageController,
+                    service: _service,
+                    services: _services,
+                    submitting: _submitting,
+                    onServiceChanged: (value) {
+                      if (value == null) return;
+                      setState(() => _service = value);
+                    },
+                    onSubmit: _submit,
+                  ),
+            const _BookingFooter(),
           ],
         ),
       ),
@@ -165,50 +124,39 @@ class _BookingHero extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.fromLTRB(
-        AppSpacing.screenHorizontal,
-        170,
-        AppSpacing.screenHorizontal,
-        110,
-      ),
-      color: AppColors.espresso,
+      color: AppColors.cream,
+      padding: const EdgeInsets.fromLTRB(28, 110, 28, 70),
       child: Center(
         child: ConstrainedBox(
           constraints: const BoxConstraints(maxWidth: 1180),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text(
-                '06 / BOOK',
-                style: TextStyle(
-                  color: AppColors.beige,
-                  fontFamily: 'Manrope',
-                  fontSize: 11,
+              Text(
+                'BOOK / INQUIRE',
+                style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                  color: AppColors.muted,
                   fontWeight: FontWeight.w600,
-                  letterSpacing: 2.4,
+                  letterSpacing: 2.5,
                 ),
               ),
-              const SizedBox(height: 28),
-              const Text(
-                'Let’s create\nsomething memorable.',
-                style: TextStyle(
-                  color: AppColors.cream,
-                  fontFamily: 'CormorantGaramond',
+              const SizedBox(height: 30),
+              Text(
+                'Let’s create something\nworth remembering.',
+                style: Theme.of(context).textTheme.displayLarge?.copyWith(
+                  color: AppColors.espresso,
                   fontSize: 72,
-                  height: .96,
+                  height: .92,
                 ),
               ),
               const SizedBox(height: 28),
               ConstrainedBox(
-                constraints: const BoxConstraints(maxWidth: 560),
-                child: const Text(
-                  'Tell us a little about your story, and we’ll take it from there.',
-                  style: TextStyle(
-                    color: AppColors.sand,
-                    fontFamily: 'Manrope',
-                    fontSize: 15,
-                    height: 1.8,
-                  ),
+                constraints: const BoxConstraints(maxWidth: 610),
+                child: Text(
+                  'Tell me a little about what you are planning. '
+                  'I’ll get back to you and we can talk through the details together.',
+                  style: Theme.of(context).textTheme.bodyLarge
+                      ?.copyWith(color: AppColors.muted, height: 1.75),
                 ),
               ),
             ],
@@ -222,31 +170,27 @@ class _BookingHero extends StatelessWidget {
 class _InquirySection extends StatelessWidget {
   const _InquirySection({
     required this.formKey,
-    required this.service,
-    required this.isSending,
-    required this.inquirySent,
-    required this.inquiryError,
     required this.nameController,
     required this.emailController,
     required this.dateController,
     required this.locationController,
     required this.messageController,
+    required this.service,
+    required this.services,
+    required this.submitting,
     required this.onServiceChanged,
     required this.onSubmit,
   });
 
   final GlobalKey<FormState> formKey;
-  final String service;
-  final bool isSending;
-  final bool inquirySent;
-  final String? inquiryError;
-
   final TextEditingController nameController;
   final TextEditingController emailController;
   final TextEditingController dateController;
   final TextEditingController locationController;
   final TextEditingController messageController;
-
+  final String service;
+  final List<String> services;
+  final bool submitting;
   final ValueChanged<String?> onServiceChanged;
   final VoidCallback onSubmit;
 
@@ -254,316 +198,105 @@ class _InquirySection extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
-      color: AppColors.ivory,
-      padding: const EdgeInsets.symmetric(
-        horizontal: AppSpacing.screenHorizontal,
-        vertical: 110,
-      ),
+      color: AppColors.darkBrown,
+      padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 90),
       child: Center(
         child: ConstrainedBox(
           constraints: const BoxConstraints(maxWidth: 1180),
           child: LayoutBuilder(
             builder: (context, constraints) {
-              final wide = constraints.maxWidth >= 800;
+              final wide = constraints.maxWidth > 820;
 
               final form = Form(
                 key: formKey,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text(
-                      '01 / YOUR STORY',
-                      style: TextStyle(
-                        color: AppColors.brown,
-                        fontFamily: 'Manrope',
-                        fontSize: 11,
-                        fontWeight: FontWeight.w600,
-                        letterSpacing: 2,
-                      ),
+                    const _Eyebrow('01 / YOUR DETAILS', color: AppColors.sand),
+                    const SizedBox(height: 34),
+                    Text(
+                      'Tell Ryan about\nyour plans.',
+                      style: Theme.of(context).textTheme.displayMedium
+                          ?.copyWith(
+                            color: AppColors.ivory,
+                            fontSize: 56,
+                            height: .96,
+                          ),
                     ),
-                    const SizedBox(height: 20),
-                    const Text(
-                      'Tell us what you’re\nplanning.',
-                      style: TextStyle(
-                        color: AppColors.espresso,
-                        fontFamily: 'CormorantGaramond',
-                        fontSize: 52,
-                        height: 1,
-                      ),
-                    ),
-                    const SizedBox(height: 45),
-                    _Field(
-                      label: 'YOUR NAME',
+                    const SizedBox(height: 42),
+                    _OvalField(
                       controller: nameController,
-                      hint: 'Full name',
-                      validator: (value) {
-                        if (value == null || value.trim().isEmpty) {
-                          return 'Please enter your name.';
-                        }
-                        return null;
-                      },
+                      label: 'YOUR NAME',
+                      validator: _required,
                     ),
-                    const SizedBox(height: 24),
-                    _Field(
-                      label: 'EMAIL',
+                    const SizedBox(height: 14),
+                    _OvalField(
                       controller: emailController,
-                      hint: 'you@example.com',
+                      label: 'EMAIL ADDRESS',
                       keyboardType: TextInputType.emailAddress,
-                      validator: (value) {
-                        if (value == null || value.trim().isEmpty) {
-                          return 'Please enter your email.';
-                        }
-                        if (!value.contains('@')) {
-                          return 'Please enter a valid email.';
-                        }
-                        return null;
-                      },
+                      validator: _email,
                     ),
-                    const SizedBox(height: 24),
-                    _Field(
-                      label: 'SERVICE',
-                      child: DropdownButtonFormField<String>(
-                        initialValue: service,
-                        decoration: _inputDecoration('Select a service'),
-                        items:
-                            const [
-                                  'Wedding',
-                                  'Baby Shower',
-                                  'Birthday',
-                                  'Photoshoot',
-                                  'Couples',
-                                  'Graduation',
-                                  'Event',
-                                  'Corporate / Brand',
-                                  'Other',
-                                ]
-                                .map(
-                                  (item) => DropdownMenuItem(
-                                    value: item,
-                                    child: Text(item),
-                                  ),
-                                )
-                                .toList(),
-                        onChanged: onServiceChanged,
-                      ),
+                    const SizedBox(height: 14),
+                    _OvalDropdown(
+                      value: service,
+                      items: services,
+                      onChanged: onServiceChanged,
                     ),
-                    const SizedBox(height: 24),
+                    const SizedBox(height: 14),
                     if (wide)
                       Row(
                         children: [
                           Expanded(
-                            child: _Field(
-                              label: 'DATE',
+                            child: _OvalField(
                               controller: dateController,
-                              hint: 'Preferred date',
+                              label: 'EVENT DATE',
+                              hint: 'DD / MM / YYYY',
                             ),
                           ),
-                          const SizedBox(width: 20),
+                          const SizedBox(width: 14),
                           Expanded(
-                            child: _Field(
-                              label: 'LOCATION',
+                            child: _OvalField(
                               controller: locationController,
-                              hint: 'Where will it happen?',
+                              label: 'LOCATION',
+                              validator: _required,
                             ),
                           ),
                         ],
                       )
                     else ...[
-                      _Field(
-                        label: 'DATE',
+                      _OvalField(
                         controller: dateController,
-                        hint: 'Preferred date',
+                        label: 'EVENT DATE',
+                        hint: 'DD / MM / YYYY',
                       ),
-                      const SizedBox(height: 24),
-                      _Field(
-                        label: 'LOCATION',
+                      const SizedBox(height: 14),
+                      _OvalField(
                         controller: locationController,
-                        hint: 'Where will it happen?',
+                        label: 'LOCATION',
+                        validator: _required,
                       ),
                     ],
-                    const SizedBox(height: 24),
-                    _Field(
-                      label: 'MESSAGE',
+                    const SizedBox(height: 14),
+                    _MessageField(
                       controller: messageController,
-                      hint: 'Tell us a little about your plans...',
-                      maxLines: 6,
+                      validator: _required,
                     ),
-                    const SizedBox(height: 30),
-                    if (inquiryError != null) ...[
-                      Container(
-                        width: double.infinity,
-                        padding: const EdgeInsets.all(22),
-                        decoration: BoxDecoration(
-                          color: AppColors.cream,
-                          borderRadius: BorderRadius.circular(18),
-                          border: Border.all(color: AppColors.error),
-                        ),
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const Icon(
-                              Icons.error_outline,
-                              color: AppColors.error,
-                              size: 26,
-                            ),
-                            const SizedBox(width: 14),
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  const Text(
-                                    'INQUIRY NOT SENT',
-                                    style: TextStyle(
-                                      color: AppColors.espresso,
-                                      fontFamily: 'Manrope',
-                                      fontWeight: FontWeight.w700,
-                                      fontSize: 12,
-                                      letterSpacing: 1.5,
-                                    ),
-                                  ),
-                                  const SizedBox(height: 7),
-                                  Text(
-                                    inquiryError!,
-                                    style: const TextStyle(
-                                      color: AppColors.brown,
-                                      fontFamily: 'Manrope',
-                                      fontSize: 13,
-                                      height: 1.6,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      const SizedBox(height: 20),
-                    ],
-                    if (inquirySent) ...[
-                      Container(
-                        width: double.infinity,
-                        padding: const EdgeInsets.all(22),
-                        decoration: BoxDecoration(
-                          color: AppColors.sand,
-                          borderRadius: BorderRadius.circular(18),
-                          border: Border.all(color: AppColors.beige),
-                        ),
-                        child: const Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Icon(
-                              Icons.check_circle_outline,
-                              color: AppColors.brown,
-                              size: 26,
-                            ),
-                            SizedBox(width: 14),
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    'INQUIRY SENT',
-                                    style: TextStyle(
-                                      color: AppColors.espresso,
-                                      fontFamily: 'Manrope',
-                                      fontWeight: FontWeight.w700,
-                                      fontSize: 12,
-                                      letterSpacing: 1.5,
-                                    ),
-                                  ),
-                                  SizedBox(height: 7),
-                                  Text(
-                                    'Thank you. We have received your inquiry and will be in touch shortly.',
-                                    style: TextStyle(
-                                      color: AppColors.brown,
-                                      fontFamily: 'Manrope',
-                                      fontSize: 13,
-                                      height: 1.6,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      const SizedBox(height: 20),
-                    ],
-                    SizedBox(
-                      width: double.infinity,
-                      child: ElevatedButton(
-                        onPressed: isSending ? null : onSubmit,
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: AppColors.espresso,
-                          foregroundColor: AppColors.cream,
-                          disabledBackgroundColor: AppColors.muted,
-                          minimumSize: const Size.fromHeight(62),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(14),
-                          ),
-                        ),
-                        child: isSending
-                            ? const SizedBox(
-                                height: 22,
-                                width: 22,
-                                child: CircularProgressIndicator(
-                                  strokeWidth: 2,
-                                  color: AppColors.cream,
-                                ),
-                              )
-                            : const Text(
-                                'SEND INQUIRY  →',
-                                style: TextStyle(
-                                  fontFamily: 'Manrope',
-                                  fontWeight: FontWeight.w600,
-                                  fontSize: 12,
-                                  letterSpacing: 1.6,
-                                ),
-                              ),
-                      ),
-                    ),
+                    const SizedBox(height: 28),
+                    _SubmitButton(submitting: submitting, onPressed: onSubmit),
                   ],
                 ),
               );
 
-              final side = Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'GOOD PHOTOGRAPHS\nSTART WITH A\nGOOD CONVERSATION.',
-                    style: TextStyle(
-                      color: AppColors.espresso,
-                      fontFamily: 'CormorantGaramond',
-                      fontSize: 42,
-                      height: 1.02,
-                    ),
-                  ),
-                  SizedBox(height: 28),
-                  Text(
-                    'Whether it is a wedding, intimate portrait session, celebration, or brand story, tell us what matters to you.',
-                    style: TextStyle(
-                      color: AppColors.brown,
-                      fontFamily: 'Manrope',
-                      fontSize: 14,
-                      height: 1.8,
-                    ),
-                  ),
-                ],
-              );
-
               if (!wide) {
-                return Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [form, const SizedBox(height: 80), side],
-                );
+                return form;
               }
 
               return Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Expanded(flex: 3, child: form),
-                  const SizedBox(width: 100),
-                  Expanded(flex: 2, child: side),
+                  Expanded(child: form),
+                  const SizedBox(width: 90),
+                  const Expanded(child: _FormAside()),
                 ],
               );
             },
@@ -572,448 +305,587 @@ class _InquirySection extends StatelessWidget {
       ),
     );
   }
+
+  static String? _required(String? value) {
+    if (value == null || value.trim().isEmpty) {
+      return 'Required';
+    }
+    return null;
+  }
+
+  static String? _email(String? value) {
+    if (value == null || value.trim().isEmpty) {
+      return 'Required';
+    }
+
+    if (!value.contains('@')) {
+      return 'Enter a valid email';
+    }
+
+    return null;
+  }
 }
 
-class _Field extends StatelessWidget {
-  const _Field({
-    required this.label,
-    this.controller,
-    this.hint,
-    this.keyboardType,
-    this.maxLines = 1,
-    this.validator,
-    this.child,
-  });
-
-  final String label;
-  final TextEditingController? controller;
-  final String? hint;
-  final TextInputType? keyboardType;
-  final int maxLines;
-  final String? Function(String?)? validator;
-  final Widget? child;
+class _FormAside extends StatelessWidget {
+  const _FormAside();
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          label,
-          style: const TextStyle(
-            color: AppColors.brown,
-            fontFamily: 'Manrope',
-            fontSize: 10,
-            fontWeight: FontWeight.w600,
-            letterSpacing: 1.8,
-          ),
-        ),
-        const SizedBox(height: 9),
-        child ??
-            TextFormField(
-              controller: controller,
-              keyboardType: keyboardType,
-              maxLines: maxLines,
-              validator: validator,
-              style: const TextStyle(
-                color: AppColors.espresso,
-                fontFamily: 'Manrope',
-                fontSize: 14,
-              ),
-              decoration: _inputDecoration(hint ?? ''),
+    return Padding(
+      padding: const EdgeInsets.only(top: 130),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          ClipRRect(
+            borderRadius: BorderRadius.circular(2),
+            child: Image.asset(
+              'assets/images/ryan/Wedding3.jpg',
+              height: 460,
+              width: double.infinity,
+              fit: BoxFit.cover,
             ),
+          ),
+          const SizedBox(height: 26),
+          Text(
+            'PHOTOGRAPHY · VIDEOGRAPHY · GRAPHICS DESIGN',
+            style: Theme.of(context).textTheme.labelSmall?.copyWith(
+              color: AppColors.sand,
+              fontWeight: FontWeight.w600,
+              letterSpacing: 1.5,
+              height: 1.6,
+            ),
+          ),
+          const SizedBox(height: 18),
+          Text(
+            'Every story deserves to be documented with intention.',
+            style: Theme.of(context).textTheme.titleLarge
+                ?.copyWith(color: AppColors.ivory, height: 1.35),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _OvalField extends StatelessWidget {
+  const _OvalField({
+    required this.controller,
+    required this.label,
+    this.hint,
+    this.keyboardType,
+    this.validator,
+  });
+
+  final TextEditingController controller;
+  final String label;
+  final String? hint;
+  final TextInputType? keyboardType;
+  final String? Function(String?)? validator;
+
+  @override
+  Widget build(BuildContext context) {
+    return TextFormField(
+      controller: controller,
+      keyboardType: keyboardType,
+      validator: validator,
+      style: const TextStyle(color: AppColors.espresso),
+      decoration: InputDecoration(
+        labelText: label,
+        hintText: hint,
+        filled: true,
+        fillColor: AppColors.ivory,
+        labelStyle: const TextStyle(
+          color: AppColors.muted,
+          fontSize: 11,
+          fontWeight: FontWeight.w600,
+          letterSpacing: 1.2,
+        ),
+        hintStyle: const TextStyle(color: AppColors.beige),
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 25,
+          vertical: 20,
+        ),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(999),
+          borderSide: BorderSide.none,
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(999),
+          borderSide: BorderSide.none,
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(999),
+          borderSide: const BorderSide(color: AppColors.mocha, width: 1.5),
+        ),
+        errorBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(999),
+          borderSide: const BorderSide(color: AppColors.error),
+        ),
+        focusedErrorBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(999),
+          borderSide: const BorderSide(color: AppColors.error),
+        ),
+      ),
+    );
+  }
+}
+
+class _OvalDropdown extends StatelessWidget {
+  const _OvalDropdown({
+    required this.value,
+    required this.items,
+    required this.onChanged,
+  });
+
+  final String value;
+  final List<String> items;
+  final ValueChanged<String?> onChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    return DropdownButtonFormField<String>(
+      initialValue: value,
+      onChanged: onChanged,
+      dropdownColor: AppColors.ivory,
+      style: const TextStyle(color: AppColors.espresso),
+      decoration: InputDecoration(
+        labelText: 'WHAT ARE YOU BOOKING?',
+        filled: true,
+        fillColor: AppColors.ivory,
+        labelStyle: const TextStyle(
+          color: AppColors.muted,
+          fontSize: 11,
+          fontWeight: FontWeight.w600,
+          letterSpacing: 1.2,
+        ),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 25, vertical: 6),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(999),
+          borderSide: BorderSide.none,
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(999),
+          borderSide: BorderSide.none,
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(999),
+          borderSide: const BorderSide(color: AppColors.mocha, width: 1.5),
+        ),
+      ),
+      items: [
+        for (final item in items)
+          DropdownMenuItem(value: item, child: Text(item)),
       ],
     );
   }
 }
 
-InputDecoration _inputDecoration(String hint) {
-  return InputDecoration(
-    hintText: hint,
-    hintStyle: const TextStyle(
-      color: AppColors.muted,
-      fontFamily: 'Manrope',
-      fontSize: 13,
-    ),
-    filled: true,
-    fillColor: AppColors.cream,
-    contentPadding: const EdgeInsets.symmetric(horizontal: 18, vertical: 18),
-    border: OutlineInputBorder(
-      borderRadius: BorderRadius.circular(12),
-      borderSide: const BorderSide(color: AppColors.border),
-    ),
-    enabledBorder: OutlineInputBorder(
-      borderRadius: BorderRadius.circular(12),
-      borderSide: const BorderSide(color: AppColors.border),
-    ),
-    focusedBorder: OutlineInputBorder(
-      borderRadius: BorderRadius.circular(12),
-      borderSide: const BorderSide(color: AppColors.brown, width: 1.4),
-    ),
-    errorBorder: OutlineInputBorder(
-      borderRadius: BorderRadius.circular(12),
-      borderSide: const BorderSide(color: AppColors.error),
-    ),
-  );
+class _MessageField extends StatelessWidget {
+  const _MessageField({required this.controller, required this.validator});
+
+  final TextEditingController controller;
+  final String? Function(String?) validator;
+
+  @override
+  Widget build(BuildContext context) {
+    return TextFormField(
+      controller: controller,
+      minLines: 6,
+      maxLines: 8,
+      validator: validator,
+      style: const TextStyle(color: AppColors.espresso),
+      decoration: InputDecoration(
+        labelText: 'TELL RYAN ABOUT YOUR PLANS',
+        alignLabelWithHint: true,
+        filled: true,
+        fillColor: AppColors.ivory,
+        labelStyle: const TextStyle(
+          color: AppColors.muted,
+          fontSize: 11,
+          fontWeight: FontWeight.w600,
+          letterSpacing: 1.2,
+        ),
+        contentPadding: const EdgeInsets.fromLTRB(25, 22, 25, 22),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(30),
+          borderSide: BorderSide.none,
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(30),
+          borderSide: BorderSide.none,
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(30),
+          borderSide: const BorderSide(color: AppColors.mocha, width: 1.5),
+        ),
+      ),
+    );
+  }
 }
 
-class _ContactSection extends StatelessWidget {
-  const _ContactSection({
-    required this.onWhatsApp,
-    required this.onCall,
-    required this.onEmail,
-  });
+class _SubmitButton extends StatelessWidget {
+  const _SubmitButton({required this.submitting, required this.onPressed});
 
-  final VoidCallback onWhatsApp;
-  final VoidCallback onCall;
-  final VoidCallback onEmail;
+  final bool submitting;
+  final VoidCallback onPressed;
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      height: 56,
+      child: FilledButton(
+        onPressed: submitting ? null : onPressed,
+        style: FilledButton.styleFrom(
+          backgroundColor: AppColors.ivory,
+          foregroundColor: AppColors.espresso,
+          disabledBackgroundColor: AppColors.beige,
+          shape: const StadiumBorder(),
+          padding: const EdgeInsets.symmetric(horizontal: 34),
+        ),
+        child: submitting
+            ? const SizedBox(
+                height: 20,
+                width: 20,
+                child: CircularProgressIndicator(
+                  strokeWidth: 2,
+                  color: AppColors.espresso,
+                ),
+              )
+            : Text(
+                'SEND INQUIRY',
+                style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                  color: AppColors.espresso,
+                  fontWeight: FontWeight.w700,
+                  letterSpacing: 1.5,
+                ),
+              ),
+      ),
+    );
+  }
+}
+
+class _SuccessSection extends StatelessWidget {
+  const _SuccessSection();
 
   @override
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
-      color: AppColors.sand,
-      padding: const EdgeInsets.symmetric(
-        horizontal: AppSpacing.screenHorizontal,
-        vertical: 100,
-      ),
+      color: AppColors.darkBrown,
+      padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 130),
       child: Center(
-        child: ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: 1180),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Text(
-                '02 / CONNECT DIRECTLY',
-                style: TextStyle(
-                  color: AppColors.brown,
-                  fontFamily: 'Manrope',
-                  fontSize: 11,
-                  fontWeight: FontWeight.w600,
-                  letterSpacing: 2,
-                ),
+        child: Column(
+          children: [
+            const Icon(
+              Icons.check_circle_outline,
+              color: AppColors.sand,
+              size: 54,
+            ),
+            const SizedBox(height: 28),
+            Text(
+              'Thank you.',
+              style: Theme.of(context).textTheme.displayMedium
+                  ?.copyWith(color: AppColors.ivory, fontSize: 58),
+            ),
+            const SizedBox(height: 20),
+            ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 520),
+              child: Text(
+                'Your inquiry has been received. Ryan will be in touch soon to talk through the details.',
+                textAlign: TextAlign.center,
+                style: Theme.of(context).textTheme.bodyLarge
+                    ?.copyWith(color: AppColors.sand, height: 1.7),
               ),
-              const SizedBox(height: 18),
-              const Text(
-                'Prefer a direct conversation?',
-                style: TextStyle(
-                  color: AppColors.espresso,
-                  fontFamily: 'CormorantGaramond',
-                  fontSize: 52,
-                  height: 1,
-                ),
-              ),
-              const SizedBox(height: 18),
-              const Text(
-                'Reach KALLYGRAPHY through any of the channels below.',
-                style: TextStyle(
-                  color: AppColors.brown,
-                  fontFamily: 'Manrope',
-                  fontSize: 14,
-                ),
-              ),
-              const SizedBox(height: 48),
-              LayoutBuilder(
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _BookingFooter extends StatelessWidget {
+  const _BookingFooter();
+
+  Future<void> _open(String value) async {
+    final uri = Uri.parse(value);
+
+    if (await canLaunchUrl(uri)) {
+      await launchUrl(uri, mode: LaunchMode.externalApplication);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        // ---------------------------------------------------------------
+        // DIRECT CONTACT — BURNT ORANGE
+        // ---------------------------------------------------------------
+        Container(
+          width: double.infinity,
+          color: AppColors.mocha,
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 88),
+          child: Center(
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 1180),
+              child: LayoutBuilder(
                 builder: (context, constraints) {
-                  final wide = constraints.maxWidth >= 760;
+                  final compact = constraints.maxWidth < 760;
 
-                  final items = [
-                    _ContactCard(
-                      icon: Icons.chat_bubble_outline,
-                      label: 'WHATSAPP',
-                      value: '+256 707 266 444',
-                      onTap: onWhatsApp,
-                    ),
-                    _ContactCard(
-                      icon: Icons.phone_outlined,
-                      label: 'CALL',
-                      value: '+256 787 758 821',
-                      onTap: onCall,
-                    ),
-                    _ContactCard(
-                      icon: Icons.mail_outline,
-                      label: 'EMAIL',
-                      value: 'kallygraph01@gmail.com',
-                      onTap: onEmail,
-                    ),
-                  ];
-
-                  if (!wide) {
-                    return Column(
-                      children: items
-                          .map(
-                            (item) => Padding(
-                              padding: const EdgeInsets.only(bottom: 14),
-                              child: item,
+                  return Flex(
+                    direction: compact ? Axis.vertical : Axis.horizontal,
+                    crossAxisAlignment: compact
+                        ? CrossAxisAlignment.start
+                        : CrossAxisAlignment.end,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Flexible(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'OR REACH RYAN DIRECTLY',
+                              style: Theme.of(context).textTheme.labelMedium
+                                  ?.copyWith(
+                                    color: AppColors.cream,
+                                    letterSpacing: 2.4,
+                                    fontWeight: FontWeight.w600,
+                                  ),
                             ),
-                          )
-                          .toList(),
-                    );
-                  }
-
-                  return Row(
-                    children: items
-                        .map(
-                          (item) => Expanded(
-                            child: Padding(
-                              padding: const EdgeInsets.only(right: 14),
-                              child: item,
+                            const SizedBox(height: 18),
+                            Text(
+                              'Prefer a direct\nconversation?',
+                              style: Theme.of(context).textTheme.displaySmall
+                                  ?.copyWith(
+                                    color: AppColors.ivory,
+                                    height: 0.95,
+                                  ),
                             ),
-                          ),
-                        )
-                        .toList(),
+                            const SizedBox(height: 18),
+                            ConstrainedBox(
+                              constraints: const BoxConstraints(maxWidth: 470),
+                              child: Text(
+                                'If you already know what you need, you can reach Ryan directly and start the conversation from there.',
+                                style: Theme.of(context).textTheme.bodyLarge
+                                    ?.copyWith(
+                                      color: AppColors.cream.withValues(
+                                        alpha: 0.88,
+                                      ),
+                                      height: 1.7,
+                                    ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      SizedBox(
+                        width: compact ? 0 : 48,
+                        height: compact ? 40 : 0,
+                      ),
+                      Flexible(
+                        child: Wrap(
+                          spacing: 10,
+                          runSpacing: 10,
+                          children: [
+                            _ContactButton(
+                              label: 'EMAIL',
+                              icon: Icons.mail_outline_rounded,
+                              onTap: () =>
+                                  _open('mailto:kallygraphy01@gmail.com'),
+                            ),
+                            _ContactButton(
+                              label: 'WHATSAPP',
+                              icon: Icons.chat_bubble_outline_rounded,
+                              onTap: () => _open('https://wa.me/256707266444'),
+                            ),
+                            _ContactButton(
+                              label: 'CALL',
+                              icon: Icons.phone_outlined,
+                              onTap: () => _open('tel:+256787758821'),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
                   );
                 },
               ),
-            ],
+            ),
           ),
         ),
-      ),
+
+        // ---------------------------------------------------------------
+        // ---------------------------------------------------------------
+        // PRIVATE STUDIO — CREAM
+        // ---------------------------------------------------------------
+        Container(
+          width: double.infinity,
+          color: AppColors.cream,
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 58),
+          child: Center(
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 1180),
+              child: LayoutBuilder(
+                builder: (context, constraints) {
+                  final compact = constraints.maxWidth < 680;
+
+                  return Flex(
+                    direction: compact ? Axis.vertical : Axis.horizontal,
+                    crossAxisAlignment: compact
+                        ? CrossAxisAlignment.start
+                        : CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'RYAN’S PRIVATE WORKSPACE',
+                            style: Theme.of(context).textTheme.labelMedium
+                                ?.copyWith(
+                                  color: AppColors.brown,
+                                  letterSpacing: 2.2,
+                                  fontWeight: FontWeight.w700,
+                                ),
+                          ),
+                          const SizedBox(height: 10),
+                          Text(
+                            'Photographer Studio.',
+                            style: Theme.of(context).textTheme.headlineSmall
+                                ?.copyWith(color: AppColors.espresso),
+                          ),
+                          const SizedBox(height: 8),
+                          Text(
+                            'Private access for Ryan to manage inquiries, '
+                            'galleries and studio work.',
+                            style: Theme.of(context).textTheme.bodyMedium
+                                ?.copyWith(color: AppColors.muted, height: 1.5),
+                          ),
+                        ],
+                      ),
+                      SizedBox(
+                        width: compact ? 0 : 32,
+                        height: compact ? 24 : 0,
+                      ),
+                      TextButton(
+                        onPressed: () => context.go('/studio'),
+                        style: TextButton.styleFrom(
+                          foregroundColor: AppColors.espresso,
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 0,
+                            vertical: 8,
+                          ),
+                          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                          visualDensity: VisualDensity.compact,
+                        ),
+                        child: const Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(
+                              'STUDIO LOGIN',
+                              style: TextStyle(
+                                fontSize: 11,
+                                fontWeight: FontWeight.w700,
+                                letterSpacing: 1.8,
+                              ),
+                            ),
+                            SizedBox(width: 10),
+                            Icon(Icons.arrow_forward, size: 16),
+                          ],
+                        ),
+                      ),
+                    ],
+                  );
+                },
+              ),
+            ),
+          ),
+        ),
+
+        // FOOTER — ESPRESSO
+        // ---------------------------------------------------------------
+        Container(
+          width: double.infinity,
+          color: AppColors.espresso,
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
+          child: Center(
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 1180),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    'KALLYGRAPHY',
+                    style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                      color: AppColors.cream,
+                      letterSpacing: 2.5,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                  Text(
+                    'KALIISA RYAN',
+                    style: Theme.of(context).textTheme.labelSmall
+                        ?.copyWith(color: AppColors.sand, letterSpacing: 1.8),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ],
     );
   }
 }
 
-class _ContactCard extends StatefulWidget {
-  const _ContactCard({
-    required this.icon,
+class _ContactButton extends StatelessWidget {
+  const _ContactButton({
     required this.label,
-    required this.value,
+    required this.icon,
     required this.onTap,
   });
 
-  final IconData icon;
   final String label;
-  final String value;
+  final IconData icon;
   final VoidCallback onTap;
 
   @override
-  State<_ContactCard> createState() => _ContactCardState();
-}
-
-class _ContactCardState extends State<_ContactCard> {
-  bool _hovered = false;
-
-  @override
   Widget build(BuildContext context) {
-    return MouseRegion(
-      onEnter: (_) => setState(() => _hovered = true),
-      onExit: (_) => setState(() => _hovered = false),
-      cursor: SystemMouseCursors.click,
-      child: GestureDetector(
-        onTap: widget.onTap,
-        child: AnimatedContainer(
-          duration: const Duration(milliseconds: 220),
-          padding: const EdgeInsets.all(26),
-          decoration: BoxDecoration(
-            color: _hovered ? AppColors.cream : AppColors.ivory,
-            borderRadius: BorderRadius.circular(20),
-            border: Border.all(color: AppColors.border),
-            boxShadow: _hovered
-                ? const [
-                    BoxShadow(
-                      color: Color(0x18000000),
-                      blurRadius: 24,
-                      offset: Offset(0, 10),
-                    ),
-                  ]
-                : null,
-          ),
-          child: Row(
-            children: [
-              Container(
-                height: 48,
-                width: 48,
-                decoration: BoxDecoration(
-                  color: AppColors.espresso,
-                  borderRadius: BorderRadius.circular(14),
-                ),
-                child: Icon(widget.icon, color: AppColors.cream, size: 21),
-              ),
-              const SizedBox(width: 16),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      widget.label,
-                      style: const TextStyle(
-                        color: AppColors.brown,
-                        fontFamily: 'Manrope',
-                        fontSize: 9,
-                        fontWeight: FontWeight.w700,
-                        letterSpacing: 1.6,
-                      ),
-                    ),
-                    const SizedBox(height: 6),
-                    Text(
-                      widget.value,
-                      style: const TextStyle(
-                        color: AppColors.espresso,
-                        fontFamily: 'Manrope',
-                        fontSize: 13,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              const Icon(Icons.arrow_outward, color: AppColors.brown, size: 18),
-            ],
-          ),
+    return OutlinedButton.icon(
+      onPressed: onTap,
+      icon: Icon(icon, size: 16),
+      label: Text(
+        label,
+        style: const TextStyle(
+          fontSize: 10,
+          fontWeight: FontWeight.w700,
+          letterSpacing: 1.5,
         ),
+      ),
+      style: OutlinedButton.styleFrom(
+        foregroundColor: AppColors.cream,
+        side: BorderSide(color: AppColors.cream.withValues(alpha: 0.65)),
+        padding: const EdgeInsets.symmetric(horizontal: 17, vertical: 14),
+        shape: const StadiumBorder(),
       ),
     );
   }
 }
 
-class _QrSection extends StatelessWidget {
-  const _QrSection();
+class _Eyebrow extends StatelessWidget {
+  const _Eyebrow(this.text, {this.color});
 
-  static const _qrData = '''
-BEGIN:VCARD
-VERSION:3.0
-FN:KALLYGRAPHY
-ORG:KALLYGRAPHY Photography
-EMAIL:kallygraph01@gmail.com
-TEL;TYPE=CELL:+256787758821
-TEL;TYPE=WORK:+256707266444
-NOTE:WhatsApp: +256707266444
-END:VCARD
-''';
+  final String text;
+  final Color? color;
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      color: AppColors.espresso,
-      padding: const EdgeInsets.symmetric(
-        horizontal: AppSpacing.screenHorizontal,
-        vertical: 100,
-      ),
-      child: Center(
-        child: ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: 920),
-          child: LayoutBuilder(
-            builder: (context, constraints) {
-              final wide = constraints.maxWidth >= 700;
-
-              final qr = Container(
-                padding: const EdgeInsets.all(18),
-                decoration: BoxDecoration(
-                  color: AppColors.ivory,
-                  borderRadius: BorderRadius.circular(24),
-                ),
-                child: QrImageView(
-                  data: _qrData,
-                  version: QrVersions.auto,
-                  size: 230,
-                  backgroundColor: AppColors.ivory,
-                  eyeStyle: const QrEyeStyle(
-                    eyeShape: QrEyeShape.square,
-                    color: AppColors.espresso,
-                  ),
-                  dataModuleStyle: const QrDataModuleStyle(
-                    dataModuleShape: QrDataModuleShape.square,
-                    color: AppColors.espresso,
-                  ),
-                ),
-              );
-
-              final text = Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    '03 / SAVE OUR CONTACT',
-                    style: TextStyle(
-                      color: AppColors.beige,
-                      fontFamily: 'Manrope',
-                      fontSize: 10,
-                      fontWeight: FontWeight.w600,
-                      letterSpacing: 2,
-                    ),
-                  ),
-                  SizedBox(height: 20),
-                  Text(
-                    'Scan.\nSave.\nConnect.',
-                    style: TextStyle(
-                      color: AppColors.cream,
-                      fontFamily: 'CormorantGaramond',
-                      fontSize: 58,
-                      height: .9,
-                    ),
-                  ),
-                  SizedBox(height: 24),
-                  Text(
-                    'Scan the QR code to save KALLYGRAPHY’s contact details directly to your phone.',
-                    style: TextStyle(
-                      color: AppColors.sand,
-                      fontFamily: 'Manrope',
-                      fontSize: 13,
-                      height: 1.8,
-                    ),
-                  ),
-                  SizedBox(height: 22),
-                  Text(
-                    'WHATSAPP  +256 707 266 444\nCALL  +256 787 758 821\nEMAIL  kallygraph01@gmail.com',
-                    style: TextStyle(
-                      color: AppColors.beige,
-                      fontFamily: 'Manrope',
-                      fontSize: 11,
-                      height: 2,
-                      letterSpacing: .7,
-                    ),
-                  ),
-                ],
-              );
-
-              if (!wide) {
-                return Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [qr, const SizedBox(height: 50), text],
-                );
-              }
-
-              return Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  qr,
-                  const SizedBox(width: 80),
-                  Expanded(child: text),
-                ],
-              );
-            },
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _BookingClosing extends StatelessWidget {
-  const _BookingClosing();
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      color: AppColors.cream,
-      padding: const EdgeInsets.fromLTRB(
-        AppSpacing.screenHorizontal,
-        100,
-        AppSpacing.screenHorizontal,
-        130,
-      ),
-      child: const Center(
-        child: Text(
-          'YOUR STORY.\nBEAUTIFULLY FRAMED.',
-          textAlign: TextAlign.center,
-          style: TextStyle(
-            color: AppColors.espresso,
-            fontFamily: 'CormorantGaramond',
-            fontSize: 62,
-            height: .95,
-          ),
-        ),
+    return Text(
+      text,
+      style: Theme.of(context).textTheme.labelMedium?.copyWith(
+        color: color ?? AppColors.muted,
+        fontWeight: FontWeight.w600,
+        letterSpacing: 2,
       ),
     );
   }

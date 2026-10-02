@@ -1,489 +1,375 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 
 import '../../core/constants/app_colors.dart';
 
-class GalleryScreen extends StatelessWidget {
+class GalleryScreen extends StatefulWidget {
   const GalleryScreen({super.key});
 
-  static const _portrait = 'assets/images/portfolio/portrait_woman.jpg';
-  static const _portraitClose =
-      'assets/images/portfolio/portrait_woman_close.jpg';
-  static const _man = 'assets/images/portfolio/portrait_man.jpg';
-  static const _wedding = 'assets/images/portfolio/couple_wedding.jpg';
-  static const _rings = 'assets/images/portfolio/wedding_rings.jpg';
-  static const _bouquet = 'assets/images/portfolio/wedding_bouquet.jpg';
-  static const _lake = 'assets/images/portfolio/lake_boat.jpg';
-  static const _landscape = 'assets/images/portfolio/woman_landscape.jpg';
-  static const _sunset = 'assets/images/portfolio/sunset_lake.jpg';
-  static const _details = 'assets/images/portfolio/hands_detail.jpg';
-  static const _door = 'assets/images/portfolio/architecture_door.jpg';
-
   @override
-  Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      child: Column(
-        children: [
-          _GalleryHero(),
-          _GalleryNavigation(),
-          _PortraitGallery(),
-          _WeddingGallery(),
-          _PlacesGallery(),
-          _DetailsGallery(),
-          _GalleryClosing(),
-        ],
-      ),
-    );
-  }
+  State<GalleryScreen> createState() => _GalleryScreenState();
 }
 
-class _GalleryHero extends StatelessWidget {
-  const _GalleryHero();
-
-  @override
-  Widget build(BuildContext context) {
-    final mobile = MediaQuery.sizeOf(context).width < 700;
-
-    return SizedBox(
-      height: mobile ? 720 : 820,
-      child: Stack(
-        fit: StackFit.expand,
-        children: [
-          Image.asset(GalleryScreen._portraitClose, fit: BoxFit.cover),
-          DecoratedBox(
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: [
-                  AppColors.espresso.withValues(alpha: 0.18),
-                  Colors.transparent,
-                  AppColors.espresso.withValues(alpha: 0.82),
-                ],
-              ),
-            ),
-          ),
-          Positioned(
-            left: 28,
-            right: 28,
-            bottom: 42,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  '04 / THE GALLERIES',
-                  style: TextStyle(
-                    color: AppColors.cream.withValues(alpha: 0.8),
-                    fontSize: 9,
-                    fontWeight: FontWeight.w700,
-                    letterSpacing: 2,
-                  ),
-                ),
-                const SizedBox(height: 18),
-                Text(
-                  'A collection\nof moments.',
-                  style: TextStyle(
-                    color: AppColors.ivory,
-                    fontFamily: 'CormorantGaramond',
-                    fontSize: mobile ? 62 : 90,
-                    height: 0.9,
-                  ),
-                ),
-                const SizedBox(height: 25),
-                Text(
-                  'PORTRAITS · WEDDINGS · PLACES · DETAILS',
-                  style: TextStyle(
-                    color: AppColors.cream.withValues(alpha: 0.75),
-                    fontSize: 9,
-                    letterSpacing: 1.7,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _GalleryNavigation extends StatelessWidget {
-  const _GalleryNavigation();
-
+class _GalleryScreenState extends State<GalleryScreen> {
   static const _categories = [
     'ALL',
-    'PORTRAITS',
     'WEDDINGS',
-    'PLACES',
-    'DETAILS',
+    'INTRODUCTIONS',
+    'BABY SHOWERS',
+    'GRADUATIONS',
+    'PHOTOSHOOTS',
+    'MOMENTS',
   ];
+
+  static const _photos = [
+    _GalleryPhoto('WEDDINGS', 'assets/images/ryan/Wedding.jpg'),
+    _GalleryPhoto('WEDDINGS', 'assets/images/ryan/Wedding2.jpg'),
+    _GalleryPhoto('WEDDINGS', 'assets/images/ryan/Wedding3.jpg'),
+    _GalleryPhoto('WEDDINGS', 'assets/images/ryan/Wedding4.jpg'),
+    _GalleryPhoto('WEDDINGS', 'assets/images/ryan/Wedding5.jpg'),
+    _GalleryPhoto('WEDDINGS', 'assets/images/ryan/Wedding6.jpg'),
+    _GalleryPhoto('WEDDINGS', 'assets/images/ryan/Wedding7.jpg'),
+
+    _GalleryPhoto('INTRODUCTIONS', 'assets/images/ryan/Introduction.jpg'),
+    _GalleryPhoto('INTRODUCTIONS', 'assets/images/ryan/Introduction2.jpg'),
+    _GalleryPhoto('INTRODUCTIONS', 'assets/images/ryan/Introduction3.jpg'),
+    _GalleryPhoto('INTRODUCTIONS', 'assets/images/ryan/Introduction4.jpg'),
+    _GalleryPhoto('INTRODUCTIONS', 'assets/images/ryan/Introduction5.jpg'),
+    _GalleryPhoto('INTRODUCTIONS', 'assets/images/ryan/Introduction6.jpg'),
+    _GalleryPhoto('INTRODUCTIONS', 'assets/images/ryan/Introduction7.jpg'),
+    _GalleryPhoto('INTRODUCTIONS', 'assets/images/ryan/Introduction8.jpg'),
+    _GalleryPhoto('INTRODUCTIONS', 'assets/images/ryan/Introduction9.jpg'),
+    _GalleryPhoto('INTRODUCTIONS', 'assets/images/ryan/Introduction10.jpg'),
+
+    _GalleryPhoto('BABY SHOWERS', 'assets/images/ryan/Baby shower.jpg'),
+
+    _GalleryPhoto('GRADUATIONS', 'assets/images/ryan/graduation.jpg'),
+    _GalleryPhoto('GRADUATIONS', 'assets/images/ryan/graduation2.jpg'),
+    _GalleryPhoto('GRADUATIONS', 'assets/images/ryan/graduation3.jpg'),
+
+    _GalleryPhoto('PHOTOSHOOTS', 'assets/images/ryan/photoshoot.jpg'),
+    _GalleryPhoto('PHOTOSHOOTS', 'assets/images/ryan/photoshoot3.jpg'),
+    _GalleryPhoto('PHOTOSHOOTS', 'assets/images/ryan/photoshoot4.jpg'),
+    _GalleryPhoto('PHOTOSHOOTS', 'assets/images/ryan/photoshoot5.jpg'),
+    _GalleryPhoto('PHOTOSHOOTS', 'assets/images/ryan/photoshoot6.jpg'),
+    _GalleryPhoto('PHOTOSHOOTS', 'assets/images/ryan/photoshoot7.jpg'),
+    _GalleryPhoto('PHOTOSHOOTS', 'assets/images/ryan/photoshoot8.jpg'),
+    _GalleryPhoto('PHOTOSHOOTS', 'assets/images/ryan/photoshoot9.jpg'),
+    _GalleryPhoto('PHOTOSHOOTS', 'assets/images/ryan/photoshoot10.jpg'),
+    _GalleryPhoto('PHOTOSHOOTS', 'assets/images/ryan/photoshoot11.jpg'),
+
+    _GalleryPhoto('MOMENTS', 'assets/images/ryan/Moments.jpg'),
+    _GalleryPhoto('MOMENTS', 'assets/images/ryan/Moments2.jpg'),
+    _GalleryPhoto('MOMENTS', 'assets/images/ryan/Moments3.jpg'),
+    _GalleryPhoto('MOMENTS', 'assets/images/ryan/Moments4.jpg'),
+    _GalleryPhoto('MOMENTS', 'assets/images/ryan/Moments5.jpg'),
+    _GalleryPhoto('MOMENTS', 'assets/images/ryan/Moments6.jpg'),
+  ];
+
+  String _selectedCategory = 'ALL';
+
+  List<_GalleryPhoto> get _filteredPhotos {
+    if (_selectedCategory == 'ALL') {
+      return _photos;
+    }
+
+    return _photos
+        .where((photo) => photo.category == _selectedCategory)
+        .toList();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: AppColors.cream,
+      body: CustomScrollView(
+        slivers: [
+          SliverToBoxAdapter(
+            child: _GalleryIntro(
+              selectedCategory: _selectedCategory,
+              categories: _categories,
+              onCategoryChanged: (category) {
+                setState(() {
+                  _selectedCategory = category;
+                });
+              },
+            ),
+          ),
+          SliverPadding(
+            padding: const EdgeInsets.fromLTRB(14, 18, 14, 100),
+            sliver: SliverLayoutBuilder(
+              builder: (context, constraints) {
+                final width = constraints.crossAxisExtent;
+
+                if (width >= 1050) {
+                  return _DesktopGallery(photos: _filteredPhotos);
+                }
+
+                if (width >= 650) {
+                  return _TabletGallery(photos: _filteredPhotos);
+                }
+
+                return _MobileGallery(photos: _filteredPhotos);
+              },
+            ),
+          ),
+          const SliverToBoxAdapter(child: _GalleryClosing()),
+        ],
+      ),
+    );
+  }
+}
+
+class _GalleryPhoto {
+  const _GalleryPhoto(this.category, this.asset);
+
+  final String category;
+  final String asset;
+}
+
+class _GalleryIntro extends StatelessWidget {
+  const _GalleryIntro({
+    required this.selectedCategory,
+    required this.categories,
+    required this.onCategoryChanged,
+  });
+
+  final String selectedCategory;
+  final List<String> categories;
+  final ValueChanged<String> onCategoryChanged;
 
   @override
   Widget build(BuildContext context) {
     return Container(
+      width: double.infinity,
       color: AppColors.cream,
-      padding: const EdgeInsets.fromLTRB(28, 34, 28, 34),
-      child: Center(
-        child: SingleChildScrollView(
-          scrollDirection: Axis.horizontal,
-          child: Row(
-            children: [
-              for (var i = 0; i < _categories.length; i++) ...[
-                _CategoryPill(label: _categories[i], active: i == 0),
-                if (i != _categories.length - 1) const SizedBox(width: 8),
-              ],
-            ],
+      padding: const EdgeInsets.fromLTRB(24, 105, 24, 48),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Center(
+            child: Text(
+              'THE GALLERIES',
+              style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                color: AppColors.muted,
+                fontWeight: FontWeight.w600,
+                letterSpacing: 3,
+              ),
+            ),
           ),
-        ),
+          const SizedBox(height: 24),
+          Center(
+            child: Text(
+              'A collection of moments.',
+              textAlign: TextAlign.center,
+              style: Theme.of(context).textTheme.displayMedium?.copyWith(
+                color: AppColors.espresso,
+                fontSize: 62,
+                height: .95,
+              ),
+            ),
+          ),
+          const SizedBox(height: 22),
+          Center(
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 620),
+              child: Text(
+                'Weddings, celebrations, portraits and everything in between — photographed by Kaliisa Ryan.',
+                textAlign: TextAlign.center,
+                style: Theme.of(context).textTheme.bodyMedium
+                    ?.copyWith(color: AppColors.muted, height: 1.7),
+              ),
+            ),
+          ),
+          const SizedBox(height: 52),
+          SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: Row(
+              children: [
+                for (final category in categories)
+                  Padding(
+                    padding: const EdgeInsets.only(right: 28),
+                    child: GestureDetector(
+                      onTap: () => onCategoryChanged(category),
+                      child: _CategoryLabel(
+                        category: category,
+                        active: selectedCategory == category,
+                      ),
+                    ),
+                  ),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }
 }
 
-class _CategoryPill extends StatelessWidget {
-  const _CategoryPill({required this.label, required this.active});
+class _CategoryLabel extends StatelessWidget {
+  const _CategoryLabel({required this.category, required this.active});
 
-  final String label;
+  final String category;
   final bool active;
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 17, vertical: 10),
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 180),
+      padding: const EdgeInsets.only(bottom: 8),
       decoration: BoxDecoration(
-        color: active ? AppColors.espresso : AppColors.sand,
-        borderRadius: BorderRadius.circular(999),
-      ),
-      child: Text(
-        label,
-        style: TextStyle(
-          color: active ? AppColors.ivory : AppColors.brown,
-          fontSize: 9,
-          fontWeight: FontWeight.w700,
-          letterSpacing: 1.4,
-        ),
-      ),
-    );
-  }
-}
-
-class _PortraitGallery extends StatelessWidget {
-  const _PortraitGallery();
-
-  @override
-  Widget build(BuildContext context) {
-    return _GallerySection(
-      number: '01',
-      title: 'PORTRAITS',
-      subtitle: 'People, presence and quiet confidence.',
-      background: AppColors.cream,
-      child: LayoutBuilder(
-        builder: (context, constraints) {
-          final wide = constraints.maxWidth >= 800;
-
-          if (!wide) {
-            return Column(
-              children: [
-                _GalleryImage(image: GalleryScreen._portrait, height: 500),
-                const SizedBox(height: 18),
-                _GalleryImage(image: GalleryScreen._man, height: 360),
-              ],
-            );
-          }
-
-          return Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Expanded(
-                flex: 6,
-                child: _GalleryImage(
-                  image: GalleryScreen._portrait,
-                  height: 650,
-                ),
-              ),
-              const SizedBox(width: 24),
-              Expanded(
-                flex: 4,
-                child: Padding(
-                  padding: const EdgeInsets.only(top: 120),
-                  child: _GalleryImage(image: GalleryScreen._man, height: 430),
-                ),
-              ),
-            ],
-          );
-        },
-      ),
-    );
-  }
-}
-
-class _WeddingGallery extends StatelessWidget {
-  const _WeddingGallery();
-
-  @override
-  Widget build(BuildContext context) {
-    return _GallerySection(
-      number: '02',
-      title: 'WEDDINGS',
-      subtitle: 'The people, the details, the beginning of forever.',
-      background: AppColors.brown,
-      light: true,
-      child: LayoutBuilder(
-        builder: (context, constraints) {
-          final wide = constraints.maxWidth >= 800;
-
-          if (!wide) {
-            return Column(
-              children: [
-                _GalleryImage(image: GalleryScreen._wedding, height: 520),
-                const SizedBox(height: 18),
-                Row(
-                  children: [
-                    Expanded(
-                      child: _GalleryImage(
-                        image: GalleryScreen._rings,
-                        height: 260,
-                      ),
-                    ),
-                    const SizedBox(width: 14),
-                    Expanded(
-                      child: _GalleryImage(
-                        image: GalleryScreen._bouquet,
-                        height: 260,
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            );
-          }
-
-          return Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Expanded(
-                flex: 6,
-                child: _GalleryImage(
-                  image: GalleryScreen._wedding,
-                  height: 650,
-                ),
-              ),
-              const SizedBox(width: 24),
-              Expanded(
-                flex: 4,
-                child: Padding(
-                  padding: const EdgeInsets.only(top: 100),
-                  child: Column(
-                    children: [
-                      _GalleryImage(image: GalleryScreen._rings, height: 260),
-                      const SizedBox(height: 24),
-                      _GalleryImage(image: GalleryScreen._bouquet, height: 260),
-                    ],
-                  ),
-                ),
-              ),
-            ],
-          );
-        },
-      ),
-    );
-  }
-}
-
-class _PlacesGallery extends StatelessWidget {
-  const _PlacesGallery();
-
-  @override
-  Widget build(BuildContext context) {
-    return _GallerySection(
-      number: '03',
-      title: 'PLACES',
-      subtitle: 'Light, landscape and the spaces between.',
-      background: AppColors.cream,
-      child: LayoutBuilder(
-        builder: (context, constraints) {
-          final wide = constraints.maxWidth >= 800;
-
-          if (!wide) {
-            return Column(
-              children: [
-                _GalleryImage(image: GalleryScreen._lake, height: 430),
-                const SizedBox(height: 18),
-                _GalleryImage(image: GalleryScreen._sunset, height: 350),
-                const SizedBox(height: 18),
-                _GalleryImage(image: GalleryScreen._landscape, height: 430),
-              ],
-            );
-          }
-
-          return Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Expanded(
-                flex: 4,
-                child: Padding(
-                  padding: const EdgeInsets.only(top: 100),
-                  child: _GalleryImage(
-                    image: GalleryScreen._landscape,
-                    height: 500,
-                  ),
-                ),
-              ),
-              const SizedBox(width: 24),
-              Expanded(
-                flex: 6,
-                child: Column(
-                  children: [
-                    _GalleryImage(image: GalleryScreen._lake, height: 570),
-                    const SizedBox(height: 24),
-                    _GalleryImage(image: GalleryScreen._sunset, height: 350),
-                  ],
-                ),
-              ),
-            ],
-          );
-        },
-      ),
-    );
-  }
-}
-
-class _DetailsGallery extends StatelessWidget {
-  const _DetailsGallery();
-
-  @override
-  Widget build(BuildContext context) {
-    return _GallerySection(
-      number: '04',
-      title: 'DETAILS',
-      subtitle: 'The small things that become part of the story.',
-      background: AppColors.sand,
-      child: LayoutBuilder(
-        builder: (context, constraints) {
-          final wide = constraints.maxWidth >= 800;
-
-          if (!wide) {
-            return Column(
-              children: [
-                _GalleryImage(image: GalleryScreen._details, height: 420),
-                const SizedBox(height: 18),
-                _GalleryImage(image: GalleryScreen._door, height: 360),
-              ],
-            );
-          }
-
-          return Row(
-            children: [
-              Expanded(
-                child: _GalleryImage(
-                  image: GalleryScreen._details,
-                  height: 480,
-                ),
-              ),
-              const SizedBox(width: 24),
-              Expanded(
-                child: Padding(
-                  padding: const EdgeInsets.only(top: 90),
-                  child: _GalleryImage(image: GalleryScreen._door, height: 430),
-                ),
-              ),
-            ],
-          );
-        },
-      ),
-    );
-  }
-}
-
-class _GallerySection extends StatelessWidget {
-  const _GallerySection({
-    required this.number,
-    required this.title,
-    required this.subtitle,
-    required this.background,
-    required this.child,
-    this.light = false,
-  });
-
-  final String number;
-  final String title;
-  final String subtitle;
-  final Color background;
-  final Widget child;
-  final bool light;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      color: background,
-      padding: const EdgeInsets.fromLTRB(28, 95, 28, 115),
-      child: Center(
-        child: ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: 1280),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  Text(
-                    '$number /',
-                    style: TextStyle(
-                      color: light
-                          ? AppColors.cream.withValues(alpha: 0.65)
-                          : AppColors.mocha,
-                      fontSize: 10,
-                      fontWeight: FontWeight.w700,
-                      letterSpacing: 2,
-                    ),
-                  ),
-                  const SizedBox(width: 12),
-                  Text(
-                    title,
-                    style: TextStyle(
-                      color: light ? AppColors.ivory : AppColors.espresso,
-                      fontSize: 11,
-                      fontWeight: FontWeight.w700,
-                      letterSpacing: 2,
-                    ),
-                  ),
-                  const Spacer(),
-                  Flexible(
-                    child: Text(
-                      subtitle,
-                      textAlign: TextAlign.right,
-                      style: TextStyle(
-                        color: light
-                            ? AppColors.cream.withValues(alpha: 0.65)
-                            : AppColors.brown,
-                        fontSize: 11,
-                        height: 1.4,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 38),
-              child,
-            ],
+        border: Border(
+          bottom: BorderSide(
+            color: active ? AppColors.espresso : Colors.transparent,
+            width: 1.5,
           ),
         ),
       ),
+      child: Text(
+        category,
+        style: Theme.of(context).textTheme.labelSmall?.copyWith(
+          color: active ? AppColors.espresso : AppColors.muted,
+          fontWeight: active ? FontWeight.w700 : FontWeight.w500,
+          letterSpacing: 1.5,
+        ),
+      ),
     );
   }
 }
 
-class _GalleryImage extends StatefulWidget {
-  const _GalleryImage({required this.image, required this.height});
+class _DesktopGallery extends StatelessWidget {
+  const _DesktopGallery({required this.photos});
 
-  final String image;
-  final double height;
+  final List<_GalleryPhoto> photos;
 
   @override
-  State<_GalleryImage> createState() => _GalleryImageState();
+  Widget build(BuildContext context) {
+    return SliverToBoxAdapter(
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          final width = constraints.maxWidth;
+          final gap = 8.0;
+          final largeWidth = (width - gap) * .58;
+          final smallWidth = (width - gap) * .42;
+
+          return Column(
+            children: [
+              for (var start = 0; start < photos.length; start += 3)
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 8),
+                  child: SizedBox(
+                    height: start % 2 == 0 ? 520 : 430,
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        if (start < photos.length)
+                          SizedBox(
+                            width: start % 2 == 0 ? largeWidth : smallWidth,
+                            child: _GalleryTile(
+                              photo: photos[start],
+                              featured: true,
+                              index: start,
+                            ),
+                          ),
+                        if (start + 1 < photos.length) SizedBox(width: gap),
+                        if (start + 1 < photos.length)
+                          Expanded(
+                            child: _GalleryTile(
+                              photo: photos[start + 1],
+                              featured: false,
+                              index: start + 1,
+                            ),
+                          ),
+                        if (start + 2 < photos.length) SizedBox(width: gap),
+                        if (start + 2 < photos.length)
+                          SizedBox(
+                            width: start % 2 == 0 ? smallWidth : largeWidth,
+                            child: _GalleryTile(
+                              photo: photos[start + 2],
+                              featured: true,
+                              index: start + 2,
+                            ),
+                          ),
+                      ],
+                    ),
+                  ),
+                ),
+            ],
+          );
+        },
+      ),
+    );
+  }
 }
 
-class _GalleryImageState extends State<_GalleryImage> {
+class _TabletGallery extends StatelessWidget {
+  const _TabletGallery({required this.photos});
+
+  final List<_GalleryPhoto> photos;
+
+  @override
+  Widget build(BuildContext context) {
+    return SliverPadding(
+      padding: EdgeInsets.zero,
+      sliver: SliverGrid(
+        delegate: SliverChildBuilderDelegate((context, index) {
+          return _GalleryTile(
+            photo: photos[index],
+            featured: index % 6 == 0,
+            index: index,
+          );
+        }, childCount: photos.length),
+        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 3,
+          crossAxisSpacing: 8,
+          mainAxisSpacing: 8,
+          childAspectRatio: .78,
+        ),
+      ),
+    );
+  }
+}
+
+class _MobileGallery extends StatelessWidget {
+  const _MobileGallery({required this.photos});
+
+  final List<_GalleryPhoto> photos;
+
+  @override
+  Widget build(BuildContext context) {
+    return SliverGrid(
+      delegate: SliverChildBuilderDelegate((context, index) {
+        return _GalleryTile(
+          photo: photos[index],
+          featured: index % 5 == 0,
+          index: index,
+        );
+      }, childCount: photos.length),
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 2,
+        crossAxisSpacing: 5,
+        mainAxisSpacing: 5,
+        childAspectRatio: .78,
+      ),
+    );
+  }
+}
+
+class _GalleryTile extends StatefulWidget {
+  const _GalleryTile({
+    required this.photo,
+    required this.featured,
+    required this.index,
+  });
+
+  final _GalleryPhoto photo;
+  final bool featured;
+  final int index;
+
+  @override
+  State<_GalleryTile> createState() => _GalleryTileState();
+}
+
+class _GalleryTileState extends State<_GalleryTile> {
   bool _hovered = false;
 
   @override
@@ -492,24 +378,153 @@ class _GalleryImageState extends State<_GalleryImage> {
       cursor: SystemMouseCursors.click,
       onEnter: (_) => setState(() => _hovered = true),
       onExit: (_) => setState(() => _hovered = false),
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 400),
-        curve: Curves.easeOutCubic,
-        transform: Matrix4.translationValues(0, _hovered ? -7 : 0, 0),
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(3),
-          child: SizedBox(
-            width: double.infinity,
-            height: widget.height,
-            child: AnimatedScale(
-              scale: _hovered ? 1.025 : 1,
-              duration: const Duration(milliseconds: 500),
-              curve: Curves.easeOutCubic,
-              child: Image.asset(widget.image, fit: BoxFit.cover),
+      child: GestureDetector(
+        onTap: () => _openViewer(context),
+        child: Stack(
+          fit: StackFit.expand,
+          children: [
+            Image.asset(
+              widget.photo.asset,
+              fit: BoxFit.cover,
+              errorBuilder: (context, error, stackTrace) {
+                return Container(
+                  color: AppColors.sand,
+                  alignment: Alignment.center,
+                  child: const Icon(
+                    Icons.image_outlined,
+                    color: AppColors.espresso,
+                  ),
+                );
+              },
             ),
-          ),
+            AnimatedOpacity(
+              duration: const Duration(milliseconds: 180),
+              opacity: _hovered ? 1 : 0,
+              child: Container(
+                color: AppColors.espresso.withValues(alpha: .32),
+                alignment: Alignment.bottomLeft,
+                padding: const EdgeInsets.all(18),
+                child: Text(
+                  widget.photo.category,
+                  style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                    color: AppColors.ivory,
+                    fontWeight: FontWeight.w600,
+                    letterSpacing: 1.5,
+                  ),
+                ),
+              ),
+            ),
+          ],
         ),
       ),
+    );
+  }
+
+  void _openViewer(BuildContext context) {
+    showDialog<void>(
+      context: context,
+      barrierColor: AppColors.espresso.withValues(alpha: .96),
+      builder: (_) => _GalleryViewer(
+        photos: _GalleryScreenState._photos,
+        initialIndex: _GalleryScreenState._photos.indexOf(widget.photo),
+      ),
+    );
+  }
+}
+
+class _GalleryViewer extends StatefulWidget {
+  const _GalleryViewer({required this.photos, required this.initialIndex});
+
+  final List<_GalleryPhoto> photos;
+  final int initialIndex;
+
+  @override
+  State<_GalleryViewer> createState() => _GalleryViewerState();
+}
+
+class _GalleryViewerState extends State<_GalleryViewer> {
+  late int _index;
+
+  @override
+  void initState() {
+    super.initState();
+    _index = widget.initialIndex;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final photo = widget.photos[_index];
+
+    return Dialog(
+      backgroundColor: Colors.transparent,
+      insetPadding: const EdgeInsets.all(18),
+      child: Stack(
+        children: [
+          Center(
+            child: InteractiveViewer(
+              minScale: .8,
+              maxScale: 4,
+              child: Image.asset(photo.asset, fit: BoxFit.contain),
+            ),
+          ),
+          Positioned(
+            top: 8,
+            right: 8,
+            child: IconButton(
+              onPressed: () => Navigator.of(context).pop(),
+              icon: const Icon(Icons.close, color: AppColors.ivory),
+            ),
+          ),
+          Positioned(
+            left: 8,
+            top: 0,
+            bottom: 0,
+            child: Center(
+              child: _ViewerButton(
+                icon: Icons.arrow_back_ios_new,
+                onPressed: _index == 0 ? null : () => setState(() => _index--),
+              ),
+            ),
+          ),
+          Positioned(
+            right: 8,
+            top: 0,
+            bottom: 0,
+            child: Center(
+              child: _ViewerButton(
+                icon: Icons.arrow_forward_ios,
+                onPressed: _index == widget.photos.length - 1
+                    ? null
+                    : () => setState(() => _index++),
+              ),
+            ),
+          ),
+          Positioned(
+            left: 20,
+            bottom: 18,
+            child: Text(
+              '${photo.category}  /  ${_index + 1} OF ${widget.photos.length}',
+              style: Theme.of(context).textTheme.labelSmall
+                  ?.copyWith(color: AppColors.ivory, letterSpacing: 1.5),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _ViewerButton extends StatelessWidget {
+  const _ViewerButton({required this.icon, required this.onPressed});
+
+  final IconData icon;
+  final VoidCallback? onPressed;
+
+  @override
+  Widget build(BuildContext context) {
+    return IconButton(
+      onPressed: onPressed,
+      icon: Icon(icon, color: AppColors.ivory, size: 22),
     );
   }
 }
@@ -520,72 +535,28 @@ class _GalleryClosing extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: AppColors.espresso,
-      padding: const EdgeInsets.fromLTRB(28, 120, 28, 100),
+      width: double.infinity,
+      color: AppColors.darkBrown,
+      padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 110),
       child: Center(
-        child: ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: 1180),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'YOUR STORY\nDESERVES\nA GALLERY.',
-                style: TextStyle(
-                  color: AppColors.ivory,
-                  fontFamily: 'CormorantGaramond',
-                  fontSize: MediaQuery.sizeOf(context).width < 700 ? 58 : 84,
-                  height: 0.88,
-                ),
+        child: Column(
+          children: [
+            Text(
+              'KEEP LOOKING.',
+              style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                color: AppColors.sand,
+                fontWeight: FontWeight.w600,
+                letterSpacing: 3,
               ),
-              const SizedBox(height: 45),
-              InkWell(
-                onTap: () => context.go('/booking'),
-                borderRadius: BorderRadius.circular(999),
-                child: Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 25,
-                    vertical: 15,
-                  ),
-                  decoration: BoxDecoration(
-                    color: AppColors.beige,
-                    borderRadius: BorderRadius.circular(999),
-                  ),
-                  child: const Text(
-                    'BOOK YOUR SESSION  →',
-                    style: TextStyle(
-                      color: AppColors.espresso,
-                      fontSize: 10,
-                      fontWeight: FontWeight.w700,
-                      letterSpacing: 1.6,
-                    ),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 80),
-              Row(
-                children: [
-                  Text(
-                    'KALLYGRAPHY',
-                    style: TextStyle(
-                      color: AppColors.cream.withValues(alpha: 0.65),
-                      fontSize: 10,
-                      fontWeight: FontWeight.w700,
-                      letterSpacing: 2.5,
-                    ),
-                  ),
-                  const Spacer(),
-                  Text(
-                    'KAMPALA · UGANDA',
-                    style: TextStyle(
-                      color: AppColors.cream.withValues(alpha: 0.45),
-                      fontSize: 9,
-                      letterSpacing: 1.5,
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ),
+            ),
+            const SizedBox(height: 24),
+            Text(
+              'Every frame tells\nsomething different.',
+              textAlign: TextAlign.center,
+              style: Theme.of(context).textTheme.displayMedium
+                  ?.copyWith(color: AppColors.ivory, fontSize: 54, height: .95),
+            ),
+          ],
         ),
       ),
     );

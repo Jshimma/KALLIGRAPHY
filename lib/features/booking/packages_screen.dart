@@ -6,85 +6,84 @@ import '../../core/constants/app_colors.dart';
 class PackagesScreen extends StatelessWidget {
   const PackagesScreen({super.key});
 
-  static const _portrait = 'assets/images/portfolio/portrait_woman.jpg';
-  static const _wedding = 'assets/images/portfolio/couple_wedding.jpg';
-  static const _baby = 'assets/images/portfolio/portrait_woman_close.jpg';
-  static const _birthday = 'assets/images/portfolio/portrait_man_hat.jpg';
-  static const _couples = 'assets/images/portfolio/portrait_man.jpg';
-  static const _graduation = 'assets/images/portfolio/woman_landscape.jpg';
-  static const _event = 'assets/images/portfolio/lake_boat.jpg';
-  static const _details = 'assets/images/portfolio/hands_detail.jpg';
+  static const _packages = [
+    _Package(
+      number: '01',
+      category: 'WEDDINGS',
+      title: 'Your wedding,\nas it felt.',
+      description: 'From the quiet details before the ceremony to the people, movement and emotion that fill the day — your wedding is documented as a story, not just a collection of images.',
+      image: 'assets/images/ryan/Wedding.jpg',
+    ),
+    _Package(
+      number: '02',
+      category: 'INTRODUCTIONS',
+      title: 'A day worth\nremembering.',
+      description: 'Traditional introductions deserve photographs that preserve the atmosphere, the people and the moments that make the celebration yours.',
+      image: 'assets/images/ryan/Introduction.jpg',
+    ),
+    _Package(
+      number: '03',
+      category: 'BABY SHOWERS',
+      title: 'New\nbeginnings.',
+      description: 'A celebration filled with anticipation, laughter and love. I capture the little details and the people who make the moment meaningful.',
+      image: 'assets/images/ryan/Baby shower.jpg',
+    ),
+    _Package(
+      number: '04',
+      category: 'PHOTOSHOOTS',
+      title: 'In your\nelement.',
+      description: 'Portraits and creative sessions built around you — your personality, your style and the visual story you want to create.',
+      image: 'assets/images/ryan/photoshoot.jpg',
+    ),
+    _Package(
+      number: '05',
+      category: 'GRADUATIONS',
+      title: 'A moment\nof arrival.',
+      description: 'The work, the people and the celebration behind the achievement. Graduation photography that gives the milestone the space it deserves.',
+      image: 'assets/images/ryan/graduation.jpg',
+    ),
+    _Package(
+      number: '06',
+      category: 'MOMENTS',
+      title: 'Life,\nas it felt.',
+      description: 'For the celebrations and everyday moments that deserve to be remembered — photographed naturally, intentionally and with feeling.',
+      image: 'assets/images/ryan/Moments.jpg',
+    ),
+  ];
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      child: Column(
-        children: [
-          const _PackagesHero(),
-          const _Intro(),
-          const _SignaturePackage(),
-          const _PackageSection(
-            number: '01',
-            title: 'WEDDINGS',
-            description: 'From the quiet moments before the ceremony to the celebration that follows, we document your wedding with intention, warmth and an editorial eye.',
-            image: _wedding,
-            alignment: Alignment.center,
-            reverse: false,
-          ),
-          const _PackageSection(
-            number: '02',
-            title: 'BABY SHOWERS',
-            description: 'A beautiful chapter deserves to be remembered. Soft details, joyful gatherings and the people who make the moment special.',
-            image: _baby,
-            alignment: Alignment.center,
-            reverse: true,
-          ),
-          const _PackageSection(
-            number: '03',
-            title: 'BIRTHDAYS',
-            description: 'Whether intimate or unforgettable, we capture the personality, people and atmosphere behind your celebration.',
-            image: _birthday,
-            alignment: Alignment.center,
-            reverse: false,
-          ),
-          const _PackageSection(
-            number: '04',
-            title: 'PHOTOSHOOTS',
-            description: 'Portrait sessions designed around you. Personal, expressive and carefully directed without ever feeling forced.',
-            image: _portrait,
-            alignment: Alignment.center,
-            reverse: true,
-          ),
-          const _PackageSection(
-            number: '05',
-            title: 'COUPLES',
-            description: 'For the two of you. Natural connection, beautiful light and photographs that feel like you rather than a performance.',
-            image: _couples,
-            alignment: Alignment.center,
-            reverse: false,
-          ),
-          const _PackageSection(
-            number: '06',
-            title: 'GRADUATIONS',
-            description: 'A milestone worth more than a certificate. Celebrate the person, the journey and everything that brought you here.',
-            image: _graduation,
-            alignment: Alignment.center,
-            reverse: true,
-          ),
-          const _PackageSection(
-            number: '07',
-            title: 'EVENTS',
-            description: 'Private celebrations, launches, gatherings and special occasions documented with a refined editorial approach.',
-            image: _event,
-            alignment: Alignment.center,
-            reverse: false,
-          ),
-          const _MoreServices(image: _details),
-          const _PackagesClosing(),
-        ],
+    return Scaffold(
+      backgroundColor: AppColors.cream,
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            const _PackagesHero(),
+            const _ExperienceSection(),
+            _PackageList(packages: _packages),
+            const _AdditionalServices(),
+            const _PackagesClosing(),
+          ],
+        ),
       ),
     );
   }
+}
+
+class _Package {
+  const _Package({
+    required this.number,
+    required this.category,
+    required this.title,
+    required this.description,
+    required this.image,
+  });
+
+  final String number;
+  final String category;
+  final String title;
+  final String description;
+  final String image;
 }
 
 class _PackagesHero extends StatelessWidget {
@@ -92,487 +91,329 @@ class _PackagesHero extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        final mobile = constraints.maxWidth < 800;
-
-        return Container(
-          color: AppColors.cream,
-          padding: EdgeInsets.fromLTRB(
-            mobile ? 24 : 72,
-            mobile ? 132 : 160,
-            mobile ? 24 : 72,
-            mobile ? 70 : 110,
-          ),
+    return Container(
+      width: double.infinity,
+      constraints: const BoxConstraints(minHeight: 620),
+      padding: const EdgeInsets.fromLTRB(28, 110, 28, 80),
+      color: AppColors.cream,
+      child: Center(
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 1180),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              const _Eyebrow('PACKAGES / KALLYGRAPHY'),
+              const SizedBox(height: 34),
               Text(
-                '05 / PACKAGES',
-                style: TextStyle(
-                  color: AppColors.brown,
-                  fontSize: 11,
-                  fontWeight: FontWeight.w700,
-                  letterSpacing: 2.2,
-                ),
-              ),
-              const SizedBox(height: 28),
-              SizedBox(
-                width: 850,
-                child: Text(
-                  'Moments worth\nremembering.',
-                  style: TextStyle(
-                    color: AppColors.espresso,
-                    fontFamily: 'CormorantGaramond',
-                    fontSize: mobile ? 58 : 100,
-                    height: .88,
-                    letterSpacing: -2.5,
-                  ),
-                ),
-              ),
-              const SizedBox(height: 36),
-              SizedBox(
-                width: 560,
-                child: Text(
-                  'Photography packages for weddings, celebrations, portraits and all the beautiful chapters in between.',
-                  style: TextStyle(
-                    color: AppColors.brown,
-                    fontSize: 15,
-                    height: 1.8,
-                    letterSpacing: .2,
-                  ),
-                ),
-              ),
-            ],
-          ),
-        );
-      },
-    );
-  }
-}
-
-class _Intro extends StatelessWidget {
-  const _Intro();
-
-  @override
-  Widget build(BuildContext context) {
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        final mobile = constraints.maxWidth < 800;
-
-        return Container(
-          color: AppColors.ivory,
-          padding: EdgeInsets.symmetric(
-            horizontal: mobile ? 24 : 72,
-            vertical: mobile ? 70 : 110,
-          ),
-          child: Flex(
-            direction: mobile ? Axis.vertical : Axis.horizontal,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Expanded(
-                flex: mobile ? 0 : 2,
-                child: Text(
-                  'THE RIGHT\nPACKAGE FOR\nYOUR STORY.',
-                  style: TextStyle(
-                    color: AppColors.espresso,
-                    fontFamily: 'CormorantGaramond',
-                    fontSize: mobile ? 42 : 58,
-                    height: .95,
-                  ),
-                ),
-              ),
-              if (mobile) const SizedBox(height: 36),
-              Expanded(
-                flex: mobile ? 0 : 2,
-                child: Text(
-                  'Every celebration is different. Our packages provide a starting point, while each session can be shaped around your people, your location and the story you want to remember.',
-                  style: TextStyle(
-                    color: AppColors.brown,
-                    fontSize: 14,
-                    height: 1.9,
-                  ),
-                ),
-              ),
-            ],
-          ),
-        );
-      },
-    );
-  }
-}
-
-class _SignaturePackage extends StatelessWidget {
-  const _SignaturePackage();
-
-  @override
-  Widget build(BuildContext context) {
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        final mobile = constraints.maxWidth < 800;
-
-        return Container(
-          color: AppColors.espresso,
-          padding: EdgeInsets.all(mobile ? 24 : 72),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'THE KALLYGRAPHY EXPERIENCE',
-                style: TextStyle(
-                  color: AppColors.beige,
-                  fontSize: 10,
-                  fontWeight: FontWeight.w700,
-                  letterSpacing: 2,
-                ),
-              ),
-              const SizedBox(height: 20),
-              Text(
-                'A little more than\njust photographs.',
-                style: TextStyle(
-                  color: AppColors.ivory,
-                  fontFamily: 'CormorantGaramond',
-                  fontSize: mobile ? 48 : 76,
+                'Choose the way\nwe tell your story.',
+                style: Theme.of(context).textTheme.displayLarge?.copyWith(
+                  fontSize: 72,
                   height: .92,
+                  color: AppColors.espresso,
                 ),
               ),
-              const SizedBox(height: 32),
-              if (mobile)
-                Column(
-                  children: [
-                    _ExperienceImage(),
-                    const SizedBox(height: 28),
-                    _ExperienceText(),
-                  ],
-                )
-              else
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    const Expanded(flex: 3, child: _ExperienceImage()),
-                    const SizedBox(width: 70),
-                    Expanded(flex: 2, child: _ExperienceText()),
-                  ],
+              const SizedBox(height: 34),
+              ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 610),
+                child: Text(
+                  'Every story is different. Explore the kinds of work I create, then let’s talk about what you have in mind.',
+                  style: Theme.of(context).textTheme.bodyLarge
+                      ?.copyWith(color: AppColors.muted, height: 1.7),
                 ),
+              ),
             ],
           ),
-        );
-      },
-    );
-  }
-}
-
-class _ExperienceImage extends StatelessWidget {
-  const _ExperienceImage();
-
-  @override
-  Widget build(BuildContext context) {
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(28),
-      child: AspectRatio(
-        aspectRatio: 1.15,
-        child: Image.asset(PackagesScreen._portrait, fit: BoxFit.cover),
+        ),
       ),
     );
   }
 }
 
-class _ExperienceText extends StatelessWidget {
+class _ExperienceSection extends StatelessWidget {
+  const _ExperienceSection();
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      color: AppColors.darkBrown,
+      padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 100),
+      child: Center(
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 1180),
+          child: LayoutBuilder(
+            builder: (context, constraints) {
+              final wide = constraints.maxWidth > 760;
+
+              final eyebrow = const _Eyebrow(
+                '01 / THE EXPERIENCE',
+                color: AppColors.sand,
+              );
+
+              final copy = Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'More than\nphotographs.',
+                    style: Theme.of(context).textTheme.displayMedium?.copyWith(
+                      color: AppColors.ivory,
+                      fontSize: 58,
+                      height: .96,
+                    ),
+                  ),
+                  const SizedBox(height: 28),
+                  Text(
+                    'Every booking begins with a conversation. I want to understand the occasion, the people and what you want to remember about it.',
+                    style: Theme.of(context).textTheme.bodyLarge
+                        ?.copyWith(color: AppColors.sand, height: 1.75),
+                  ),
+                ],
+              );
+
+              if (!wide) {
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [eyebrow, const SizedBox(height: 38), copy],
+                );
+              }
+
+              return Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Expanded(child: eyebrow),
+                  const SizedBox(width: 80),
+                  Expanded(flex: 2, child: copy),
+                ],
+              );
+            },
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _PackageList extends StatelessWidget {
+  const _PackageList({required this.packages});
+
+  final List<_Package> packages;
+
   @override
   Widget build(BuildContext context) {
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          'A considered experience from first conversation to final gallery.',
-          style: TextStyle(
-            color: AppColors.ivory,
-            fontFamily: 'CormorantGaramond',
-            fontSize: 30,
-            height: 1.1,
-          ),
-        ),
-        const SizedBox(height: 24),
-        Text(
-          'Pre-session consultation\n'
-          'Professional photography direction\n'
-          'Carefully edited final photographs\n'
-          'Private online gallery\n'
-          'Print-ready images',
-          style: TextStyle(color: AppColors.beige, fontSize: 13, height: 2.1),
-        ),
+        for (var index = 0; index < packages.length; index++)
+          _PackageRow(package: packages[index], reverse: index.isOdd),
       ],
     );
   }
 }
 
-class _PackageSection extends StatelessWidget {
-  const _PackageSection({
-    required this.number,
-    required this.title,
-    required this.description,
-    required this.image,
-    required this.alignment,
-    required this.reverse,
-  });
+class _PackageRow extends StatelessWidget {
+  const _PackageRow({required this.package, required this.reverse});
 
-  final String number;
-  final String title;
-  final String description;
-  final String image;
-  final Alignment alignment;
+  final _Package package;
   final bool reverse;
 
   @override
   Widget build(BuildContext context) {
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        final mobile = constraints.maxWidth < 800;
+    return Container(
+      color: reverse ? AppColors.ivory : AppColors.cream,
+      padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 90),
+      child: Center(
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 1180),
+          child: LayoutBuilder(
+            builder: (context, constraints) {
+              final wide = constraints.maxWidth > 760;
 
-        final imageWidget = ClipRRect(
-          borderRadius: BorderRadius.circular(30),
-          child: AspectRatio(
-            aspectRatio: mobile ? 1.15 : .95,
-            child: Image.asset(image, fit: BoxFit.cover, alignment: alignment),
-          ),
-        );
-
-        final textWidget = Padding(
-          padding: EdgeInsets.symmetric(
-            horizontal: mobile ? 0 : 20,
-            vertical: mobile ? 30 : 40,
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text(
-                number,
-                style: TextStyle(
-                  color: AppColors.mocha,
-                  fontSize: 11,
-                  fontWeight: FontWeight.w700,
-                  letterSpacing: 2,
+              final image = ClipRRect(
+                borderRadius: BorderRadius.circular(2),
+                child: AspectRatio(
+                  aspectRatio: 4 / 5,
+                  child: Image.asset(
+                    package.image,
+                    fit: BoxFit.cover,
+                    errorBuilder: (context, error, stackTrace) {
+                      return Container(
+                        color: AppColors.sand,
+                        alignment: Alignment.center,
+                        child: const Icon(
+                          Icons.image_outlined,
+                          size: 40,
+                          color: AppColors.espresso,
+                        ),
+                      );
+                    },
+                  ),
                 ),
-              ),
-              const SizedBox(height: 22),
-              Text(
-                title,
-                style: TextStyle(
-                  color: AppColors.espresso,
-                  fontFamily: 'CormorantGaramond',
-                  fontSize: mobile ? 48 : 62,
-                  height: .9,
-                ),
-              ),
-              const SizedBox(height: 26),
-              Text(
-                description,
-                style: TextStyle(
-                  color: AppColors.brown,
-                  fontSize: 14,
-                  height: 1.9,
-                ),
-              ),
-              const SizedBox(height: 30),
-              _ArrowButton(
-                label: 'INQUIRE',
-                onTap: () => context.go('/booking'),
-              ),
-            ],
-          ),
-        );
+              );
 
-        return Container(
-          color: AppColors.cream,
-          padding: EdgeInsets.symmetric(
-            horizontal: mobile ? 24 : 72,
-            vertical: mobile ? 65 : 100,
-          ),
-          child: mobile
-              ? Column(children: [imageWidget, textWidget])
-              : Row(
-                  children: reverse
-                      ? [
-                          Expanded(child: textWidget),
-                          const SizedBox(width: 70),
-                          Expanded(child: imageWidget),
-                        ]
-                      : [
-                          Expanded(child: imageWidget),
-                          const SizedBox(width: 70),
-                          Expanded(child: textWidget),
-                        ],
+              final copy = Padding(
+                padding: EdgeInsets.only(
+                  left: wide && !reverse ? 70 : 0,
+                  right: wide && reverse ? 70 : 0,
+                  top: wide ? 20 : 36,
                 ),
-        );
-      },
-    );
-  }
-}
-
-class _MoreServices extends StatelessWidget {
-  const _MoreServices({required this.image});
-
-  final String image;
-
-  @override
-  Widget build(BuildContext context) {
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        final mobile = constraints.maxWidth < 800;
-
-        return Container(
-          color: AppColors.ivory,
-          padding: EdgeInsets.fromLTRB(
-            mobile ? 24 : 72,
-            mobile ? 65 : 100,
-            mobile ? 24 : 72,
-            mobile ? 75 : 120,
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'AND MORE',
-                style: TextStyle(
-                  color: AppColors.mocha,
-                  fontSize: 10,
-                  fontWeight: FontWeight.w700,
-                  letterSpacing: 2.2,
-                ),
-              ),
-              const SizedBox(height: 22),
-              Text(
-                'Something a little\ndifferent?',
-                style: TextStyle(
-                  color: AppColors.espresso,
-                  fontFamily: 'CormorantGaramond',
-                  fontSize: mobile ? 50 : 72,
-                  height: .9,
-                ),
-              ),
-              const SizedBox(height: 42),
-              if (mobile)
-                Column(
-                  children: [
-                    _MoreImage(image: image),
-                    const SizedBox(height: 32),
-                    _MoreList(),
-                  ],
-                )
-              else
-                Row(
+                child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Expanded(flex: 3, child: _MoreImage(image: image)),
-                    const SizedBox(width: 80),
-                    const Expanded(flex: 2, child: _MoreList()),
+                    _Eyebrow('${package.number} / ${package.category}'),
+                    const SizedBox(height: 28),
+                    Text(
+                      package.title,
+                      style: Theme.of(context).textTheme.displayMedium
+                          ?.copyWith(
+                            color: AppColors.espresso,
+                            fontSize: 54,
+                            height: .96,
+                          ),
+                    ),
+                    const SizedBox(height: 28),
+                    Text(
+                      package.description,
+                      style: Theme.of(context).textTheme.bodyMedium
+                          ?.copyWith(color: AppColors.muted, height: 1.75),
+                    ),
+                    const SizedBox(height: 34),
+                    _InquireButton(
+                      label: 'INQUIRE',
+                      onPressed: () => context.go('/booking'),
+                    ),
                   ],
                 ),
-            ],
+              );
+
+              if (!wide) {
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [image, copy],
+                );
+              }
+
+              return Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: reverse
+                    ? [
+                        Expanded(child: copy),
+                        const SizedBox(width: 30),
+                        Expanded(child: image),
+                      ]
+                    : [
+                        Expanded(child: image),
+                        const SizedBox(width: 30),
+                        Expanded(child: copy),
+                      ],
+              );
+            },
           ),
-        );
-      },
-    );
-  }
-}
-
-class _MoreImage extends StatelessWidget {
-  const _MoreImage({required this.image});
-
-  final String image;
-
-  @override
-  Widget build(BuildContext context) {
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(30),
-      child: AspectRatio(
-        aspectRatio: 1.45,
-        child: Image.asset(image, fit: BoxFit.cover),
+        ),
       ),
     );
   }
 }
 
-class _MoreList extends StatelessWidget {
-  const _MoreList();
-
-  static const services = [
-    'Corporate & Brand',
-    'Family Sessions',
-    'Maternity',
-    'Engagements',
-    'Private Events',
-    'Content Creation',
-    'Product Photography',
-    'Lifestyle Sessions',
-    'Custom Projects',
-  ];
+class _AdditionalServices extends StatelessWidget {
+  const _AdditionalServices();
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        for (var i = 0; i < services.length; i++)
-          Container(
-            width: double.infinity,
-            padding: const EdgeInsets.symmetric(vertical: 17),
-            decoration: BoxDecoration(
-              border: Border(bottom: BorderSide(color: AppColors.border)),
-            ),
-            child: Row(
-              children: [
-                Text(
-                  (i + 1).toString().padLeft(2, '0'),
-                  style: TextStyle(
-                    color: AppColors.mocha,
-                    fontSize: 10,
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
-                const SizedBox(width: 18),
-                Expanded(
-                  child: Text(
-                    services[i],
-                    style: TextStyle(
+    return Container(
+      width: double.infinity,
+      color: AppColors.sand,
+      padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 100),
+      child: Center(
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 1180),
+          child: LayoutBuilder(
+            builder: (context, constraints) {
+              final wide = constraints.maxWidth > 760;
+
+              final services = [
+                ('01', 'VIDEOGRAPHY'),
+                ('02', 'GRAPHICS DESIGN'),
+                ('03', 'CUSTOM WORK'),
+              ];
+
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const _Eyebrow('02 / BEYOND PHOTOGRAPHY'),
+                  const SizedBox(height: 42),
+                  Text(
+                    'Built around\nyour vision.',
+                    style: Theme.of(context).textTheme.displayMedium?.copyWith(
                       color: AppColors.espresso,
-                      fontFamily: 'CormorantGaramond',
-                      fontSize: 24,
+                      fontSize: 58,
+                      height: .96,
                     ),
                   ),
-                ),
-              ],
-            ),
+                  const SizedBox(height: 58),
+                  if (wide)
+                    Row(
+                      children: [
+                        for (var i = 0; i < services.length; i++)
+                          Expanded(
+                            child: Padding(
+                              padding: EdgeInsets.only(
+                                right: i == services.length - 1 ? 0 : 18,
+                              ),
+                              child: _ServiceItem(
+                                number: services[i].$1,
+                                title: services[i].$2,
+                              ),
+                            ),
+                          ),
+                      ],
+                    )
+                  else
+                    Column(
+                      children: [
+                        for (final service in services)
+                          Padding(
+                            padding: const EdgeInsets.only(bottom: 18),
+                            child: _ServiceItem(
+                              number: service.$1,
+                              title: service.$2,
+                            ),
+                          ),
+                      ],
+                    ),
+                ],
+              );
+            },
           ),
-      ],
+        ),
+      ),
     );
   }
 }
 
-class _ArrowButton extends StatelessWidget {
-  const _ArrowButton({required this.label, required this.onTap});
+class _ServiceItem extends StatelessWidget {
+  const _ServiceItem({required this.number, required this.title});
 
-  final String label;
-  final VoidCallback onTap;
+  final String number;
+  final String title;
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
-      onTap: onTap,
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
+    return Container(
+      padding: const EdgeInsets.all(28),
+      decoration: BoxDecoration(border: Border.all(color: AppColors.border)),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            label,
-            style: TextStyle(
-              color: AppColors.brown,
-              fontSize: 10,
-              fontWeight: FontWeight.w700,
-              letterSpacing: 1.8,
-            ),
+            number,
+            style: Theme.of(context).textTheme.labelMedium
+                ?.copyWith(color: AppColors.muted, letterSpacing: 1.5),
           ),
-          const SizedBox(width: 12),
-          Icon(Icons.arrow_forward_rounded, size: 17, color: AppColors.brown),
+          const SizedBox(height: 44),
+          Text(
+            title,
+            style: Theme.of(context).textTheme.titleLarge
+                ?.copyWith(color: AppColors.espresso, letterSpacing: 1.2),
+          ),
         ],
       ),
     );
@@ -586,47 +427,94 @@ class _PackagesClosing extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
-      color: AppColors.brown,
-      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 100),
-      child: Column(
-        children: [
-          Text(
-            'YOUR MOMENT.\nYOUR STORY.',
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              color: AppColors.ivory,
-              fontFamily: 'CormorantGaramond',
-              fontSize: 56,
-              height: .9,
-            ),
-          ),
-          const SizedBox(height: 28),
-          Text(
-            'Tell us what you are planning.',
-            style: TextStyle(color: AppColors.sand, fontSize: 13),
-          ),
-          const SizedBox(height: 30),
-          Material(
-            color: AppColors.ivory,
-            borderRadius: BorderRadius.circular(999),
-            child: InkWell(
-              borderRadius: BorderRadius.circular(999),
-              onTap: () => context.go('/booking'),
-              child: const Padding(
-                padding: EdgeInsets.symmetric(horizontal: 28, vertical: 15),
-                child: Text(
-                  'START AN INQUIRY',
-                  style: TextStyle(
-                    color: AppColors.espresso,
-                    fontSize: 10,
-                    fontWeight: FontWeight.w700,
-                    letterSpacing: 1.7,
-                  ),
+      color: AppColors.espresso,
+      padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 120),
+      child: Center(
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 1180),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const _Eyebrow(
+                '03 / START A CONVERSATION',
+                color: AppColors.sand,
+              ),
+              const SizedBox(height: 34),
+              Text(
+                'Tell me what you are\nplanning.',
+                style: Theme.of(context).textTheme.displayMedium?.copyWith(
+                  color: AppColors.ivory,
+                  fontSize: 64,
+                  height: .95,
                 ),
               ),
-            ),
+              const SizedBox(height: 34),
+              Text(
+                'Share the details and let’s create something meaningful around them.',
+                style: Theme.of(context).textTheme.bodyLarge
+                    ?.copyWith(color: AppColors.sand, height: 1.7),
+              ),
+              const SizedBox(height: 42),
+              _InquireButton(
+                label: 'MAKE AN INQUIRY',
+                dark: false,
+                onPressed: () => context.go('/booking'),
+              ),
+            ],
           ),
-        ],
+        ),
+      ),
+    );
+  }
+}
+
+class _InquireButton extends StatelessWidget {
+  const _InquireButton({
+    required this.label,
+    required this.onPressed,
+    this.dark = true,
+  });
+
+  final String label;
+  final VoidCallback onPressed;
+  final bool dark;
+
+  @override
+  Widget build(BuildContext context) {
+    return FilledButton(
+      onPressed: onPressed,
+      style: FilledButton.styleFrom(
+        backgroundColor: dark ? AppColors.espresso : AppColors.ivory,
+        foregroundColor: dark ? AppColors.ivory : AppColors.espresso,
+        padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 17),
+        shape: const StadiumBorder(),
+      ),
+      child: Text(
+        label,
+        style: Theme.of(context).textTheme.labelMedium?.copyWith(
+          color: dark ? AppColors.ivory : AppColors.espresso,
+          fontWeight: FontWeight.w600,
+          letterSpacing: 1.4,
+        ),
+      ),
+    );
+  }
+}
+
+class _Eyebrow extends StatelessWidget {
+  const _Eyebrow(this.text, {this.color});
+
+  final String text;
+  final Color? color;
+
+  @override
+  Widget build(BuildContext context) {
+    return Text(
+      text,
+      style: Theme.of(context).textTheme.labelMedium?.copyWith(
+        color: color ?? AppColors.muted,
+        fontWeight: FontWeight.w600,
+        letterSpacing: 2,
       ),
     );
   }
