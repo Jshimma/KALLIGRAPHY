@@ -3,6 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from app.api.routes import (
     auth_router,
+    galleries_router,
     inquiries_router,
     photographer_router,
     portfolio_router,
@@ -28,3 +29,4 @@ app.include_router(auth_router)
 app.include_router(inquiries_router)
 app.include_router(photographer_router)
 app.include_router(portfolio_router)
+app.include_router(galleries_router)
