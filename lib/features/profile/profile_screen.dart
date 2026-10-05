@@ -10,23 +10,27 @@ class ProfileScreen extends StatelessWidget {
 
   static const _workImages = [
     'assets/images/ryan/Wedding.jpg',
-    'assets/images/ryan/Introduction.jpg',
+    'assets/images/ryan/Introduction4.jpg',
     'assets/images/ryan/photoshoot.jpg',
-    'assets/images/ryan/graduation.jpg',
+    'assets/images/ryan/Moments4.jpg',
   ];
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      child: Column(
-        children: [
-          const _AboutHero(),
-          const _AboutRyan(),
-          const _CreativeWork(),
-          const _Approach(),
-          const _VisualStory(),
-          const _AboutClosing(),
-        ],
+    return ColoredBox(
+      color: AppColors.cream,
+      child: SingleChildScrollView(
+        child: Column(
+          children: [
+            const _AboutHero(),
+            const _Manifesto(),
+            const _AboutStory(),
+            const _Disciplines(),
+            const _VisualInterlude(),
+            const _Approach(),
+            const _AboutClosing(),
+          ],
+        ),
       ),
     );
   }
@@ -37,38 +41,41 @@ class _AboutHero extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final mobile = MediaQuery.sizeOf(context).width < 800;
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final wide = constraints.maxWidth >= 900;
 
-    return Container(
-      color: AppColors.cream,
-      padding: EdgeInsets.fromLTRB(
-        mobile ? 24 : 60,
-        mobile ? 120 : 150,
-        mobile ? 24 : 60,
-        mobile ? 70 : 110,
-      ),
-      child: Center(
-        child: ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: 1280),
-          child: mobile
-              ? Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const _HeroPortrait(),
-                    const SizedBox(height: 45),
-                    const _HeroIdentity(),
-                  ],
-                )
-              : Row(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    const Expanded(flex: 6, child: _HeroPortrait()),
-                    const SizedBox(width: 90),
-                    const Expanded(flex: 5, child: _HeroIdentity()),
-                  ],
-                ),
-        ),
-      ),
+        return Padding(
+          padding: EdgeInsets.fromLTRB(
+            wide ? 72 : 24,
+            wide ? 110 : 70,
+            wide ? 72 : 24,
+            wide ? 105 : 70,
+          ),
+          child: Center(
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 1280),
+              child: wide
+                  ? Row(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        const Expanded(flex: 51, child: _HeroPortrait()),
+                        const SizedBox(width: 90),
+                        const Expanded(flex: 49, child: _HeroCopy()),
+                      ],
+                    )
+                  : const Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        _HeroPortrait(),
+                        SizedBox(height: 48),
+                        _HeroCopy(),
+                      ],
+                    ),
+            ),
+          ),
+        );
+      },
     );
   }
 }
@@ -78,57 +85,73 @@ class _HeroPortrait extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(2),
+    return Container(
+      color: AppColors.sand,
+      constraints: const BoxConstraints(maxWidth: 610),
       child: AspectRatio(
-        aspectRatio: 0.82,
-        child: Image.asset(ProfileScreen._portrait, fit: BoxFit.cover),
+        aspectRatio: .82,
+        child: Image.asset(
+          ProfileScreen._portrait,
+          fit: BoxFit.contain,
+          errorBuilder: (context, error, stackTrace) {
+            return const Center(
+              child: Icon(
+                Icons.person_outline,
+                size: 48,
+                color: AppColors.brown,
+              ),
+            );
+          },
+        ),
       ),
     );
   }
 }
 
-class _HeroIdentity extends StatelessWidget {
-  const _HeroIdentity();
+class _HeroCopy extends StatelessWidget {
+  const _HeroCopy();
 
   @override
   Widget build(BuildContext context) {
-    final mobile = MediaQuery.sizeOf(context).width < 800;
+    final mobile = MediaQuery.sizeOf(context).width < 900;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const _Eyebrow('ABOUT / KALIISA RYAN'),
-        const SizedBox(height: 30),
+        const _Eyebrow('01 · THE PERSON BEHIND THE LENS'),
+        const SizedBox(height: 28),
         Text(
-          'KALIISA\nRYAN',
+          'KALIISA\nRYAN.',
           style: TextStyle(
             fontFamily: 'CormorantGaramond',
-            fontSize: mobile ? 72 : 104,
-            height: 0.82,
-            fontWeight: FontWeight.w400,
+            fontSize: mobile ? 78 : 108,
+            height: .79,
+            letterSpacing: -2.5,
             color: AppColors.espresso,
           ),
         ),
-        const SizedBox(height: 32),
+        const SizedBox(height: 34),
+        Container(width: 48, height: 1, color: AppColors.mocha),
+        const SizedBox(height: 26),
         const Text(
           'PHOTOGRAPHER · VIDEOGRAPHER\nGRAPHICS DESIGNER',
           style: TextStyle(
+            fontFamily: 'Manrope',
             fontSize: 10,
-            height: 1.7,
             fontWeight: FontWeight.w700,
-            letterSpacing: 1.7,
+            height: 1.8,
+            letterSpacing: 1.8,
             color: AppColors.brown,
           ),
         ),
-        const SizedBox(height: 32),
-        const Text(
-          'Creating visual stories with feeling, detail and intention.',
+        const SizedBox(height: 28),
+        Text(
+          'Creating photographs that feel like something you remember.',
           style: TextStyle(
             fontFamily: 'CormorantGaramond',
-            fontSize: 28,
-            height: 1.25,
-            color: AppColors.espresso,
+            fontSize: mobile ? 29 : 35,
+            height: 1.2,
+            color: AppColors.darkBrown,
           ),
         ),
       ],
@@ -136,169 +159,57 @@ class _HeroIdentity extends StatelessWidget {
   }
 }
 
-class _AboutRyan extends StatelessWidget {
-  const _AboutRyan();
+class _Manifesto extends StatelessWidget {
+  const _Manifesto();
 
   @override
   Widget build(BuildContext context) {
     final mobile = MediaQuery.sizeOf(context).width < 800;
 
     return Container(
-      color: AppColors.brown,
+      width: double.infinity,
+      color: AppColors.darkBrown,
       padding: EdgeInsets.fromLTRB(
-        mobile ? 24 : 60,
-        mobile ? 75 : 110,
-        mobile ? 24 : 60,
-        mobile ? 85 : 120,
+        mobile ? 24 : 72,
+        mobile ? 78 : 115,
+        mobile ? 24 : 72,
+        mobile ? 82 : 125,
       ),
       child: Center(
         child: ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: 1200),
-          child: mobile
-              ? Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const _Eyebrow('01 / ABOUT RYAN', color: AppColors.cream),
-                    const SizedBox(height: 35),
-                    const _RyanStory(),
-                  ],
-                )
-              : Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Expanded(
-                      flex: 3,
-                      child: _Eyebrow(
-                        '01 / ABOUT RYAN',
-                        color: AppColors.cream,
-                      ),
-                    ),
-                    const Expanded(flex: 7, child: _RyanStory()),
-                  ],
-                ),
-        ),
-      ),
-    );
-  }
-}
-
-class _RyanStory extends StatelessWidget {
-  const _RyanStory();
-
-  @override
-  Widget build(BuildContext context) {
-    return const Text(
-      'I am Kaliisa Ryan — a photographer, videographer and '
-      'graphics designer with a passion for creating visual stories.\n\n'
-      'My work is shaped by a strong aesthetic sense, technical '
-      'knowledge of modern camera technologies, attention to detail '
-      'and an understanding of how to bring a creative idea to life.\n\n'
-      'From weddings and traditional events to fashion, beauty and '
-      'portrait photography, I focus on creating images that feel '
-      'intentional, expressive and memorable.',
-      style: TextStyle(
-        fontFamily: 'CormorantGaramond',
-        fontSize: 34,
-        height: 1.25,
-        color: AppColors.cream,
-      ),
-    );
-  }
-}
-
-class _CreativeWork extends StatelessWidget {
-  const _CreativeWork();
-
-  @override
-  Widget build(BuildContext context) {
-    final mobile = MediaQuery.sizeOf(context).width < 800;
-
-    return Container(
-      color: AppColors.cream,
-      padding: EdgeInsets.fromLTRB(
-        mobile ? 24 : 60,
-        mobile ? 80 : 120,
-        mobile ? 24 : 60,
-        mobile ? 85 : 120,
-      ),
-      child: Center(
-        child: ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: 1200),
+          constraints: const BoxConstraints(maxWidth: 1180),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const _Eyebrow('02 / THE CREATIVE WORK'),
-              const SizedBox(height: 28),
+              const _Eyebrow('02 · THE PHILOSOPHY', color: AppColors.sand),
+              const SizedBox(height: 30),
               Text(
-                'Three ways I\ncreate.',
+                'THE BEST PHOTOGRAPHS\nDON’T JUST SHOW YOU\nWHAT HAPPENED.',
                 style: TextStyle(
                   fontFamily: 'CormorantGaramond',
-                  fontSize: mobile ? 62 : 86,
-                  height: 0.9,
-                  color: AppColors.espresso,
+                  fontSize: mobile ? 49 : 78,
+                  height: .91,
+                  letterSpacing: -1.2,
+                  color: AppColors.cream,
                 ),
               ),
-              const SizedBox(height: 65),
-              LayoutBuilder(
-                builder: (context, constraints) {
-                  final wide = constraints.maxWidth >= 800;
-
-                  final items = [
-                    (
-                      '01',
-                      'PHOTOGRAPHY',
-                      'Portraits, weddings, introductions, celebrations, '
-                          'fashion, beauty and the moments in between.',
+              const SizedBox(height: 38),
+              Align(
+                alignment: Alignment.centerRight,
+                child: ConstrainedBox(
+                  constraints: const BoxConstraints(maxWidth: 540),
+                  child: const Text(
+                    'They bring you back to how it felt.',
+                    textAlign: TextAlign.right,
+                    style: TextStyle(
+                      fontFamily: 'CormorantGaramond',
+                      fontSize: 28,
+                      height: 1.2,
+                      fontStyle: FontStyle.italic,
+                      color: AppColors.sand,
                     ),
-                    (
-                      '02',
-                      'VIDEOGRAPHY',
-                      'Moving images that preserve atmosphere, emotion '
-                          'and the story behind an important day.',
-                    ),
-                    (
-                      '03',
-                      'GRAPHICS DESIGN',
-                      'Visual identities and creative designs that give '
-                          'an idea its own visual language.',
-                    ),
-                  ];
-
-                  if (!wide) {
-                    return Column(
-                      children: [
-                        for (var i = 0; i < items.length; i++) ...[
-                          _CreativeItem(
-                            number: items[i].$1,
-                            title: items[i].$2,
-                            body: items[i].$3,
-                          ),
-                          if (i != items.length - 1)
-                            const Padding(
-                              padding: EdgeInsets.symmetric(vertical: 35),
-                              child: Divider(color: AppColors.border),
-                            ),
-                        ],
-                      ],
-                    );
-                  }
-
-                  return Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      for (var i = 0; i < items.length; i++) ...[
-                        Expanded(
-                          child: _CreativeItem(
-                            number: items[i].$1,
-                            title: items[i].$2,
-                            body: items[i].$3,
-                          ),
-                        ),
-                        if (i != items.length - 1) const SizedBox(width: 55),
-                      ],
-                    ],
-                  );
-                },
+                  ),
+                ),
               ),
             ],
           ),
@@ -308,8 +219,213 @@ class _CreativeWork extends StatelessWidget {
   }
 }
 
-class _CreativeItem extends StatelessWidget {
-  const _CreativeItem({
+class _AboutStory extends StatelessWidget {
+  const _AboutStory();
+
+  @override
+  Widget build(BuildContext context) {
+    final mobile = MediaQuery.sizeOf(context).width < 850;
+
+    return Padding(
+      padding: EdgeInsets.fromLTRB(
+        mobile ? 24 : 72,
+        mobile ? 82 : 125,
+        mobile ? 24 : 72,
+        mobile ? 90 : 135,
+      ),
+      child: Center(
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 1180),
+          child: mobile
+              ? const Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [_StoryLabel(), SizedBox(height: 36), _StoryText()],
+                )
+              : const Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Expanded(flex: 3, child: _StoryLabel()),
+                    SizedBox(width: 70),
+                    Expanded(flex: 7, child: _StoryText()),
+                  ],
+                ),
+        ),
+      ),
+    );
+  }
+}
+
+class _StoryLabel extends StatelessWidget {
+  const _StoryLabel();
+
+  @override
+  Widget build(BuildContext context) {
+    return const Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _Eyebrow('03 · THE STORY'),
+        SizedBox(height: 18),
+        Text(
+          'THE EYE\nBEHIND\nTHE IMAGE.',
+          style: TextStyle(
+            fontFamily: 'CormorantGaramond',
+            fontSize: 43,
+            height: .9,
+            color: AppColors.espresso,
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _StoryText extends StatelessWidget {
+  const _StoryText();
+
+  @override
+  Widget build(BuildContext context) {
+    return const Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'I am Kaliisa Ryan — a photographer, videographer and graphics '
+          'designer driven by the belief that meaningful images should '
+          'feel as good as they look.',
+          style: TextStyle(
+            fontFamily: 'CormorantGaramond',
+            fontSize: 32,
+            height: 1.25,
+            color: AppColors.darkBrown,
+          ),
+        ),
+        SizedBox(height: 30),
+        Text(
+          'My work is built around observation. The expression that happens '
+          'for half a second. The quiet before everyone arrives. The way '
+          'people look at each other when they forget the camera is there.',
+          style: TextStyle(
+            fontFamily: 'Manrope',
+            fontSize: 14,
+            height: 1.85,
+            color: AppColors.brown,
+          ),
+        ),
+        SizedBox(height: 22),
+        Text(
+          'From weddings and traditional celebrations to portraits, '
+          'introductions, fashion and everyday moments, I approach each '
+          'story with intention — creating photographs that remain '
+          'personal long after the day is over.',
+          style: TextStyle(
+            fontFamily: 'Manrope',
+            fontSize: 14,
+            height: 1.85,
+            color: AppColors.brown,
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _Disciplines extends StatelessWidget {
+  const _Disciplines();
+
+  static const _items = [
+    (
+      '01',
+      'PHOTOGRAPHY',
+      'Weddings, portraits, introductions, celebrations and the honest '
+          'moments between them.',
+    ),
+    (
+      '02',
+      'VIDEOGRAPHY',
+      'Moving images that preserve atmosphere, energy and the story '
+          'behind an important day.',
+    ),
+    (
+      '03',
+      'GRAPHICS DESIGN',
+      'Visual identities and creative design with the same attention '
+          'to detail brought to every photograph.',
+    ),
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    final mobile = MediaQuery.sizeOf(context).width < 850;
+
+    return Container(
+      color: AppColors.sand,
+      padding: EdgeInsets.fromLTRB(
+        mobile ? 24 : 72,
+        mobile ? 78 : 110,
+        mobile ? 24 : 72,
+        mobile ? 82 : 120,
+      ),
+      child: Center(
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 1180),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const _Eyebrow('04 · WHAT I CREATE'),
+              const SizedBox(height: 25),
+              Text(
+                'MORE THAN\nA CAMERA.',
+                style: TextStyle(
+                  fontFamily: 'CormorantGaramond',
+                  fontSize: mobile ? 58 : 82,
+                  height: .87,
+                  letterSpacing: -1.5,
+                  color: AppColors.espresso,
+                ),
+              ),
+              const SizedBox(height: 58),
+              if (mobile)
+                Column(
+                  children: [
+                    for (var i = 0; i < _items.length; i++) ...[
+                      _DisciplineItem(
+                        number: _items[i].$1,
+                        title: _items[i].$2,
+                        body: _items[i].$3,
+                      ),
+                      if (i != _items.length - 1)
+                        const Padding(
+                          padding: EdgeInsets.symmetric(vertical: 34),
+                          child: Divider(color: AppColors.border),
+                        ),
+                    ],
+                  ],
+                )
+              else
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    for (var i = 0; i < _items.length; i++) ...[
+                      Expanded(
+                        child: _DisciplineItem(
+                          number: _items[i].$1,
+                          title: _items[i].$2,
+                          body: _items[i].$3,
+                        ),
+                      ),
+                      if (i != _items.length - 1) const SizedBox(width: 55),
+                    ],
+                  ],
+                ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _DisciplineItem extends StatelessWidget {
+  const _DisciplineItem({
     required this.number,
     required this.title,
     required this.body,
@@ -327,6 +443,7 @@ class _CreativeItem extends StatelessWidget {
         Text(
           number,
           style: const TextStyle(
+            fontFamily: 'Manrope',
             fontSize: 10,
             fontWeight: FontWeight.w700,
             letterSpacing: 2,
@@ -337,22 +454,101 @@ class _CreativeItem extends StatelessWidget {
         Text(
           title,
           style: const TextStyle(
+            fontFamily: 'Manrope',
             fontSize: 12,
             fontWeight: FontWeight.w700,
-            letterSpacing: 2,
+            letterSpacing: 1.8,
             color: AppColors.espresso,
           ),
         ),
-        const SizedBox(height: 18),
+        const SizedBox(height: 17),
         Text(
           body,
           style: const TextStyle(
-            fontSize: 14,
-            height: 1.75,
+            fontFamily: 'Manrope',
+            fontSize: 13,
+            height: 1.8,
             color: AppColors.brown,
           ),
         ),
       ],
+    );
+  }
+}
+
+class _VisualInterlude extends StatelessWidget {
+  const _VisualInterlude();
+
+  @override
+  Widget build(BuildContext context) {
+    final mobile = MediaQuery.sizeOf(context).width < 850;
+
+    return Padding(
+      padding: EdgeInsets.fromLTRB(
+        mobile ? 18 : 40,
+        mobile ? 18 : 40,
+        mobile ? 18 : 40,
+        mobile ? 18 : 40,
+      ),
+      child: mobile
+          ? Column(
+              children: [
+                _Frame(image: ProfileScreen._workImages[0], aspectRatio: .82),
+                const SizedBox(height: 18),
+                _Frame(image: ProfileScreen._workImages[1], aspectRatio: .82),
+                const SizedBox(height: 18),
+                _Frame(image: ProfileScreen._workImages[2], aspectRatio: .82),
+              ],
+            )
+          : Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Expanded(
+                  flex: 12,
+                  child: _Frame(
+                    image: ProfileScreen._workImages[0],
+                    aspectRatio: .78,
+                  ),
+                ),
+                const SizedBox(width: 22),
+                Expanded(
+                  flex: 9,
+                  child: Padding(
+                    padding: const EdgeInsets.only(top: 95),
+                    child: _Frame(
+                      image: ProfileScreen._workImages[1],
+                      aspectRatio: .78,
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 22),
+                Expanded(
+                  flex: 10,
+                  child: _Frame(
+                    image: ProfileScreen._workImages[2],
+                    aspectRatio: .78,
+                  ),
+                ),
+              ],
+            ),
+    );
+  }
+}
+
+class _Frame extends StatelessWidget {
+  const _Frame({required this.image, required this.aspectRatio});
+
+  final String image;
+  final double aspectRatio;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      color: AppColors.sand,
+      child: AspectRatio(
+        aspectRatio: aspectRatio,
+        child: Image.asset(image, fit: BoxFit.contain),
+      ),
     );
   }
 }
@@ -367,168 +563,61 @@ class _Approach extends StatelessWidget {
     return Container(
       color: AppColors.espresso,
       padding: EdgeInsets.fromLTRB(
-        mobile ? 24 : 60,
-        mobile ? 80 : 120,
-        mobile ? 24 : 60,
-        mobile ? 90 : 130,
+        mobile ? 24 : 72,
+        mobile ? 82 : 120,
+        mobile ? 24 : 72,
+        mobile ? 90 : 135,
       ),
       child: Center(
         child: ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: 1100),
+          constraints: const BoxConstraints(maxWidth: 1120),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const _Eyebrow('03 / THE APPROACH', color: AppColors.sand),
-              const SizedBox(height: 35),
+              const _Eyebrow('05 · THE APPROACH', color: AppColors.sand),
+              const SizedBox(height: 30),
               Text(
-                'I want the photograph\nto feel like the moment.',
+                'I WANT THE\nPHOTOGRAPH TO\nFEEL LIKE THE\nMOMENT.',
                 style: TextStyle(
                   fontFamily: 'CormorantGaramond',
-                  fontSize: mobile ? 50 : 76,
-                  height: 0.98,
+                  fontSize: mobile ? 52 : 76,
+                  height: .89,
+                  letterSpacing: -1,
                   color: AppColors.cream,
                 ),
               ),
-              const SizedBox(height: 45),
+              const SizedBox(height: 42),
               ConstrainedBox(
-                constraints: const BoxConstraints(maxWidth: 620),
+                constraints: const BoxConstraints(maxWidth: 650),
                 child: const Text(
-                  'For me, photography is not only about making an '
-                  'image look beautiful. It is about noticing what is '
-                  'already there — the expression, the movement, the '
-                  'connection, the atmosphere — and preserving it with '
-                  'care.',
+                  'Beautiful is important. But feeling is everything. '
+                  'I look for the details that make a photograph personal — '
+                  'the people, the atmosphere, the movement and the small '
+                  'things you may not notice until later.',
                   style: TextStyle(
-                    fontSize: 15,
-                    height: 1.8,
+                    fontFamily: 'Manrope',
+                    fontSize: 14,
+                    height: 1.9,
                     color: AppColors.sand,
                   ),
                 ),
               ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _VisualStory extends StatelessWidget {
-  const _VisualStory();
-
-  @override
-  Widget build(BuildContext context) {
-    final mobile = MediaQuery.sizeOf(context).width < 800;
-
-    return Container(
-      color: AppColors.cream,
-      padding: EdgeInsets.fromLTRB(
-        mobile ? 24 : 60,
-        mobile ? 80 : 120,
-        mobile ? 24 : 60,
-        mobile ? 85 : 120,
-      ),
-      child: Center(
-        child: ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: 1200),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const _Eyebrow('04 / IN FRAME'),
               const SizedBox(height: 35),
-              Text(
-                'A few frames\nfrom the work.',
+              Container(width: 55, height: 1, color: AppColors.mocha),
+              const SizedBox(height: 25),
+              const Text(
+                'OBSERVE · CREATE · PRESERVE',
                 style: TextStyle(
-                  fontFamily: 'CormorantGaramond',
-                  fontSize: mobile ? 58 : 80,
-                  height: 0.9,
-                  color: AppColors.espresso,
+                  fontFamily: 'Manrope',
+                  fontSize: 10,
+                  fontWeight: FontWeight.w700,
+                  letterSpacing: 2.2,
+                  color: AppColors.cream,
                 ),
               ),
-              const SizedBox(height: 55),
-              LayoutBuilder(
-                builder: (context, constraints) {
-                  final gap = mobile ? 12.0 : 22.0;
-
-                  if (mobile) {
-                    return Column(
-                      children: [
-                        for (final image in ProfileScreen._workImages) ...[
-                          _WorkImage(image: image),
-                          if (image != ProfileScreen._workImages.last)
-                            SizedBox(height: gap),
-                        ],
-                      ],
-                    );
-                  }
-
-                  return Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Expanded(
-                        flex: 13,
-                        child: _WorkImage(
-                          image: ProfileScreen._workImages[0],
-                          aspectRatio: 0.78,
-                        ),
-                      ),
-                      SizedBox(width: gap),
-                      Expanded(
-                        flex: 9,
-                        child: Padding(
-                          padding: const EdgeInsets.only(top: 100),
-                          child: _WorkImage(
-                            image: ProfileScreen._workImages[1],
-                            aspectRatio: 0.78,
-                          ),
-                        ),
-                      ),
-                      SizedBox(width: gap),
-                      Expanded(
-                        flex: 10,
-                        child: _WorkImage(
-                          image: ProfileScreen._workImages[2],
-                          aspectRatio: 0.78,
-                        ),
-                      ),
-                    ],
-                  );
-                },
-              ),
-              if (!mobile) ...[
-                const SizedBox(height: 22),
-                Align(
-                  alignment: Alignment.centerRight,
-                  child: SizedBox(
-                    width: 360,
-                    child: _WorkImage(
-                      image: ProfileScreen._workImages[3],
-                      aspectRatio: 1.2,
-                    ),
-                  ),
-                ),
-              ],
             ],
           ),
         ),
-      ),
-    );
-  }
-}
-
-class _WorkImage extends StatelessWidget {
-  const _WorkImage({required this.image, this.aspectRatio = 0.82});
-
-  final String image;
-  final double aspectRatio;
-
-  @override
-  Widget build(BuildContext context) {
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(2),
-      child: AspectRatio(
-        aspectRatio: aspectRatio,
-        child: Image.asset(image, fit: BoxFit.cover),
       ),
     );
   }
@@ -542,47 +631,68 @@ class _AboutClosing extends StatelessWidget {
     final mobile = MediaQuery.sizeOf(context).width < 800;
 
     return Container(
+      width: double.infinity,
       color: AppColors.brown,
       padding: EdgeInsets.fromLTRB(
-        mobile ? 24 : 60,
-        mobile ? 80 : 110,
-        mobile ? 24 : 60,
-        mobile ? 90 : 120,
+        mobile ? 24 : 72,
+        mobile ? 82 : 115,
+        mobile ? 24 : 72,
+        mobile ? 95 : 130,
       ),
       child: Center(
         child: ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: 1100),
+          constraints: const BoxConstraints(maxWidth: 1120),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const _Eyebrow('05 / LET’S CREATE', color: AppColors.sand),
-              const SizedBox(height: 30),
+              const _Eyebrow('06 · YOUR STORY', color: AppColors.sand),
+              const SizedBox(height: 28),
               Text(
-                'Let’s make something\nworth remembering.',
+                'YOUR MOMENT\nDESERVES TO BE\nREMEMBERED.',
                 style: TextStyle(
                   fontFamily: 'CormorantGaramond',
-                  fontSize: mobile ? 54 : 78,
-                  height: 0.95,
+                  fontSize: mobile ? 53 : 78,
+                  height: .9,
+                  letterSpacing: -1,
                   color: AppColors.cream,
                 ),
               ),
-              const SizedBox(height: 35),
+              const SizedBox(height: 32),
               const SizedBox(
-                width: 580,
+                width: 570,
                 child: Text(
-                  'If you have a story, an idea or a moment you want '
-                  'captured with intention, I would love to hear about it.',
+                  'Whether it is a wedding, portrait session, celebration '
+                  'or an idea waiting to become real, let’s create '
+                  'something that still feels like you years from now.',
                   style: TextStyle(
-                    fontSize: 15,
-                    height: 1.75,
+                    fontFamily: 'Manrope',
+                    fontSize: 14,
+                    height: 1.85,
                     color: AppColors.sand,
                   ),
                 ),
               ),
               const SizedBox(height: 38),
-              _PillButton(
-                label: 'INQUIRE',
+              FilledButton(
                 onPressed: () => context.go('/booking'),
+                style: FilledButton.styleFrom(
+                  backgroundColor: AppColors.mocha,
+                  foregroundColor: AppColors.cream,
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 30,
+                    vertical: 18,
+                  ),
+                  shape: const StadiumBorder(),
+                ),
+                child: const Text(
+                  'START A CONVERSATION',
+                  style: TextStyle(
+                    fontFamily: 'Manrope',
+                    fontSize: 10,
+                    fontWeight: FontWeight.w700,
+                    letterSpacing: 1.7,
+                  ),
+                ),
               ),
             ],
           ),
@@ -593,7 +703,7 @@ class _AboutClosing extends StatelessWidget {
 }
 
 class _Eyebrow extends StatelessWidget {
-  const _Eyebrow(this.text, {this.color = AppColors.brown});
+  const _Eyebrow(this.text, {this.color = AppColors.mocha});
 
   final String text;
   final Color color;
@@ -603,38 +713,11 @@ class _Eyebrow extends StatelessWidget {
     return Text(
       text,
       style: TextStyle(
+        fontFamily: 'Manrope',
         fontSize: 10,
         fontWeight: FontWeight.w700,
-        letterSpacing: 2.3,
+        letterSpacing: 2.2,
         color: color,
-      ),
-    );
-  }
-}
-
-class _PillButton extends StatelessWidget {
-  const _PillButton({required this.label, required this.onPressed});
-
-  final String label;
-  final VoidCallback onPressed;
-
-  @override
-  Widget build(BuildContext context) {
-    return OutlinedButton(
-      onPressed: onPressed,
-      style: OutlinedButton.styleFrom(
-        foregroundColor: AppColors.cream,
-        side: const BorderSide(color: AppColors.cream, width: 0.8),
-        padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 17),
-        shape: const StadiumBorder(),
-      ),
-      child: Text(
-        label,
-        style: const TextStyle(
-          fontSize: 10,
-          fontWeight: FontWeight.w700,
-          letterSpacing: 1.8,
-        ),
       ),
     );
   }

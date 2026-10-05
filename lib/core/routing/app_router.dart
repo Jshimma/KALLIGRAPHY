@@ -2,12 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../navigation/main_shell.dart';
+import '../../features/studio/studio_galleries_screen.dart';
+import '../../features/studio/studio_gallery_manager_screen.dart';
 
 import '../../features/auth/auth_gate.dart';
 import '../../features/auth/photographer_shell.dart';
 import '../../features/booking/booking_screen.dart';
 import '../../features/booking/packages_screen.dart';
 import '../../features/gallery/gallery_screen.dart';
+import '../../features/gallery/client_gallery_screen.dart';
 import '../../features/home/home_screen.dart';
 import '../../features/inquiries/inquiries_screen.dart';
 import '../../features/portfolio/portfolio_screen.dart';
@@ -54,6 +57,14 @@ final GoRouter appRouter = GoRouter(
         ),
       ],
     ),
+    GoRoute(
+      path: '/client-gallery/:token',
+      name: 'client-gallery',
+      builder: (context, state) {
+        return ClientGalleryScreen(token: state.pathParameters['token']!);
+      },
+    ),
+
     ShellRoute(
       builder: (context, state, child) {
         return AuthGate(
@@ -62,6 +73,15 @@ final GoRouter appRouter = GoRouter(
 
             if (state.uri.path == '/studio/inquiries') {
               studioPage = InquiriesScreen(session: session);
+            } else if (state.uri.path == '/studio/galleries') {
+              studioPage = StudioGalleriesScreen(session: session);
+            } else if (state.uri.path.startsWith('/studio/galleries/')) {
+              final galleryId = int.parse(state.pathParameters['galleryId']!);
+
+              studioPage = StudioGalleryManagerScreen(
+                session: session,
+                galleryId: galleryId,
+              );
             } else {
               studioPage = const StudioDashboardScreen();
             }
@@ -83,6 +103,16 @@ final GoRouter appRouter = GoRouter(
         GoRoute(
           path: '/studio/inquiries',
           name: 'studio-inquiries',
+          builder: (context, state) => const SizedBox.shrink(),
+        ),
+        GoRoute(
+          path: '/studio/galleries',
+          name: 'studio-galleries',
+          builder: (context, state) => const SizedBox.shrink(),
+        ),
+        GoRoute(
+          path: '/studio/galleries/:galleryId',
+          name: 'studio-gallery-manager',
           builder: (context, state) => const SizedBox.shrink(),
         ),
       ],

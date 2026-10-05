@@ -48,3 +48,4 @@ class PortfolioPhotoResponse(BaseModel):
     processing_status: str
     created_at: datetime
     updated_at: datetime
+    preview_url: str | None = None

@@ -63,3 +63,27 @@ class GalleryResponse(BaseModel):
 class GallerySummary(GalleryResponse):
     client_name: str
     photo_count: int
+
+class PublicGalleryPhoto(BaseModel):
+    id: int
+    title: str
+    preview_url: str
+
+
+class PublicGalleryResponse(BaseModel):
+    name: str
+    description: str | None
+    photo_count: int
+    is_download_enabled: bool
+    is_favorites_enabled: bool
+    expires_at: datetime | None
+    photos: list[PublicGalleryPhoto]
+
+
+class GalleryPhotoReorderItem(BaseModel):
+    photo_id: int
+    display_order: int
+
+
+class GalleryPhotoReorderRequest(BaseModel):
+    photos: list[GalleryPhotoReorderItem]

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:url_launcher/url_launcher.dart';
+import 'package:qr_flutter/qr_flutter.dart';
 
 import '../../core/constants/app_colors.dart';
 import '../../services/api/inquiry_api_service.dart';
@@ -53,15 +53,13 @@ class _BookingScreenState extends State<BookingScreen> {
     setState(() => _submitting = true);
 
     try {
-      final api = InquiryApiService();
-
-      await api.submitInquiry(
-        name: _nameController.text,
-        email: _emailController.text,
+      await InquiryApiService().submitInquiry(
+        name: _nameController.text.trim(),
+        email: _emailController.text.trim(),
         service: _service,
-        preferredDate: _dateController.text,
-        location: _locationController.text,
-        message: _messageController.text,
+        preferredDate: _dateController.text.trim(),
+        location: _locationController.text.trim(),
+        message: _messageController.text.trim(),
       );
 
       if (!mounted) return;
@@ -125,41 +123,97 @@ class _BookingHero extends StatelessWidget {
     return Container(
       width: double.infinity,
       color: AppColors.cream,
-      padding: const EdgeInsets.fromLTRB(28, 110, 28, 70),
+      padding: const EdgeInsets.fromLTRB(28, 105, 28, 80),
       child: Center(
         child: ConstrainedBox(
           constraints: const BoxConstraints(maxWidth: 1180),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'BOOK / INQUIRE',
-                style: Theme.of(context).textTheme.labelMedium?.copyWith(
-                  color: AppColors.muted,
-                  fontWeight: FontWeight.w600,
-                  letterSpacing: 2.5,
+          child: LayoutBuilder(
+            builder: (context, constraints) {
+              final wide = constraints.maxWidth > 850;
+
+              final title = Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'KALLYGRAPHY STUDIO',
+                    style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                      color: AppColors.muted,
+                      fontWeight: FontWeight.w700,
+                      letterSpacing: 3,
+                    ),
+                  ),
+                  const SizedBox(height: 28),
+                  Text(
+                    'BOOK YOUR\nMOMENT.',
+                    style: Theme.of(context).textTheme.displayLarge?.copyWith(
+                      color: AppColors.espresso,
+                      fontSize: wide ? 82 : 58,
+                      height: .88,
+                      letterSpacing: -1.5,
+                    ),
+                  ),
+                  const SizedBox(height: 28),
+                  ConstrainedBox(
+                    constraints: const BoxConstraints(maxWidth: 600),
+                    child: Text(
+                      'Every story begins with a conversation. '
+                      'Tell KALLYGRAPHY STUDIO what you are planning, '
+                      'and let’s create photographs that feel like memory.',
+                      style: Theme.of(context).textTheme.bodyLarge
+                          ?.copyWith(color: AppColors.muted, height: 1.75),
+                    ),
+                  ),
+                ],
+              );
+
+              final mark = Container(
+                width: wide ? 210 : double.infinity,
+                height: wide ? 210 : 170,
+                padding: const EdgeInsets.all(24),
+                decoration: BoxDecoration(
+                  color: AppColors.mocha,
+                  borderRadius: BorderRadius.circular(32),
                 ),
-              ),
-              const SizedBox(height: 30),
-              Text(
-                'Let’s create something\nworth remembering.',
-                style: Theme.of(context).textTheme.displayLarge?.copyWith(
-                  color: AppColors.espresso,
-                  fontSize: 72,
-                  height: .92,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      '01',
+                      style: Theme.of(context).textTheme.displaySmall?.copyWith(
+                        color: AppColors.ivory,
+                        fontSize: 48,
+                        height: 1,
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+                    Text(
+                      'START HERE',
+                      style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                        color: AppColors.ivory,
+                        fontWeight: FontWeight.w700,
+                        letterSpacing: 2.5,
+                      ),
+                    ),
+                  ],
                 ),
-              ),
-              const SizedBox(height: 28),
-              ConstrainedBox(
-                constraints: const BoxConstraints(maxWidth: 610),
-                child: Text(
-                  'Tell me a little about what you are planning. '
-                  'I’ll get back to you and we can talk through the details together.',
-                  style: Theme.of(context).textTheme.bodyLarge
-                      ?.copyWith(color: AppColors.muted, height: 1.75),
-                ),
-              ),
-            ],
+              );
+
+              if (!wide) {
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [title, const SizedBox(height: 35), mark],
+                );
+              }
+
+              return Row(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  Expanded(child: title),
+                  const SizedBox(width: 70),
+                  mark,
+                ],
+              );
+            },
           ),
         ),
       ),
@@ -205,7 +259,7 @@ class _InquirySection extends StatelessWidget {
           constraints: const BoxConstraints(maxWidth: 1180),
           child: LayoutBuilder(
             builder: (context, constraints) {
-              final wide = constraints.maxWidth > 820;
+              final wide = constraints.maxWidth > 900;
 
               final form = Form(
                 key: formKey,
@@ -213,17 +267,17 @@ class _InquirySection extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     const _Eyebrow('01 / YOUR DETAILS', color: AppColors.sand),
-                    const SizedBox(height: 34),
+                    const SizedBox(height: 30),
                     Text(
-                      'Tell Ryan about\nyour plans.',
+                      'Tell KALLYGRAPHY\nabout your plans.',
                       style: Theme.of(context).textTheme.displayMedium
                           ?.copyWith(
                             color: AppColors.ivory,
-                            fontSize: 56,
-                            height: .96,
+                            fontSize: wide ? 58 : 45,
+                            height: .94,
                           ),
                     ),
-                    const SizedBox(height: 42),
+                    const SizedBox(height: 40),
                     _OvalField(
                       controller: nameController,
                       label: 'YOUR NAME',
@@ -258,45 +312,85 @@ class _InquirySection extends StatelessWidget {
                             child: _OvalField(
                               controller: locationController,
                               label: 'LOCATION',
-                              validator: _required,
                             ),
                           ),
                         ],
                       )
-                    else ...[
-                      _OvalField(
-                        controller: dateController,
-                        label: 'EVENT DATE',
-                        hint: 'DD / MM / YYYY',
+                    else
+                      Column(
+                        children: [
+                          _OvalField(
+                            controller: dateController,
+                            label: 'EVENT DATE',
+                            hint: 'DD / MM / YYYY',
+                          ),
+                          const SizedBox(height: 14),
+                          _OvalField(
+                            controller: locationController,
+                            label: 'LOCATION',
+                          ),
+                        ],
                       ),
-                      const SizedBox(height: 14),
-                      _OvalField(
-                        controller: locationController,
-                        label: 'LOCATION',
-                        validator: _required,
-                      ),
-                    ],
                     const SizedBox(height: 14),
-                    _MessageField(
+                    _OvalField(
                       controller: messageController,
-                      validator: _required,
+                      label: 'TELL US ABOUT IT',
+                      maxLines: 5,
                     ),
-                    const SizedBox(height: 28),
-                    _SubmitButton(submitting: submitting, onPressed: onSubmit),
+                    const SizedBox(height: 30),
+                    SizedBox(
+                      height: 58,
+                      child: FilledButton(
+                        onPressed: submitting ? null : onSubmit,
+                        style: FilledButton.styleFrom(
+                          backgroundColor: AppColors.mocha,
+                          foregroundColor: AppColors.ivory,
+                          disabledBackgroundColor: AppColors.brown,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(999),
+                          ),
+                        ),
+                        child: submitting
+                            ? const SizedBox(
+                                width: 22,
+                                height: 22,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                  color: AppColors.ivory,
+                                ),
+                              )
+                            : const Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text(
+                                    'SEND INQUIRY',
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.w700,
+                                      letterSpacing: 1.5,
+                                    ),
+                                  ),
+                                  SizedBox(width: 14),
+                                  Icon(Icons.arrow_forward_rounded),
+                                ],
+                              ),
+                      ),
+                    ),
                   ],
                 ),
               );
 
+              final qr = const _BookingQr();
+
               if (!wide) {
-                return form;
+                return Column(children: [form, const SizedBox(height: 70), qr]);
               }
 
               return Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Expanded(child: form),
-                  const SizedBox(width: 90),
-                  const Expanded(child: _FormAside()),
+                  Expanded(flex: 6, child: form),
+                  const SizedBox(width: 80),
+                  const Expanded(flex: 4, child: _BookingQr()),
                 ],
               );
             },
@@ -305,63 +399,216 @@ class _InquirySection extends StatelessWidget {
       ),
     );
   }
-
-  static String? _required(String? value) {
-    if (value == null || value.trim().isEmpty) {
-      return 'Required';
-    }
-    return null;
-  }
-
-  static String? _email(String? value) {
-    if (value == null || value.trim().isEmpty) {
-      return 'Required';
-    }
-
-    if (!value.contains('@')) {
-      return 'Enter a valid email';
-    }
-
-    return null;
-  }
 }
 
-class _FormAside extends StatelessWidget {
-  const _FormAside();
+class _BookingQr extends StatelessWidget {
+  const _BookingQr();
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(top: 130),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          ClipRRect(
-            borderRadius: BorderRadius.circular(2),
-            child: Image.asset(
-              'assets/images/ryan/Wedding3.jpg',
-              height: 460,
-              width: double.infinity,
-              fit: BoxFit.cover,
+    const contactData = '''
+BEGIN:VCARD
+VERSION:3.0
+FN:KALLYGRAPHY STUDIO
+ORG:KALLYGRAPHY STUDIO
+TEL;TYPE=CELL:+256787758821
+TEL;TYPE=WORK:+256707266444
+EMAIL:kallygraph01@gmail.com
+END:VCARD
+''';
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const _Eyebrow('02 / QUICK BOOKING', color: AppColors.sand),
+        const SizedBox(height: 30),
+        Text(
+          'Scan.\nBook.\nBegin.',
+          style: Theme.of(context).textTheme.displayMedium
+              ?.copyWith(color: AppColors.ivory, fontSize: 58, height: .9),
+        ),
+        const SizedBox(height: 24),
+        Text(
+          'Save KALLYGRAPHY STUDIO to your phone. '
+          'Scan this code to get our WhatsApp, phone and email details.',
+          style: Theme.of(context).textTheme.bodyMedium
+              ?.copyWith(color: AppColors.sand, height: 1.7),
+        ),
+        const SizedBox(height: 30),
+        Container(
+          width: 230,
+          height: 230,
+          padding: const EdgeInsets.all(18),
+          decoration: BoxDecoration(
+            color: AppColors.ivory,
+            borderRadius: BorderRadius.circular(26),
+          ),
+          child: QrImageView(
+            data: contactData,
+            version: QrVersions.auto,
+            backgroundColor: AppColors.ivory,
+            eyeStyle: const QrEyeStyle(
+              eyeShape: QrEyeShape.square,
+              color: AppColors.espresso,
+            ),
+            dataModuleStyle: const QrDataModuleStyle(
+              dataModuleShape: QrDataModuleShape.square,
+              color: AppColors.espresso,
             ),
           ),
-          const SizedBox(height: 26),
-          Text(
-            'PHOTOGRAPHY · VIDEOGRAPHY · GRAPHICS DESIGN',
-            style: Theme.of(context).textTheme.labelSmall?.copyWith(
-              color: AppColors.sand,
-              fontWeight: FontWeight.w600,
-              letterSpacing: 1.5,
-              height: 1.6,
-            ),
+        ),
+        const SizedBox(height: 20),
+        Text(
+          'KALLYGRAPHY STUDIO',
+          style: Theme.of(context).textTheme.labelMedium?.copyWith(
+            color: AppColors.ivory,
+            fontWeight: FontWeight.w700,
+            letterSpacing: 2,
           ),
-          const SizedBox(height: 18),
-          Text(
-            'Every story deserves to be documented with intention.',
-            style: Theme.of(context).textTheme.titleLarge
-                ?.copyWith(color: AppColors.ivory, height: 1.35),
+        ),
+      ],
+    );
+  }
+}
+
+class _SuccessSection extends StatelessWidget {
+  const _SuccessSection();
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      color: AppColors.mocha,
+      padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 120),
+      child: Center(
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 900),
+          child: Column(
+            children: [
+              const Text(
+                'THANK YOU.',
+                style: TextStyle(
+                  color: AppColors.ivory,
+                  fontFamily: 'Manrope',
+                  fontWeight: FontWeight.w700,
+                  letterSpacing: 3,
+                ),
+              ),
+              const SizedBox(height: 25),
+              Text(
+                'Your story is\nnow in motion.',
+                textAlign: TextAlign.center,
+                style: Theme.of(context).textTheme.displayLarge?.copyWith(
+                  color: AppColors.ivory,
+                  fontSize: 70,
+                  height: .9,
+                ),
+              ),
+              const SizedBox(height: 28),
+              Text(
+                'Your inquiry has been received by KALLYGRAPHY STUDIO. '
+                'We’ll be in touch soon to talk through the details.',
+                textAlign: TextAlign.center,
+                style: Theme.of(context).textTheme.bodyLarge
+                    ?.copyWith(color: AppColors.cream, height: 1.7),
+              ),
+              const SizedBox(height: 38),
+              FilledButton(
+                onPressed: () => context.go('/portfolio'),
+                style: FilledButton.styleFrom(
+                  backgroundColor: AppColors.ivory,
+                  foregroundColor: AppColors.espresso,
+                  minimumSize: const Size(190, 56),
+                ),
+                child: const Text('VIEW THE WORK'),
+              ),
+            ],
           ),
-        ],
+        ),
+      ),
+    );
+  }
+}
+
+class _BookingFooter extends StatelessWidget {
+  const _BookingFooter();
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      color: AppColors.cream,
+      padding: const EdgeInsets.fromLTRB(28, 65, 28, 45),
+      child: Center(
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 1180),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'KALLYGRAPHY STUDIO',
+                style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                  color: AppColors.espresso,
+                  fontWeight: FontWeight.w700,
+                  letterSpacing: 2,
+                ),
+              ),
+              const SizedBox(height: 12),
+              Text(
+                'PHOTOGRAPHY · VIDEOGRAPHY · GRAPHICS DESIGN',
+                style: Theme.of(context).textTheme.labelMedium
+                    ?.copyWith(color: AppColors.muted, letterSpacing: 1.5),
+              ),
+              const SizedBox(height: 35),
+              OutlinedButton.icon(
+                onPressed: () => context.go('/studio'),
+                icon: const Icon(Icons.lock_outline_rounded, size: 18),
+                label: const Text(
+                  'KALLYGRAPHY STUDIO LOGIN',
+                  style: TextStyle(
+                    fontWeight: FontWeight.w700,
+                    letterSpacing: 1.2,
+                  ),
+                ),
+                style: OutlinedButton.styleFrom(
+                  foregroundColor: AppColors.espresso,
+                  side: const BorderSide(color: AppColors.espresso, width: 1.2),
+                  minimumSize: const Size(250, 54),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(999),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 35),
+              const Divider(color: AppColors.border),
+              const SizedBox(height: 22),
+              Text(
+                'KAMPALA · UGANDA · WORLDWIDE',
+                style: Theme.of(context).textTheme.labelSmall
+                    ?.copyWith(color: AppColors.muted, letterSpacing: 1.5),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _Eyebrow extends StatelessWidget {
+  const _Eyebrow(this.text, {required this.color});
+
+  final String text;
+  final Color color;
+
+  @override
+  Widget build(BuildContext context) {
+    return Text(
+      text,
+      style: Theme.of(context).textTheme.labelMedium?.copyWith(
+        color: color,
+        fontWeight: FontWeight.w700,
+        letterSpacing: 2.5,
       ),
     );
   }
@@ -373,6 +620,7 @@ class _OvalField extends StatelessWidget {
     required this.label,
     this.hint,
     this.keyboardType,
+    this.maxLines = 1,
     this.validator,
   });
 
@@ -380,6 +628,7 @@ class _OvalField extends StatelessWidget {
   final String label;
   final String? hint;
   final TextInputType? keyboardType;
+  final int maxLines;
   final String? Function(String?)? validator;
 
   @override
@@ -387,43 +636,48 @@ class _OvalField extends StatelessWidget {
     return TextFormField(
       controller: controller,
       keyboardType: keyboardType,
+      maxLines: maxLines,
       validator: validator,
-      style: const TextStyle(color: AppColors.espresso),
+      style: const TextStyle(color: AppColors.espresso, fontFamily: 'Manrope'),
       decoration: InputDecoration(
         labelText: label,
         hintText: hint,
+        alignLabelWithHint: maxLines > 1,
         filled: true,
         fillColor: AppColors.ivory,
         labelStyle: const TextStyle(
           color: AppColors.muted,
           fontSize: 11,
-          fontWeight: FontWeight.w600,
+          fontWeight: FontWeight.w700,
           letterSpacing: 1.2,
         ),
-        hintStyle: const TextStyle(color: AppColors.beige),
-        contentPadding: const EdgeInsets.symmetric(
-          horizontal: 25,
-          vertical: 20,
+        hintStyle: const TextStyle(
+          color: AppColors.beige,
+          fontFamily: 'Manrope',
+        ),
+        contentPadding: EdgeInsets.symmetric(
+          horizontal: 24,
+          vertical: maxLines > 1 ? 20 : 17,
         ),
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(999),
+          borderRadius: BorderRadius.circular(maxLines > 1 ? 24 : 999),
           borderSide: BorderSide.none,
         ),
         enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(999),
+          borderRadius: BorderRadius.circular(maxLines > 1 ? 24 : 999),
           borderSide: BorderSide.none,
         ),
         focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(999),
-          borderSide: const BorderSide(color: AppColors.mocha, width: 1.5),
+          borderRadius: BorderRadius.circular(maxLines > 1 ? 24 : 999),
+          borderSide: const BorderSide(color: AppColors.mocha, width: 2),
         ),
         errorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(999),
+          borderRadius: BorderRadius.circular(maxLines > 1 ? 24 : 999),
           borderSide: const BorderSide(color: AppColors.error),
         ),
         focusedErrorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(999),
-          borderSide: const BorderSide(color: AppColors.error),
+          borderRadius: BorderRadius.circular(maxLines > 1 ? 24 : 999),
+          borderSide: const BorderSide(color: AppColors.error, width: 2),
         ),
       ),
     );
@@ -446,447 +700,57 @@ class _OvalDropdown extends StatelessWidget {
     return DropdownButtonFormField<String>(
       initialValue: value,
       onChanged: onChanged,
-      dropdownColor: AppColors.ivory,
-      style: const TextStyle(color: AppColors.espresso),
+      style: const TextStyle(
+        color: AppColors.espresso,
+        fontFamily: 'Manrope',
+        fontSize: 14,
+      ),
       decoration: InputDecoration(
-        labelText: 'WHAT ARE YOU BOOKING?',
+        labelText: 'WHAT ARE WE CREATING?',
         filled: true,
         fillColor: AppColors.ivory,
         labelStyle: const TextStyle(
           color: AppColors.muted,
           fontSize: 11,
-          fontWeight: FontWeight.w600,
-          letterSpacing: 1.2,
-        ),
-        contentPadding: const EdgeInsets.symmetric(horizontal: 25, vertical: 6),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(999),
-          borderSide: BorderSide.none,
-        ),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(999),
-          borderSide: BorderSide.none,
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(999),
-          borderSide: const BorderSide(color: AppColors.mocha, width: 1.5),
-        ),
-      ),
-      items: [
-        for (final item in items)
-          DropdownMenuItem(value: item, child: Text(item)),
-      ],
-    );
-  }
-}
-
-class _MessageField extends StatelessWidget {
-  const _MessageField({required this.controller, required this.validator});
-
-  final TextEditingController controller;
-  final String? Function(String?) validator;
-
-  @override
-  Widget build(BuildContext context) {
-    return TextFormField(
-      controller: controller,
-      minLines: 6,
-      maxLines: 8,
-      validator: validator,
-      style: const TextStyle(color: AppColors.espresso),
-      decoration: InputDecoration(
-        labelText: 'TELL RYAN ABOUT YOUR PLANS',
-        alignLabelWithHint: true,
-        filled: true,
-        fillColor: AppColors.ivory,
-        labelStyle: const TextStyle(
-          color: AppColors.muted,
-          fontSize: 11,
-          fontWeight: FontWeight.w600,
-          letterSpacing: 1.2,
-        ),
-        contentPadding: const EdgeInsets.fromLTRB(25, 22, 25, 22),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(30),
-          borderSide: BorderSide.none,
-        ),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(30),
-          borderSide: BorderSide.none,
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(30),
-          borderSide: const BorderSide(color: AppColors.mocha, width: 1.5),
-        ),
-      ),
-    );
-  }
-}
-
-class _SubmitButton extends StatelessWidget {
-  const _SubmitButton({required this.submitting, required this.onPressed});
-
-  final bool submitting;
-  final VoidCallback onPressed;
-
-  @override
-  Widget build(BuildContext context) {
-    return SizedBox(
-      height: 56,
-      child: FilledButton(
-        onPressed: submitting ? null : onPressed,
-        style: FilledButton.styleFrom(
-          backgroundColor: AppColors.ivory,
-          foregroundColor: AppColors.espresso,
-          disabledBackgroundColor: AppColors.beige,
-          shape: const StadiumBorder(),
-          padding: const EdgeInsets.symmetric(horizontal: 34),
-        ),
-        child: submitting
-            ? const SizedBox(
-                height: 20,
-                width: 20,
-                child: CircularProgressIndicator(
-                  strokeWidth: 2,
-                  color: AppColors.espresso,
-                ),
-              )
-            : Text(
-                'SEND INQUIRY',
-                style: Theme.of(context).textTheme.labelMedium?.copyWith(
-                  color: AppColors.espresso,
-                  fontWeight: FontWeight.w700,
-                  letterSpacing: 1.5,
-                ),
-              ),
-      ),
-    );
-  }
-}
-
-class _SuccessSection extends StatelessWidget {
-  const _SuccessSection();
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      color: AppColors.darkBrown,
-      padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 130),
-      child: Center(
-        child: Column(
-          children: [
-            const Icon(
-              Icons.check_circle_outline,
-              color: AppColors.sand,
-              size: 54,
-            ),
-            const SizedBox(height: 28),
-            Text(
-              'Thank you.',
-              style: Theme.of(context).textTheme.displayMedium
-                  ?.copyWith(color: AppColors.ivory, fontSize: 58),
-            ),
-            const SizedBox(height: 20),
-            ConstrainedBox(
-              constraints: const BoxConstraints(maxWidth: 520),
-              child: Text(
-                'Your inquiry has been received. Ryan will be in touch soon to talk through the details.',
-                textAlign: TextAlign.center,
-                style: Theme.of(context).textTheme.bodyLarge
-                    ?.copyWith(color: AppColors.sand, height: 1.7),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class _BookingFooter extends StatelessWidget {
-  const _BookingFooter();
-
-  Future<void> _open(String value) async {
-    final uri = Uri.parse(value);
-
-    if (await canLaunchUrl(uri)) {
-      await launchUrl(uri, mode: LaunchMode.externalApplication);
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        // ---------------------------------------------------------------
-        // DIRECT CONTACT — BURNT ORANGE
-        // ---------------------------------------------------------------
-        Container(
-          width: double.infinity,
-          color: AppColors.mocha,
-          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 88),
-          child: Center(
-            child: ConstrainedBox(
-              constraints: const BoxConstraints(maxWidth: 1180),
-              child: LayoutBuilder(
-                builder: (context, constraints) {
-                  final compact = constraints.maxWidth < 760;
-
-                  return Flex(
-                    direction: compact ? Axis.vertical : Axis.horizontal,
-                    crossAxisAlignment: compact
-                        ? CrossAxisAlignment.start
-                        : CrossAxisAlignment.end,
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Flexible(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'OR REACH RYAN DIRECTLY',
-                              style: Theme.of(context).textTheme.labelMedium
-                                  ?.copyWith(
-                                    color: AppColors.cream,
-                                    letterSpacing: 2.4,
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                            ),
-                            const SizedBox(height: 18),
-                            Text(
-                              'Prefer a direct\nconversation?',
-                              style: Theme.of(context).textTheme.displaySmall
-                                  ?.copyWith(
-                                    color: AppColors.ivory,
-                                    height: 0.95,
-                                  ),
-                            ),
-                            const SizedBox(height: 18),
-                            ConstrainedBox(
-                              constraints: const BoxConstraints(maxWidth: 470),
-                              child: Text(
-                                'If you already know what you need, you can reach Ryan directly and start the conversation from there.',
-                                style: Theme.of(context).textTheme.bodyLarge
-                                    ?.copyWith(
-                                      color: AppColors.cream.withValues(
-                                        alpha: 0.88,
-                                      ),
-                                      height: 1.7,
-                                    ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      SizedBox(
-                        width: compact ? 0 : 48,
-                        height: compact ? 40 : 0,
-                      ),
-                      Flexible(
-                        child: Wrap(
-                          spacing: 10,
-                          runSpacing: 10,
-                          children: [
-                            _ContactButton(
-                              label: 'EMAIL',
-                              icon: Icons.mail_outline_rounded,
-                              onTap: () =>
-                                  _open('mailto:kallygraphy01@gmail.com'),
-                            ),
-                            _ContactButton(
-                              label: 'WHATSAPP',
-                              icon: Icons.chat_bubble_outline_rounded,
-                              onTap: () => _open('https://wa.me/256707266444'),
-                            ),
-                            _ContactButton(
-                              label: 'CALL',
-                              icon: Icons.phone_outlined,
-                              onTap: () => _open('tel:+256787758821'),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  );
-                },
-              ),
-            ),
-          ),
-        ),
-
-        // ---------------------------------------------------------------
-        // ---------------------------------------------------------------
-        // PRIVATE STUDIO — CREAM
-        // ---------------------------------------------------------------
-        Container(
-          width: double.infinity,
-          color: AppColors.cream,
-          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 58),
-          child: Center(
-            child: ConstrainedBox(
-              constraints: const BoxConstraints(maxWidth: 1180),
-              child: LayoutBuilder(
-                builder: (context, constraints) {
-                  final compact = constraints.maxWidth < 680;
-
-                  return Flex(
-                    direction: compact ? Axis.vertical : Axis.horizontal,
-                    crossAxisAlignment: compact
-                        ? CrossAxisAlignment.start
-                        : CrossAxisAlignment.center,
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'RYAN’S PRIVATE WORKSPACE',
-                            style: Theme.of(context).textTheme.labelMedium
-                                ?.copyWith(
-                                  color: AppColors.brown,
-                                  letterSpacing: 2.2,
-                                  fontWeight: FontWeight.w700,
-                                ),
-                          ),
-                          const SizedBox(height: 10),
-                          Text(
-                            'Photographer Studio.',
-                            style: Theme.of(context).textTheme.headlineSmall
-                                ?.copyWith(color: AppColors.espresso),
-                          ),
-                          const SizedBox(height: 8),
-                          Text(
-                            'Private access for Ryan to manage inquiries, '
-                            'galleries and studio work.',
-                            style: Theme.of(context).textTheme.bodyMedium
-                                ?.copyWith(color: AppColors.muted, height: 1.5),
-                          ),
-                        ],
-                      ),
-                      SizedBox(
-                        width: compact ? 0 : 32,
-                        height: compact ? 24 : 0,
-                      ),
-                      TextButton(
-                        onPressed: () => context.go('/studio'),
-                        style: TextButton.styleFrom(
-                          foregroundColor: AppColors.espresso,
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 0,
-                            vertical: 8,
-                          ),
-                          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                          visualDensity: VisualDensity.compact,
-                        ),
-                        child: const Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Text(
-                              'STUDIO LOGIN',
-                              style: TextStyle(
-                                fontSize: 11,
-                                fontWeight: FontWeight.w700,
-                                letterSpacing: 1.8,
-                              ),
-                            ),
-                            SizedBox(width: 10),
-                            Icon(Icons.arrow_forward, size: 16),
-                          ],
-                        ),
-                      ),
-                    ],
-                  );
-                },
-              ),
-            ),
-          ),
-        ),
-
-        // FOOTER — ESPRESSO
-        // ---------------------------------------------------------------
-        Container(
-          width: double.infinity,
-          color: AppColors.espresso,
-          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
-          child: Center(
-            child: ConstrainedBox(
-              constraints: const BoxConstraints(maxWidth: 1180),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    'KALLYGRAPHY',
-                    style: Theme.of(context).textTheme.labelMedium?.copyWith(
-                      color: AppColors.cream,
-                      letterSpacing: 2.5,
-                      fontWeight: FontWeight.w700,
-                    ),
-                  ),
-                  Text(
-                    'KALIISA RYAN',
-                    style: Theme.of(context).textTheme.labelSmall
-                        ?.copyWith(color: AppColors.sand, letterSpacing: 1.8),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-}
-
-class _ContactButton extends StatelessWidget {
-  const _ContactButton({
-    required this.label,
-    required this.icon,
-    required this.onTap,
-  });
-
-  final String label;
-  final IconData icon;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    return OutlinedButton.icon(
-      onPressed: onTap,
-      icon: Icon(icon, size: 16),
-      label: Text(
-        label,
-        style: const TextStyle(
-          fontSize: 10,
           fontWeight: FontWeight.w700,
-          letterSpacing: 1.5,
+          letterSpacing: 1.2,
+        ),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 6),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(999),
+          borderSide: BorderSide.none,
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(999),
+          borderSide: BorderSide.none,
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(999),
+          borderSide: const BorderSide(color: AppColors.mocha, width: 2),
         ),
       ),
-      style: OutlinedButton.styleFrom(
-        foregroundColor: AppColors.cream,
-        side: BorderSide(color: AppColors.cream.withValues(alpha: 0.65)),
-        padding: const EdgeInsets.symmetric(horizontal: 17, vertical: 14),
-        shape: const StadiumBorder(),
-      ),
+      items: items
+          .map((item) => DropdownMenuItem(value: item, child: Text(item)))
+          .toList(),
     );
   }
 }
 
-class _Eyebrow extends StatelessWidget {
-  const _Eyebrow(this.text, {this.color});
-
-  final String text;
-  final Color? color;
-
-  @override
-  Widget build(BuildContext context) {
-    return Text(
-      text,
-      style: Theme.of(context).textTheme.labelMedium?.copyWith(
-        color: color ?? AppColors.muted,
-        fontWeight: FontWeight.w600,
-        letterSpacing: 2,
-      ),
-    );
+String? _required(String? value) {
+  if (value == null || value.trim().isEmpty) {
+    return 'Required';
   }
+  return null;
+}
+
+String? _email(String? value) {
+  if (value == null || value.trim().isEmpty) {
+    return 'Required';
+  }
+
+  if (!value.contains('@') || !value.contains('.')) {
+    return 'Enter a valid email';
+  }
+
+  return null;
 }

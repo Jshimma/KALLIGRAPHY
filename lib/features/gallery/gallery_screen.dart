@@ -1,330 +1,387 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../core/constants/app_colors.dart';
 
-class GalleryScreen extends StatefulWidget {
+class GalleryScreen extends StatelessWidget {
   const GalleryScreen({super.key});
 
-  @override
-  State<GalleryScreen> createState() => _GalleryScreenState();
-}
-
-class _GalleryScreenState extends State<GalleryScreen> {
-  static const _categories = [
-    'ALL',
-    'WEDDINGS',
-    'INTRODUCTIONS',
-    'BABY SHOWERS',
-    'GRADUATIONS',
-    'PHOTOSHOOTS',
-    'MOMENTS',
-  ];
-
   static const _photos = [
-    _GalleryPhoto('WEDDINGS', 'assets/images/ryan/Wedding.jpg'),
-    _GalleryPhoto('WEDDINGS', 'assets/images/ryan/Wedding2.jpg'),
-    _GalleryPhoto('WEDDINGS', 'assets/images/ryan/Wedding3.jpg'),
-    _GalleryPhoto('WEDDINGS', 'assets/images/ryan/Wedding4.jpg'),
-    _GalleryPhoto('WEDDINGS', 'assets/images/ryan/Wedding5.jpg'),
-    _GalleryPhoto('WEDDINGS', 'assets/images/ryan/Wedding6.jpg'),
-    _GalleryPhoto('WEDDINGS', 'assets/images/ryan/Wedding7.jpg'),
-
-    _GalleryPhoto('INTRODUCTIONS', 'assets/images/ryan/Introduction.jpg'),
-    _GalleryPhoto('INTRODUCTIONS', 'assets/images/ryan/Introduction2.jpg'),
-    _GalleryPhoto('INTRODUCTIONS', 'assets/images/ryan/Introduction3.jpg'),
-    _GalleryPhoto('INTRODUCTIONS', 'assets/images/ryan/Introduction4.jpg'),
-    _GalleryPhoto('INTRODUCTIONS', 'assets/images/ryan/Introduction5.jpg'),
-    _GalleryPhoto('INTRODUCTIONS', 'assets/images/ryan/Introduction6.jpg'),
-    _GalleryPhoto('INTRODUCTIONS', 'assets/images/ryan/Introduction7.jpg'),
-    _GalleryPhoto('INTRODUCTIONS', 'assets/images/ryan/Introduction8.jpg'),
-    _GalleryPhoto('INTRODUCTIONS', 'assets/images/ryan/Introduction9.jpg'),
-    _GalleryPhoto('INTRODUCTIONS', 'assets/images/ryan/Introduction10.jpg'),
-
-    _GalleryPhoto('BABY SHOWERS', 'assets/images/ryan/Baby shower.jpg'),
-
-    _GalleryPhoto('GRADUATIONS', 'assets/images/ryan/graduation.jpg'),
-    _GalleryPhoto('GRADUATIONS', 'assets/images/ryan/graduation2.jpg'),
-    _GalleryPhoto('GRADUATIONS', 'assets/images/ryan/graduation3.jpg'),
-
-    _GalleryPhoto('PHOTOSHOOTS', 'assets/images/ryan/photoshoot.jpg'),
-    _GalleryPhoto('PHOTOSHOOTS', 'assets/images/ryan/photoshoot3.jpg'),
-    _GalleryPhoto('PHOTOSHOOTS', 'assets/images/ryan/photoshoot4.jpg'),
-    _GalleryPhoto('PHOTOSHOOTS', 'assets/images/ryan/photoshoot5.jpg'),
-    _GalleryPhoto('PHOTOSHOOTS', 'assets/images/ryan/photoshoot6.jpg'),
-    _GalleryPhoto('PHOTOSHOOTS', 'assets/images/ryan/photoshoot7.jpg'),
-    _GalleryPhoto('PHOTOSHOOTS', 'assets/images/ryan/photoshoot8.jpg'),
-    _GalleryPhoto('PHOTOSHOOTS', 'assets/images/ryan/photoshoot9.jpg'),
-    _GalleryPhoto('PHOTOSHOOTS', 'assets/images/ryan/photoshoot10.jpg'),
-    _GalleryPhoto('PHOTOSHOOTS', 'assets/images/ryan/photoshoot11.jpg'),
-
-    _GalleryPhoto('MOMENTS', 'assets/images/ryan/Moments.jpg'),
-    _GalleryPhoto('MOMENTS', 'assets/images/ryan/Moments2.jpg'),
-    _GalleryPhoto('MOMENTS', 'assets/images/ryan/Moments3.jpg'),
-    _GalleryPhoto('MOMENTS', 'assets/images/ryan/Moments4.jpg'),
-    _GalleryPhoto('MOMENTS', 'assets/images/ryan/Moments5.jpg'),
-    _GalleryPhoto('MOMENTS', 'assets/images/ryan/Moments6.jpg'),
+    _GalleryPhoto(
+      'Introduction.jpg',
+      'Introductions',
+      'A beginning worth remembering.',
+    ),
+    _GalleryPhoto('Wedding.jpg', 'Weddings', 'The day they became one.'),
+    _GalleryPhoto('Moment6.jpg', 'Moments', 'The in-between moments.'),
+    _GalleryPhoto(
+      'Introduction2.jpg',
+      'Introductions',
+      'A room full of anticipation.',
+    ),
+    _GalleryPhoto('Wedding2.jpg', 'Weddings', 'Love, surrounded by everyone.'),
+    _GalleryPhoto('photoshoot.jpg', 'Portraits', 'In their element.'),
+    _GalleryPhoto('Introduction3.jpg', 'Introductions', 'The first chapter.'),
+    _GalleryPhoto('Moments.jpg', 'Moments', 'Life, as it felt.'),
+    _GalleryPhoto('Wedding3.jpg', 'Weddings', 'A day worth holding onto.'),
+    _GalleryPhoto(
+      'Introduction4.jpg',
+      'Introductions',
+      'Where the story begins.',
+    ),
+    _GalleryPhoto('graduation.jpg', 'Graduations', 'A milestone made visible.'),
+    _GalleryPhoto('Wedding4.jpg', 'Weddings', 'Joy in every direction.'),
+    _GalleryPhoto('photoshoot3.jpg', 'Portraits', 'A portrait with presence.'),
+    _GalleryPhoto('Introduction5.jpg', 'Introductions', 'A new beginning.'),
+    _GalleryPhoto(
+      'Moments2.jpg',
+      'Moments',
+      'Nothing staged. Everything felt.',
+    ),
+    _GalleryPhoto('Wedding5.jpg', 'Weddings', 'The people who made the day.'),
+    _GalleryPhoto(
+      'Baby shower.jpg',
+      'Baby Showers',
+      'Waiting for someone special.',
+    ),
+    _GalleryPhoto('Introduction6.jpg', 'Introductions', 'The room remembers.'),
+    _GalleryPhoto('graduation2.jpg', 'Graduations', 'Made it here.'),
+    _GalleryPhoto('Wedding6.jpg', 'Weddings', 'Held in the moment.'),
+    _GalleryPhoto(
+      'photoshoot4.jpg',
+      'Portraits',
+      'The person behind the portrait.',
+    ),
+    _GalleryPhoto('Moments3.jpg', 'Moments', 'A little piece of ordinary.'),
+    _GalleryPhoto(
+      'Introduction7.jpg',
+      'Introductions',
+      'Before everything changed.',
+    ),
+    _GalleryPhoto('Wedding7.jpg', 'Weddings', 'Forever, documented.'),
+    _GalleryPhoto('photoshoot5.jpg', 'Portraits', 'Presence over perfection.'),
+    _GalleryPhoto('graduation3.jpg', 'Graduations', 'One chapter closes.'),
+    _GalleryPhoto('Moments4.jpg', 'Moments', 'The moments between moments.'),
+    _GalleryPhoto(
+      'Introduction8.jpg',
+      'Introductions',
+      'A celebration of arrival.',
+    ),
+    _GalleryPhoto('photoshoot6.jpg', 'Portraits', 'Seen as you are.'),
+    _GalleryPhoto('Wedding.jpg', 'Weddings', 'Remember this feeling.'),
+    _GalleryPhoto('Moments5.jpg', 'Moments', 'A memory in motion.'),
+    _GalleryPhoto(
+      'Introduction9.jpg',
+      'Introductions',
+      'The beginning of something.',
+    ),
+    _GalleryPhoto('photoshoot7.jpg', 'Portraits', 'Unmistakably you.'),
+    _GalleryPhoto('Moments6.jpg', 'Moments', 'The beauty of being there.'),
+    _GalleryPhoto('Introduction10.jpg', 'Introductions', 'And so it begins.'),
+    _GalleryPhoto('photoshoot8.jpg', 'Portraits', 'A frame of character.'),
+    _GalleryPhoto('photoshoot9.jpg', 'Portraits', 'Quiet confidence.'),
+    _GalleryPhoto('photoshoot10.jpg', 'Portraits', 'Nothing but presence.'),
+    _GalleryPhoto('photoshoot11.jpg', 'Portraits', 'A story in one frame.'),
+    _GalleryPhoto('Wedding2.jpg', 'Weddings', 'Where memory becomes tangible.'),
   ];
-
-  String _selectedCategory = 'ALL';
-
-  List<_GalleryPhoto> get _filteredPhotos {
-    if (_selectedCategory == 'ALL') {
-      return _photos;
-    }
-
-    return _photos
-        .where((photo) => photo.category == _selectedCategory)
-        .toList();
-  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.cream,
-      body: CustomScrollView(
-        slivers: [
-          SliverToBoxAdapter(
-            child: _GalleryIntro(
-              selectedCategory: _selectedCategory,
-              categories: _categories,
-              onCategoryChanged: (category) {
-                setState(() {
-                  _selectedCategory = category;
-                });
-              },
-            ),
-          ),
-          SliverPadding(
-            padding: const EdgeInsets.fromLTRB(14, 18, 14, 100),
-            sliver: SliverLayoutBuilder(
-              builder: (context, constraints) {
-                final width = constraints.crossAxisExtent;
-
-                if (width >= 1050) {
-                  return _DesktopGallery(photos: _filteredPhotos);
-                }
-
-                if (width >= 650) {
-                  return _TabletGallery(photos: _filteredPhotos);
-                }
-
-                return _MobileGallery(photos: _filteredPhotos);
-              },
-            ),
-          ),
-          const SliverToBoxAdapter(child: _GalleryClosing()),
-        ],
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            const _GalleryHero(),
+            const _GalleryStatement(),
+            _GalleryArchive(photos: _photos),
+            const _GalleryClosing(),
+          ],
+        ),
       ),
     );
   }
 }
 
 class _GalleryPhoto {
-  const _GalleryPhoto(this.category, this.asset);
+  const _GalleryPhoto(this.fileName, this.category, this.caption);
 
+  final String fileName;
   final String category;
-  final String asset;
+  final String caption;
+
+  String get path => 'assets/images/ryan/$fileName';
 }
 
-class _GalleryIntro extends StatelessWidget {
-  const _GalleryIntro({
-    required this.selectedCategory,
-    required this.categories,
-    required this.onCategoryChanged,
-  });
+class _GalleryHero extends StatelessWidget {
+  const _GalleryHero();
 
-  final String selectedCategory;
-  final List<String> categories;
-  final ValueChanged<String> onCategoryChanged;
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      color: AppColors.espresso,
+      width: double.infinity,
+      child: Center(
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 1280),
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(28, 100, 28, 95),
+            child: LayoutBuilder(
+              builder: (context, constraints) {
+                final wide = constraints.maxWidth > 800;
+
+                final title = Text(
+                  'THE\nGALLERY.',
+                  style: Theme.of(context).textTheme.displayLarge?.copyWith(
+                    color: AppColors.ivory,
+                    fontSize: wide ? 112 : 68,
+                    height: .78,
+                    letterSpacing: -2,
+                  ),
+                );
+
+                final copy = Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const _Eyebrow(
+                      'KALLYGRAPHY / VISUAL ARCHIVE',
+                      color: AppColors.sand,
+                    ),
+                    const SizedBox(height: 28),
+                    Container(width: 55, height: 3, color: AppColors.mocha),
+                    const SizedBox(height: 25),
+                    Text(
+                      'A collection of celebrations, people, '
+                      'places and fleeting moments.',
+                      style: Theme.of(context).textTheme.bodyLarge
+                          ?.copyWith(color: AppColors.sand, height: 1.75),
+                    ),
+                    const SizedBox(height: 30),
+                    const Text(
+                      'EVERY FRAME HOLDS A MEMORY.',
+                      style: TextStyle(
+                        fontFamily: 'Manrope',
+                        fontSize: 10,
+                        fontWeight: FontWeight.w700,
+                        letterSpacing: 2,
+                        color: AppColors.mocha,
+                      ),
+                    ),
+                  ],
+                );
+
+                if (!wide) {
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [title, const SizedBox(height: 55), copy],
+                  );
+                }
+
+                return Row(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    Expanded(flex: 5, child: title),
+                    const SizedBox(width: 100),
+                    Expanded(flex: 2, child: copy),
+                  ],
+                );
+              },
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _GalleryStatement extends StatelessWidget {
+  const _GalleryStatement();
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      color: AppColors.mocha,
+      padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 34),
+      child: Center(
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 1280),
+          child: LayoutBuilder(
+            builder: (context, constraints) {
+              final wide = constraints.maxWidth > 760;
+
+              final statement = Text(
+                'PHOTOGRAPHS THAT FEEL LIKE MEMORY.',
+                style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                  color: AppColors.ivory,
+                  fontWeight: FontWeight.w600,
+                  letterSpacing: 1.2,
+                ),
+              );
+
+              final count = const Text(
+                '39 FRAMES',
+                style: TextStyle(
+                  fontFamily: 'Manrope',
+                  fontSize: 10,
+                  fontWeight: FontWeight.w700,
+                  letterSpacing: 2,
+                  color: AppColors.ivory,
+                ),
+              );
+
+              if (!wide) {
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [statement, const SizedBox(height: 16), count],
+                );
+              }
+
+              return Row(
+                children: [
+                  Expanded(child: statement),
+                  count,
+                ],
+              );
+            },
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _GalleryArchive extends StatelessWidget {
+  const _GalleryArchive({required this.photos});
+
+  final List<_GalleryPhoto> photos;
 
   @override
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
       color: AppColors.cream,
-      padding: const EdgeInsets.fromLTRB(24, 105, 24, 48),
-      child: Column(
+      padding: const EdgeInsets.fromLTRB(20, 85, 20, 110),
+      child: Center(
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 1280),
+          child: LayoutBuilder(
+            builder: (context, constraints) {
+              final wide = constraints.maxWidth > 850;
+
+              if (!wide) {
+                return _MobileGallery(photos: photos);
+              }
+
+              return _EditorialGallery(photos: photos);
+            },
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _EditorialGallery extends StatelessWidget {
+  const _EditorialGallery({required this.photos});
+
+  final List<_GalleryPhoto> photos;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        for (var index = 0; index < photos.length; index += 3)
+          Padding(
+            padding: const EdgeInsets.only(bottom: 80),
+            child: _GalleryRow(photos: photos, startIndex: index),
+          ),
+      ],
+    );
+  }
+}
+
+class _GalleryRow extends StatelessWidget {
+  const _GalleryRow({required this.photos, required this.startIndex});
+
+  final List<_GalleryPhoto> photos;
+  final int startIndex;
+
+  @override
+  Widget build(BuildContext context) {
+    final first = photos[startIndex];
+    final hasSecond = startIndex + 1 < photos.length;
+    final hasThird = startIndex + 2 < photos.length;
+
+    if (!hasSecond) {
+      return _LargeGalleryTile(
+        photo: first,
+        index: startIndex,
+        onTap: () => _openGallery(context, photos, startIndex),
+      );
+    }
+
+    if (!hasThird) {
+      return Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Center(
-            child: Text(
-              'THE GALLERIES',
-              style: Theme.of(context).textTheme.labelMedium?.copyWith(
-                color: AppColors.muted,
-                fontWeight: FontWeight.w600,
-                letterSpacing: 3,
-              ),
+          Expanded(
+            flex: 3,
+            child: _GalleryTile(
+              photo: first,
+              index: startIndex,
+              tall: true,
+              onTap: () => _openGallery(context, photos, startIndex),
             ),
           ),
-          const SizedBox(height: 24),
-          Center(
-            child: Text(
-              'A collection of moments.',
-              textAlign: TextAlign.center,
-              style: Theme.of(context).textTheme.displayMedium?.copyWith(
-                color: AppColors.espresso,
-                fontSize: 62,
-                height: .95,
-              ),
-            ),
-          ),
-          const SizedBox(height: 22),
-          Center(
-            child: ConstrainedBox(
-              constraints: const BoxConstraints(maxWidth: 620),
-              child: Text(
-                'Weddings, celebrations, portraits and everything in between — photographed by Kaliisa Ryan.',
-                textAlign: TextAlign.center,
-                style: Theme.of(context).textTheme.bodyMedium
-                    ?.copyWith(color: AppColors.muted, height: 1.7),
-              ),
-            ),
-          ),
-          const SizedBox(height: 52),
-          SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: Row(
-              children: [
-                for (final category in categories)
-                  Padding(
-                    padding: const EdgeInsets.only(right: 28),
-                    child: GestureDetector(
-                      onTap: () => onCategoryChanged(category),
-                      child: _CategoryLabel(
-                        category: category,
-                        active: selectedCategory == category,
-                      ),
-                    ),
-                  ),
-              ],
+          const SizedBox(width: 22),
+          Expanded(
+            flex: 2,
+            child: _GalleryTile(
+              photo: photos[startIndex + 1],
+              index: startIndex + 1,
+              tall: false,
+              onTap: () => _openGallery(context, photos, startIndex + 1),
             ),
           ),
         ],
-      ),
-    );
-  }
-}
+      );
+    }
 
-class _CategoryLabel extends StatelessWidget {
-  const _CategoryLabel({required this.category, required this.active});
-
-  final String category;
-  final bool active;
-
-  @override
-  Widget build(BuildContext context) {
-    return AnimatedContainer(
-      duration: const Duration(milliseconds: 180),
-      padding: const EdgeInsets.only(bottom: 8),
-      decoration: BoxDecoration(
-        border: Border(
-          bottom: BorderSide(
-            color: active ? AppColors.espresso : Colors.transparent,
-            width: 1.5,
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Expanded(
+          flex: 3,
+          child: _GalleryTile(
+            photo: first,
+            index: startIndex,
+            tall: true,
+            onTap: () => _openGallery(context, photos, startIndex),
           ),
         ),
-      ),
-      child: Text(
-        category,
-        style: Theme.of(context).textTheme.labelSmall?.copyWith(
-          color: active ? AppColors.espresso : AppColors.muted,
-          fontWeight: active ? FontWeight.w700 : FontWeight.w500,
-          letterSpacing: 1.5,
-        ),
-      ),
-    );
-  }
-}
-
-class _DesktopGallery extends StatelessWidget {
-  const _DesktopGallery({required this.photos});
-
-  final List<_GalleryPhoto> photos;
-
-  @override
-  Widget build(BuildContext context) {
-    return SliverToBoxAdapter(
-      child: LayoutBuilder(
-        builder: (context, constraints) {
-          final width = constraints.maxWidth;
-          final gap = 8.0;
-          final largeWidth = (width - gap) * .58;
-          final smallWidth = (width - gap) * .42;
-
-          return Column(
+        const SizedBox(width: 22),
+        Expanded(
+          flex: 2,
+          child: Column(
             children: [
-              for (var start = 0; start < photos.length; start += 3)
-                Padding(
-                  padding: const EdgeInsets.only(bottom: 8),
-                  child: SizedBox(
-                    height: start % 2 == 0 ? 520 : 430,
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        if (start < photos.length)
-                          SizedBox(
-                            width: start % 2 == 0 ? largeWidth : smallWidth,
-                            child: _GalleryTile(
-                              photo: photos[start],
-                              featured: true,
-                              index: start,
-                            ),
-                          ),
-                        if (start + 1 < photos.length) SizedBox(width: gap),
-                        if (start + 1 < photos.length)
-                          Expanded(
-                            child: _GalleryTile(
-                              photo: photos[start + 1],
-                              featured: false,
-                              index: start + 1,
-                            ),
-                          ),
-                        if (start + 2 < photos.length) SizedBox(width: gap),
-                        if (start + 2 < photos.length)
-                          SizedBox(
-                            width: start % 2 == 0 ? smallWidth : largeWidth,
-                            child: _GalleryTile(
-                              photo: photos[start + 2],
-                              featured: true,
-                              index: start + 2,
-                            ),
-                          ),
-                      ],
-                    ),
-                  ),
-                ),
+              _GalleryTile(
+                photo: photos[startIndex + 1],
+                index: startIndex + 1,
+                tall: false,
+                onTap: () => _openGallery(context, photos, startIndex + 1),
+              ),
+              const SizedBox(height: 22),
+              _GalleryTile(
+                photo: photos[startIndex + 2],
+                index: startIndex + 2,
+                tall: false,
+                onTap: () => _openGallery(context, photos, startIndex + 2),
+              ),
             ],
-          );
-        },
-      ),
-    );
-  }
-}
-
-class _TabletGallery extends StatelessWidget {
-  const _TabletGallery({required this.photos});
-
-  final List<_GalleryPhoto> photos;
-
-  @override
-  Widget build(BuildContext context) {
-    return SliverPadding(
-      padding: EdgeInsets.zero,
-      sliver: SliverGrid(
-        delegate: SliverChildBuilderDelegate((context, index) {
-          return _GalleryTile(
-            photo: photos[index],
-            featured: index % 6 == 0,
-            index: index,
-          );
-        }, childCount: photos.length),
-        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 3,
-          crossAxisSpacing: 8,
-          mainAxisSpacing: 8,
-          childAspectRatio: .78,
+          ),
         ),
-      ),
+      ],
     );
   }
 }
@@ -336,82 +393,124 @@ class _MobileGallery extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SliverGrid(
-      delegate: SliverChildBuilderDelegate((context, index) {
-        return _GalleryTile(
-          photo: photos[index],
-          featured: index % 5 == 0,
-          index: index,
-        );
-      }, childCount: photos.length),
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 2,
-        crossAxisSpacing: 5,
-        mainAxisSpacing: 5,
-        childAspectRatio: .78,
-      ),
+    return Column(
+      children: [
+        for (var index = 0; index < photos.length; index++)
+          Padding(
+            padding: const EdgeInsets.only(bottom: 48),
+            child: _LargeGalleryTile(
+              photo: photos[index],
+              index: index,
+              onTap: () => _openGallery(context, photos, index),
+            ),
+          ),
+      ],
     );
   }
 }
 
-class _GalleryTile extends StatefulWidget {
-  const _GalleryTile({
+class _LargeGalleryTile extends StatelessWidget {
+  const _LargeGalleryTile({
     required this.photo,
-    required this.featured,
     required this.index,
+    required this.onTap,
   });
 
   final _GalleryPhoto photo;
-  final bool featured;
   final int index;
-
-  @override
-  State<_GalleryTile> createState() => _GalleryTileState();
-}
-
-class _GalleryTileState extends State<_GalleryTile> {
-  bool _hovered = false;
+  final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
-    return MouseRegion(
-      cursor: SystemMouseCursors.click,
-      onEnter: (_) => setState(() => _hovered = true),
-      onExit: (_) => setState(() => _hovered = false),
-      child: GestureDetector(
-        onTap: () => _openViewer(context),
-        child: Stack(
-          fit: StackFit.expand,
+    return _GalleryTile(photo: photo, index: index, tall: true, onTap: onTap);
+  }
+}
+
+class _GalleryTile extends StatelessWidget {
+  const _GalleryTile({
+    required this.photo,
+    required this.index,
+    required this.tall,
+    required this.onTap,
+  });
+
+  final _GalleryPhoto photo;
+  final int index;
+  final bool tall;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: AppColors.sand,
+      child: InkWell(
+        onTap: onTap,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Image.asset(
-              widget.photo.asset,
-              fit: BoxFit.cover,
-              errorBuilder: (context, error, stackTrace) {
-                return Container(
-                  color: AppColors.sand,
-                  alignment: Alignment.center,
-                  child: const Icon(
-                    Icons.image_outlined,
-                    color: AppColors.espresso,
-                  ),
-                );
-              },
-            ),
-            AnimatedOpacity(
-              duration: const Duration(milliseconds: 180),
-              opacity: _hovered ? 1 : 0,
-              child: Container(
-                color: AppColors.espresso.withValues(alpha: .32),
-                alignment: Alignment.bottomLeft,
-                padding: const EdgeInsets.all(18),
-                child: Text(
-                  widget.photo.category,
-                  style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                    color: AppColors.ivory,
-                    fontWeight: FontWeight.w600,
-                    letterSpacing: 1.5,
-                  ),
+            AspectRatio(
+              aspectRatio: tall ? .86 : 1.12,
+              child: Padding(
+                padding: const EdgeInsets.all(12),
+                child: Image.asset(
+                  photo.path,
+                  fit: BoxFit.contain,
+                  errorBuilder: (context, error, stackTrace) {
+                    return const Center(
+                      child: Icon(
+                        Icons.image_outlined,
+                        size: 40,
+                        color: AppColors.espresso,
+                      ),
+                    );
+                  },
                 ),
+              ),
+            ),
+            Container(
+              color: AppColors.sand,
+              padding: const EdgeInsets.fromLTRB(16, 13, 16, 17),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          photo.category.toUpperCase(),
+                          style: const TextStyle(
+                            fontFamily: 'Manrope',
+                            fontSize: 9,
+                            fontWeight: FontWeight.w700,
+                            letterSpacing: 1.8,
+                            color: AppColors.mocha,
+                          ),
+                        ),
+                        const SizedBox(height: 5),
+                        Text(
+                          photo.caption,
+                          style: Theme.of(context).textTheme.bodySmall
+                              ?.copyWith(
+                                color: AppColors.espresso,
+                                height: 1.35,
+                              ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Text(
+                    (index + 1).toString().padLeft(2, '0'),
+                    style: const TextStyle(
+                      fontFamily: 'Manrope',
+                      fontSize: 9,
+                      fontWeight: FontWeight.w700,
+                      letterSpacing: 1,
+                      color: AppColors.brown,
+                    ),
+                  ),
+                ],
               ),
             ),
           ],
@@ -419,17 +518,18 @@ class _GalleryTileState extends State<_GalleryTile> {
       ),
     );
   }
+}
 
-  void _openViewer(BuildContext context) {
-    showDialog<void>(
-      context: context,
-      barrierColor: AppColors.espresso.withValues(alpha: .96),
-      builder: (_) => _GalleryViewer(
-        photos: _GalleryScreenState._photos,
-        initialIndex: _GalleryScreenState._photos.indexOf(widget.photo),
-      ),
-    );
-  }
+void _openGallery(
+  BuildContext context,
+  List<_GalleryPhoto> photos,
+  int initialIndex,
+) {
+  showDialog<void>(
+    context: context,
+    barrierColor: AppColors.espresso.withValues(alpha: .97),
+    builder: (_) => _GalleryViewer(photos: photos, initialIndex: initialIndex),
+  );
 }
 
 class _GalleryViewer extends StatefulWidget {
@@ -451,80 +551,157 @@ class _GalleryViewerState extends State<_GalleryViewer> {
     _index = widget.initialIndex;
   }
 
+  void _previous() {
+    if (_index == 0) return;
+    setState(() => _index--);
+  }
+
+  void _next() {
+    if (_index == widget.photos.length - 1) return;
+    setState(() => _index++);
+  }
+
   @override
   Widget build(BuildContext context) {
     final photo = widget.photos[_index];
 
     return Dialog(
+      insetPadding: EdgeInsets.zero,
       backgroundColor: Colors.transparent,
-      insetPadding: const EdgeInsets.all(18),
-      child: Stack(
-        children: [
-          Center(
-            child: InteractiveViewer(
-              minScale: .8,
-              maxScale: 4,
-              child: Image.asset(photo.asset, fit: BoxFit.contain),
-            ),
-          ),
-          Positioned(
-            top: 8,
-            right: 8,
-            child: IconButton(
-              onPressed: () => Navigator.of(context).pop(),
-              icon: const Icon(Icons.close, color: AppColors.ivory),
-            ),
-          ),
-          Positioned(
-            left: 8,
-            top: 0,
-            bottom: 0,
-            child: Center(
-              child: _ViewerButton(
-                icon: Icons.arrow_back_ios_new,
-                onPressed: _index == 0 ? null : () => setState(() => _index--),
+      child: Material(
+        color: AppColors.espresso,
+        child: SafeArea(
+          child: Stack(
+            children: [
+              Positioned.fill(
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(70, 75, 70, 90),
+                  child: Image.asset(
+                    photo.path,
+                    fit: BoxFit.contain,
+                    errorBuilder: (context, error, stackTrace) {
+                      return const Icon(
+                        Icons.image_outlined,
+                        size: 60,
+                        color: AppColors.sand,
+                      );
+                    },
+                  ),
+                ),
               ),
-            ),
-          ),
-          Positioned(
-            right: 8,
-            top: 0,
-            bottom: 0,
-            child: Center(
-              child: _ViewerButton(
-                icon: Icons.arrow_forward_ios,
-                onPressed: _index == widget.photos.length - 1
-                    ? null
-                    : () => setState(() => _index++),
+              Positioned(
+                top: 24,
+                left: 28,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      photo.category.toUpperCase(),
+                      style: const TextStyle(
+                        fontFamily: 'Manrope',
+                        fontSize: 9,
+                        fontWeight: FontWeight.w700,
+                        letterSpacing: 2,
+                        color: AppColors.mocha,
+                      ),
+                    ),
+                    const SizedBox(height: 5),
+                    Text(
+                      photo.caption,
+                      style: const TextStyle(
+                        fontFamily: 'Manrope',
+                        fontSize: 12,
+                        color: AppColors.sand,
+                      ),
+                    ),
+                  ],
+                ),
               ),
-            ),
+              Positioned(
+                top: 18,
+                right: 18,
+                child: IconButton(
+                  onPressed: () => Navigator.of(context).pop(),
+                  icon: const Icon(Icons.close, color: AppColors.ivory),
+                ),
+              ),
+              Positioned(
+                left: 18,
+                top: 0,
+                bottom: 0,
+                child: Center(
+                  child: IconButton(
+                    onPressed: _index == 0 ? null : _previous,
+                    style: IconButton.styleFrom(
+                      backgroundColor: AppColors.cream.withValues(alpha: .12),
+                      foregroundColor: AppColors.ivory,
+                      disabledForegroundColor: AppColors.sand.withValues(
+                        alpha: .25,
+                      ),
+                    ),
+                    icon: const Icon(Icons.arrow_back),
+                  ),
+                ),
+              ),
+              Positioned(
+                right: 18,
+                top: 0,
+                bottom: 0,
+                child: Center(
+                  child: IconButton(
+                    onPressed: _index == widget.photos.length - 1
+                        ? null
+                        : _next,
+                    style: IconButton.styleFrom(
+                      backgroundColor: AppColors.cream.withValues(alpha: .12),
+                      foregroundColor: AppColors.ivory,
+                      disabledForegroundColor: AppColors.sand.withValues(
+                        alpha: .25,
+                      ),
+                    ),
+                    icon: const Icon(Icons.arrow_forward),
+                  ),
+                ),
+              ),
+              Positioned(
+                bottom: 24,
+                left: 28,
+                right: 28,
+                child: Row(
+                  children: [
+                    Text(
+                      (_index + 1).toString().padLeft(2, '0'),
+                      style: const TextStyle(
+                        fontFamily: 'Manrope',
+                        fontSize: 10,
+                        fontWeight: FontWeight.w700,
+                        letterSpacing: 2,
+                        color: AppColors.ivory,
+                      ),
+                    ),
+                    Expanded(
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 18),
+                        child: Container(height: 1, color: AppColors.brown),
+                      ),
+                    ),
+                    Text(
+                      widget.photos.length.toString().padLeft(2, '0'),
+                      style: const TextStyle(
+                        fontFamily: 'Manrope',
+                        fontSize: 10,
+                        fontWeight: FontWeight.w700,
+                        letterSpacing: 2,
+                        color: AppColors.sand,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
           ),
-          Positioned(
-            left: 20,
-            bottom: 18,
-            child: Text(
-              '${photo.category}  /  ${_index + 1} OF ${widget.photos.length}',
-              style: Theme.of(context).textTheme.labelSmall
-                  ?.copyWith(color: AppColors.ivory, letterSpacing: 1.5),
-            ),
-          ),
-        ],
+        ),
       ),
-    );
-  }
-}
-
-class _ViewerButton extends StatelessWidget {
-  const _ViewerButton({required this.icon, required this.onPressed});
-
-  final IconData icon;
-  final VoidCallback? onPressed;
-
-  @override
-  Widget build(BuildContext context) {
-    return IconButton(
-      onPressed: onPressed,
-      icon: Icon(icon, color: AppColors.ivory, size: 22),
     );
   }
 }
@@ -537,27 +714,102 @@ class _GalleryClosing extends StatelessWidget {
     return Container(
       width: double.infinity,
       color: AppColors.darkBrown,
-      padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 110),
+      padding: const EdgeInsets.fromLTRB(28, 110, 28, 120),
       child: Center(
-        child: Column(
-          children: [
-            Text(
-              'KEEP LOOKING.',
-              style: Theme.of(context).textTheme.labelMedium?.copyWith(
-                color: AppColors.sand,
-                fontWeight: FontWeight.w600,
-                letterSpacing: 3,
-              ),
-            ),
-            const SizedBox(height: 24),
-            Text(
-              'Every frame tells\nsomething different.',
-              textAlign: TextAlign.center,
-              style: Theme.of(context).textTheme.displayMedium
-                  ?.copyWith(color: AppColors.ivory, fontSize: 54, height: .95),
-            ),
-          ],
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 1280),
+          child: LayoutBuilder(
+            builder: (context, constraints) {
+              final wide = constraints.maxWidth > 760;
+
+              final heading = Text(
+                'YOUR STORY\nDESERVES\nTO BE FELT.',
+                style: Theme.of(context).textTheme.displayMedium?.copyWith(
+                  color: AppColors.ivory,
+                  fontSize: wide ? 72 : 50,
+                  height: .85,
+                  letterSpacing: -1,
+                ),
+              );
+
+              final action = Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    'LET’S CREATE SOMETHING\nWORTH REMEMBERING.',
+                    style: TextStyle(
+                      fontFamily: 'Manrope',
+                      fontSize: 10,
+                      fontWeight: FontWeight.w700,
+                      letterSpacing: 1.8,
+                      color: AppColors.sand,
+                      height: 1.6,
+                    ),
+                  ),
+                  const SizedBox(height: 22),
+                  FilledButton(
+                    onPressed: () => context.go('/booking'),
+                    style: FilledButton.styleFrom(
+                      backgroundColor: AppColors.mocha,
+                      foregroundColor: AppColors.ivory,
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 27,
+                        vertical: 19,
+                      ),
+                      shape: const StadiumBorder(),
+                    ),
+                    child: const Text(
+                      'START YOUR INQUIRY  →',
+                      style: TextStyle(
+                        fontFamily: 'Manrope',
+                        fontSize: 10,
+                        fontWeight: FontWeight.w700,
+                        letterSpacing: 1.7,
+                      ),
+                    ),
+                  ),
+                ],
+              );
+
+              if (!wide) {
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [heading, const SizedBox(height: 45), action],
+                );
+              }
+
+              return Row(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  Expanded(child: heading),
+                  const SizedBox(width: 90),
+                  action,
+                ],
+              );
+            },
+          ),
         ),
+      ),
+    );
+  }
+}
+
+class _Eyebrow extends StatelessWidget {
+  const _Eyebrow(this.text, {this.color = AppColors.brown});
+
+  final String text;
+  final Color color;
+
+  @override
+  Widget build(BuildContext context) {
+    return Text(
+      text,
+      style: TextStyle(
+        fontFamily: 'Manrope',
+        fontSize: 10,
+        fontWeight: FontWeight.w700,
+        letterSpacing: 2.2,
+        color: color,
       ),
     );
   }
