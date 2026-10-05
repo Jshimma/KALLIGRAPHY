@@ -46,3 +46,13 @@ app.*.map.json
 
 # Widget Preview related
 .widget_preview/
+
+# KALLIGRAPHY self-hosted generated photo storage
+backend/storage/originals/*
+backend/storage/previews/*
+backend/storage/thumbnails/*
+backend/storage/temp/*
+!backend/storage/originals/.gitkeep
+!backend/storage/previews/.gitkeep
+!backend/storage/thumbnails/.gitkeep
+!backend/storage/temp/.gitkeep
