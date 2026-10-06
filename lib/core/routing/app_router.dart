@@ -9,7 +9,6 @@ import '../../features/auth/auth_gate.dart';
 import '../../features/auth/photographer_shell.dart';
 import '../../features/booking/booking_screen.dart';
 import '../../features/booking/packages_screen.dart';
-import '../../features/gallery/gallery_screen.dart';
 import '../../features/gallery/client_gallery_screen.dart';
 import '../../features/home/home_screen.dart';
 import '../../features/inquiries/inquiries_screen.dart';
@@ -44,11 +43,6 @@ final GoRouter appRouter = GoRouter(
           path: '/packages',
           name: 'packages',
           builder: (context, state) => const PackagesScreen(),
-        ),
-        GoRoute(
-          path: '/gallery',
-          name: 'gallery',
-          builder: (context, state) => const GalleryScreen(),
         ),
         GoRoute(
           path: '/profile',

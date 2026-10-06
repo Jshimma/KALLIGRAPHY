@@ -122,7 +122,7 @@ class _PackagesHero extends StatelessWidget {
               final wide = constraints.maxWidth > 800;
 
               final heading = Text(
-                'PACKAGES\nMADE FOR\nTHE DAY.',
+                'PACKAGES MADE\nFOR THE DAY.',
                 style: Theme.of(context).textTheme.displayLarge?.copyWith(
                   color: AppColors.espresso,
                   fontSize: wide ? 92 : 58,

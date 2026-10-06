@@ -85,9 +85,9 @@ class _HeroCopy extends StatelessWidget {
           const _Eyebrow('KAMPALA · UGANDA · WORLDWIDE'),
           const SizedBox(height: 28),
           Text(
-            'THE ART\nOF BEING\nREMEMBERED.',
+            'THE ART\nOF BEING REMEMBERED.',
             style: Theme.of(context).textTheme.displayLarge?.copyWith(
-              fontSize: 68,
+              fontSize: 58,
               height: .9,
               letterSpacing: -2.4,
               color: AppColors.darkBrown,
@@ -292,9 +292,9 @@ class _IntroductionCopy extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'PHOTOGRAPHS\nTHAT FEEL\nLIKE MEMORY.',
+          'PHOTOGRAPHS\nTHAT FEEL LIKE MEMORY.',
           style: Theme.of(context).textTheme.displayMedium
-              ?.copyWith(fontSize: 56, height: .94, letterSpacing: -1.5),
+              ?.copyWith(fontSize: 48, height: .98, letterSpacing: -1.2),
         ),
         const SizedBox(height: 34),
         ConstrainedBox(
@@ -676,7 +676,7 @@ class _ExperienceSection extends StatelessWidget {
               ),
               const SizedBox(height: 28),
               Text(
-                'NOT JUST\nPHOTOGRAPHS.\nAN EXPERIENCE.',
+                'NOT JUST PHOTOGRAPHS.\nAN EXPERIENCE.',
                 style: Theme.of(context).textTheme.displayMedium?.copyWith(
                   color: AppColors.cream,
                   fontSize: 54,
@@ -969,10 +969,10 @@ class _FinalCtaSection extends StatelessWidget {
               const _Eyebrow('07 · LET’S MAKE SOMETHING LAST'),
               const SizedBox(height: 26),
               Text(
-                'YOUR STORY\nDESERVES TO\nBE FELT.',
+                'YOUR STORY\nDESERVES TO BE FELT.',
                 textAlign: TextAlign.center,
                 style: Theme.of(context).textTheme.displayLarge
-                    ?.copyWith(fontSize: 72, height: .9, letterSpacing: -2),
+                    ?.copyWith(fontSize: 58, height: .94, letterSpacing: -1.5),
               ),
               const SizedBox(height: 30),
               ConstrainedBox(

@@ -78,7 +78,7 @@ class _DesktopHeader extends StatelessWidget {
         const Spacer(),
 
         _NavLink(
-          label: 'WORK',
+          label: 'GALLERY',
           route: '/portfolio',
           active: path == '/portfolio',
         ),
@@ -91,13 +91,6 @@ class _DesktopHeader extends StatelessWidget {
           label: 'PACKAGES',
           route: '/packages',
           active: path == '/packages',
-        ),
-        const SizedBox(width: 28),
-
-        _NavLink(
-          label: 'GALLERIES',
-          route: '/gallery',
-          active: path == '/gallery',
         ),
         const SizedBox(width: 28),
 
@@ -148,10 +141,10 @@ class _MobileHeader extends StatelessWidget {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                _MobileMenuItem(label: 'WORK', route: '/portfolio'),
+                _MobileMenuItem(label: 'GALLERY', route: '/portfolio'),
                 _MobileMenuItem(label: 'ABOUT', route: '/profile'),
                 _MobileMenuItem(label: 'PACKAGES', route: '/packages'),
-                _MobileMenuItem(label: 'GALLERIES', route: '/gallery'),
+
                 _MobileMenuItem(label: 'BOOK', route: '/booking'),
                 const SizedBox(height: 12),
                 _MobileMenuItem(
@@ -203,20 +196,26 @@ class _NavLink extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () => context.go(route),
+      borderRadius: BorderRadius.circular(999),
       splashColor: Colors.transparent,
       highlightColor: Colors.transparent,
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 8),
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 180),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+        decoration: BoxDecoration(
+          color: active ? AppColors.mocha : Colors.transparent,
+          borderRadius: BorderRadius.circular(999),
+          border: active
+              ? null
+              : Border.all(color: AppColors.border, width: .8),
+        ),
         child: Text(
           label,
           style: TextStyle(
-            color: AppColors.espresso,
-            fontSize: 10.5,
-            fontWeight: FontWeight.w600,
-            letterSpacing: 1.8,
-            decoration: active ? TextDecoration.underline : null,
-            decorationColor: AppColors.espresso,
-            decorationThickness: 1.1,
+            color: active ? AppColors.ivory : AppColors.espresso,
+            fontSize: 10,
+            fontWeight: FontWeight.w700,
+            letterSpacing: 1.4,
           ),
         ),
       ),
@@ -231,17 +230,22 @@ class _InquireLink extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () => context.go('/booking'),
+      borderRadius: BorderRadius.circular(999),
       splashColor: Colors.transparent,
       highlightColor: Colors.transparent,
-      child: const Padding(
-        padding: EdgeInsets.symmetric(vertical: 8),
-        child: Text(
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 10),
+        decoration: BoxDecoration(
+          color: AppColors.mocha,
+          borderRadius: BorderRadius.circular(999),
+        ),
+        child: const Text(
           'INQUIRE →',
           style: TextStyle(
-            color: AppColors.espresso,
-            fontSize: 10.5,
+            color: AppColors.ivory,
+            fontSize: 10,
             fontWeight: FontWeight.w700,
-            letterSpacing: 1.6,
+            letterSpacing: 1.4,
           ),
         ),
       ),
@@ -269,17 +273,25 @@ class _MobileMenuItem extends StatelessWidget {
           Navigator.of(context).pop();
           context.go(route);
         },
+        borderRadius: BorderRadius.circular(999),
         splashColor: Colors.transparent,
         highlightColor: Colors.transparent,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 15),
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 13),
+          decoration: BoxDecoration(
+            color: accent ? AppColors.mocha : Colors.transparent,
+            borderRadius: BorderRadius.circular(999),
+            border: accent
+                ? null
+                : Border.all(color: AppColors.border, width: .8),
+          ),
           child: Text(
             label,
             style: TextStyle(
-              color: accent ? AppColors.brown : AppColors.espresso,
-              fontSize: 12,
-              fontWeight: accent ? FontWeight.w700 : FontWeight.w600,
-              letterSpacing: 2,
+              color: accent ? AppColors.ivory : AppColors.espresso,
+              fontSize: 11,
+              fontWeight: FontWeight.w700,
+              letterSpacing: 1.6,
             ),
           ),
         ),

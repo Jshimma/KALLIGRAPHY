@@ -425,7 +425,7 @@ END:VCARD
         Text(
           'Scan.\nBook.\nBegin.',
           style: Theme.of(context).textTheme.displayMedium
-              ?.copyWith(color: AppColors.ivory, fontSize: 58, height: .9),
+              ?.copyWith(color: AppColors.ivory, fontSize: 50, height: .96),
         ),
         const SizedBox(height: 24),
         Text(
@@ -500,7 +500,7 @@ class _SuccessSection extends StatelessWidget {
                 textAlign: TextAlign.center,
                 style: Theme.of(context).textTheme.displayLarge?.copyWith(
                   color: AppColors.ivory,
-                  fontSize: 70,
+                  fontSize: 56,
                   height: .9,
                 ),
               ),

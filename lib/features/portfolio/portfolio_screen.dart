@@ -188,9 +188,9 @@ class _WorkHero extends StatelessWidget {
         const _Eyebrow('01 · THE PORTFOLIO'),
         const SizedBox(height: 25),
         Text(
-          'THE WORK\nSPEAKS\nFOR ITSELF.',
+          'THE WORK\nSPEAKS FOR ITSELF.',
           style: Theme.of(context).textTheme.displayLarge
-              ?.copyWith(fontSize: 76, height: .88, letterSpacing: -2.5),
+              ?.copyWith(fontSize: 58, height: .94, letterSpacing: -1.5),
         ),
       ],
     );
@@ -229,10 +229,10 @@ class _CategoryHeaderDelegate extends SliverPersistentHeaderDelegate {
   final ValueChanged<String> onSelected;
 
   @override
-  double get minExtent => 72;
+  double get minExtent => 78;
 
   @override
-  double get maxExtent => 72;
+  double get maxExtent => 78;
 
   @override
   Widget build(
@@ -241,8 +241,9 @@ class _CategoryHeaderDelegate extends SliverPersistentHeaderDelegate {
     bool overlapsContent,
   ) {
     return Material(
-      color: AppColors.cream.withValues(alpha: .97),
+      color: AppColors.cream,
       child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 13),
         decoration: const BoxDecoration(
           border: Border(
             top: BorderSide(color: AppColors.border),
@@ -251,42 +252,39 @@ class _CategoryHeaderDelegate extends SliverPersistentHeaderDelegate {
         ),
         child: SingleChildScrollView(
           scrollDirection: Axis.horizontal,
-          padding: const EdgeInsets.symmetric(horizontal: 26),
+          padding: const EdgeInsets.symmetric(horizontal: 24),
           child: Row(
             children: categories.map((category) {
               final active = category == selectedCategory;
 
               return Padding(
-                padding: const EdgeInsets.only(right: 30),
+                padding: const EdgeInsets.only(right: 10),
                 child: InkWell(
                   onTap: () => onSelected(category),
-                  child: SizedBox(
-                    height: 72,
-                    child: Center(
-                      child: AnimatedDefaultTextStyle(
-                        duration: const Duration(milliseconds: 180),
-                        style: TextStyle(
-                          fontFamily: 'Manrope',
-                          fontSize: 10,
-                          fontWeight: active
-                              ? FontWeight.w700
-                              : FontWeight.w500,
-                          letterSpacing: 1.5,
-                          color: active ? AppColors.mocha : AppColors.muted,
-                        ),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Text(category),
-                            const SizedBox(height: 7),
-                            AnimatedContainer(
-                              duration: const Duration(milliseconds: 180),
-                              width: active ? 24 : 0,
-                              height: 2,
-                              color: AppColors.mocha,
-                            ),
-                          ],
-                        ),
+                  borderRadius: BorderRadius.circular(999),
+                  splashColor: Colors.transparent,
+                  highlightColor: Colors.transparent,
+                  child: AnimatedContainer(
+                    duration: const Duration(milliseconds: 180),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 10,
+                    ),
+                    decoration: BoxDecoration(
+                      color: active ? AppColors.mocha : Colors.transparent,
+                      borderRadius: BorderRadius.circular(999),
+                      border: active
+                          ? null
+                          : Border.all(color: AppColors.border, width: .8),
+                    ),
+                    child: Text(
+                      category,
+                      style: TextStyle(
+                        fontFamily: 'Manrope',
+                        fontSize: 9.5,
+                        fontWeight: active ? FontWeight.w700 : FontWeight.w600,
+                        letterSpacing: 1.25,
+                        color: active ? AppColors.ivory : AppColors.espresso,
                       ),
                     ),
                   ),
@@ -438,119 +436,41 @@ class _EditorialGallery extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (!wide) {
-      return Column(
-        children: [
-          for (var i = 0; i < images.length; i++) ...[
-            _PhotoCard(
-              image: images[i],
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final width = constraints.maxWidth;
+
+        final columns = width >= 1100
+            ? 4
+            : width >= 800
+            ? 3
+            : 2;
+
+        final spacing = width >= 800 ? 18.0 : 12.0;
+        final aspectRatio = width >= 800 ? .82 : .78;
+
+        return GridView.builder(
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          itemCount: images.length,
+          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: columns,
+            crossAxisSpacing: spacing,
+            mainAxisSpacing: spacing,
+            childAspectRatio: aspectRatio,
+          ),
+          itemBuilder: (context, index) {
+            return _PhotoCard(
+              image: images[index],
               images: images,
-              imageIndex: i,
-              height: i.isEven ? 460 : 360,
+              imageIndex: index,
+              height: double.infinity,
               alignment: Alignment.center,
-            ),
-            if (i != images.length - 1) const SizedBox(height: 18),
-          ],
-        ],
-      );
-    }
-
-    final rows = <Widget>[];
-    var imageIndex = 0;
-
-    while (imageIndex < images.length) {
-      final pattern = imageIndex % 3;
-
-      if (pattern == 0 && imageIndex + 1 < images.length) {
-        rows.add(
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Expanded(
-                flex: 58,
-                child: _PhotoCard(
-                  image: images[imageIndex],
-                  images: images,
-                  imageIndex: imageIndex,
-                  height: 620,
-                ),
-              ),
-              const SizedBox(width: 24),
-              Expanded(
-                flex: 42,
-                child: Padding(
-                  padding: const EdgeInsets.only(top: 110),
-                  child: _PhotoCard(
-                    image: images[imageIndex + 1],
-                    images: images,
-                    imageIndex: imageIndex + 1,
-                    height: 450,
-                  ),
-                ),
-              ),
-            ],
-          ),
+            );
+          },
         );
-        imageIndex += 2;
-      } else if (imageIndex + 2 < images.length) {
-        rows.add(
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Expanded(
-                child: _PhotoCard(
-                  image: images[imageIndex],
-                  images: images,
-                  imageIndex: imageIndex,
-                  height: 430,
-                ),
-              ),
-              const SizedBox(width: 24),
-              Expanded(
-                child: Padding(
-                  padding: const EdgeInsets.only(top: 90),
-                  child: _PhotoCard(
-                    image: images[imageIndex + 1],
-                    images: images,
-                    imageIndex: imageIndex + 1,
-                    height: 510,
-                  ),
-                ),
-              ),
-              const SizedBox(width: 24),
-              Expanded(
-                child: _PhotoCard(
-                  image: images[imageIndex + 2],
-                  images: images,
-                  imageIndex: imageIndex + 2,
-                  height: 390,
-                ),
-              ),
-            ],
-          ),
-        );
-        imageIndex += 3;
-      } else {
-        rows.add(
-          SizedBox(
-            width: 520,
-            child: _PhotoCard(
-              image: images[imageIndex],
-              images: images,
-              imageIndex: imageIndex,
-              height: 500,
-            ),
-          ),
-        );
-        imageIndex++;
-      }
-
-      if (imageIndex < images.length) {
-        rows.add(const SizedBox(height: 28));
-      }
-    }
-
-    return Column(children: rows);
+      },
+    );
   }
 }
 
@@ -822,7 +742,7 @@ class _WorkClosing extends StatelessWidget {
             'THE NEXT FRAME\nCOULD BE YOURS.',
             textAlign: TextAlign.center,
             style: Theme.of(context).textTheme.displayMedium
-                ?.copyWith(color: AppColors.cream, fontSize: 62, height: .92),
+                ?.copyWith(color: AppColors.cream, fontSize: 50, height: .96),
           ),
           const SizedBox(height: 28),
           const SizedBox(

@@ -45,37 +45,76 @@ class _AboutHero extends StatelessWidget {
       builder: (context, constraints) {
         final wide = constraints.maxWidth >= 900;
 
-        return Padding(
+        return Container(
+          color: AppColors.cream,
           padding: EdgeInsets.fromLTRB(
-            wide ? 72 : 24,
-            wide ? 110 : 70,
-            wide ? 72 : 24,
-            wide ? 105 : 70,
+            wide ? 72 : 22,
+            wide ? 62 : 38,
+            wide ? 72 : 22,
+            wide ? 88 : 58,
           ),
           child: Center(
             child: ConstrainedBox(
-              constraints: const BoxConstraints(maxWidth: 1280),
-              child: wide
-                  ? Row(
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      children: [
-                        const Expanded(flex: 51, child: _HeroPortrait()),
-                        const SizedBox(width: 90),
-                        const Expanded(flex: 49, child: _HeroCopy()),
-                      ],
-                    )
-                  : const Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        _HeroPortrait(),
-                        SizedBox(height: 48),
-                        _HeroCopy(),
-                      ],
-                    ),
+              constraints: const BoxConstraints(maxWidth: 1320),
+              child: wide ? const _DesktopHero() : const _MobileHero(),
             ),
           ),
         );
       },
+    );
+  }
+}
+
+class _DesktopHero extends StatelessWidget {
+  const _DesktopHero();
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      children: [
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: [
+            const Expanded(flex: 56, child: _HeroPortrait()),
+            const SizedBox(width: 72),
+            Expanded(
+              flex: 44,
+              child: Padding(
+                padding: const EdgeInsets.only(bottom: 24),
+                child: _HeroCopy(),
+              ),
+            ),
+          ],
+        ),
+        const Positioned(
+          left: 0,
+          top: 0,
+          child: _Eyebrow('01 · THE PERSON BEHIND THE LENS'),
+        ),
+        const Positioned(
+          right: 0,
+          bottom: 0,
+          child: _VerticalMark('KALLIGRAPHY'),
+        ),
+      ],
+    );
+  }
+}
+
+class _MobileHero extends StatelessWidget {
+  const _MobileHero();
+
+  @override
+  Widget build(BuildContext context) {
+    return const Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _Eyebrow('01 · THE PERSON BEHIND THE LENS'),
+        SizedBox(height: 24),
+        _HeroPortrait(),
+        SizedBox(height: 34),
+        _HeroCopy(),
+      ],
     );
   }
 }
@@ -87,9 +126,9 @@ class _HeroPortrait extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       color: AppColors.sand,
-      constraints: const BoxConstraints(maxWidth: 610),
+      constraints: const BoxConstraints(maxWidth: 680),
       child: AspectRatio(
-        aspectRatio: .82,
+        aspectRatio: .84,
         child: Image.asset(
           ProfileScreen._portrait,
           fit: BoxFit.contain,
@@ -118,21 +157,19 @@ class _HeroCopy extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const _Eyebrow('01 · THE PERSON BEHIND THE LENS'),
-        const SizedBox(height: 28),
         Text(
           'KALIISA\nRYAN.',
           style: TextStyle(
             fontFamily: 'CormorantGaramond',
-            fontSize: mobile ? 78 : 108,
-            height: .79,
-            letterSpacing: -2.5,
+            fontSize: mobile ? 52 : 70,
+            height: .78,
+            letterSpacing: -3,
             color: AppColors.espresso,
           ),
         ),
-        const SizedBox(height: 34),
-        Container(width: 48, height: 1, color: AppColors.mocha),
-        const SizedBox(height: 26),
+        const SizedBox(height: 30),
+        Container(width: 54, height: 2, color: AppColors.mocha),
+        const SizedBox(height: 25),
         const Text(
           'PHOTOGRAPHER · VIDEOGRAPHER\nGRAPHICS DESIGNER',
           style: TextStyle(
@@ -140,18 +177,37 @@ class _HeroCopy extends StatelessWidget {
             fontSize: 10,
             fontWeight: FontWeight.w700,
             height: 1.8,
-            letterSpacing: 1.8,
+            letterSpacing: 1.7,
             color: AppColors.brown,
           ),
         ),
-        const SizedBox(height: 28),
+        const SizedBox(height: 30),
         Text(
           'Creating photographs that feel like something you remember.',
           style: TextStyle(
             fontFamily: 'CormorantGaramond',
-            fontSize: mobile ? 29 : 35,
-            height: 1.2,
+            fontSize: mobile ? 28 : 38,
+            height: 1.12,
             color: AppColors.darkBrown,
+          ),
+        ),
+        const SizedBox(height: 32),
+        OutlinedButton(
+          onPressed: () => context.go('/booking'),
+          style: OutlinedButton.styleFrom(
+            foregroundColor: AppColors.espresso,
+            side: const BorderSide(color: AppColors.espresso),
+            padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 15),
+            shape: const StadiumBorder(),
+          ),
+          child: const Text(
+            'WORK WITH RYAN',
+            style: TextStyle(
+              fontFamily: 'Manrope',
+              fontSize: 9.5,
+              fontWeight: FontWeight.w700,
+              letterSpacing: 1.5,
+            ),
           ),
         ),
       ],
@@ -168,48 +224,49 @@ class _Manifesto extends StatelessWidget {
 
     return Container(
       width: double.infinity,
-      color: AppColors.darkBrown,
+      color: AppColors.espresso,
       padding: EdgeInsets.fromLTRB(
         mobile ? 24 : 72,
-        mobile ? 78 : 115,
+        mobile ? 72 : 112,
         mobile ? 24 : 72,
-        mobile ? 82 : 125,
+        mobile ? 76 : 120,
       ),
       child: Center(
         child: ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: 1180),
+          constraints: const BoxConstraints(maxWidth: 1220),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const _Eyebrow('02 · THE PHILOSOPHY', color: AppColors.sand),
-              const SizedBox(height: 30),
+              const SizedBox(height: 28),
               Text(
-                'THE BEST PHOTOGRAPHS\nDON’T JUST SHOW YOU\nWHAT HAPPENED.',
+                'THE BEST PHOTOGRAPHS\nDON’T JUST SHOW YOU WHAT HAPPENED.',
                 style: TextStyle(
                   fontFamily: 'CormorantGaramond',
-                  fontSize: mobile ? 49 : 78,
-                  height: .91,
-                  letterSpacing: -1.2,
+                  fontSize: mobile ? 39 : 60,
+                  height: .9,
+                  letterSpacing: -1.4,
                   color: AppColors.cream,
                 ),
               ),
-              const SizedBox(height: 38),
-              Align(
-                alignment: Alignment.centerRight,
-                child: ConstrainedBox(
-                  constraints: const BoxConstraints(maxWidth: 540),
-                  child: const Text(
-                    'They bring you back to how it felt.',
-                    textAlign: TextAlign.right,
-                    style: TextStyle(
-                      fontFamily: 'CormorantGaramond',
-                      fontSize: 28,
-                      height: 1.2,
-                      fontStyle: FontStyle.italic,
-                      color: AppColors.sand,
+              const SizedBox(height: 42),
+              Row(
+                children: [
+                  Container(width: 42, height: 1, color: AppColors.mocha),
+                  const SizedBox(width: 18),
+                  const Expanded(
+                    child: Text(
+                      'They bring you back to how it felt.',
+                      style: TextStyle(
+                        fontFamily: 'CormorantGaramond',
+                        fontSize: 27,
+                        height: 1.2,
+                        fontStyle: FontStyle.italic,
+                        color: AppColors.sand,
+                      ),
                     ),
                   ),
-                ),
+                ],
               ),
             ],
           ),
@@ -231,21 +288,21 @@ class _AboutStory extends StatelessWidget {
         mobile ? 24 : 72,
         mobile ? 82 : 125,
         mobile ? 24 : 72,
-        mobile ? 90 : 135,
+        mobile ? 88 : 135,
       ),
       child: Center(
         child: ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: 1180),
+          constraints: const BoxConstraints(maxWidth: 1220),
           child: mobile
               ? const Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [_StoryLabel(), SizedBox(height: 36), _StoryText()],
+                  children: [_StoryLabel(), SizedBox(height: 38), _StoryText()],
                 )
               : const Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Expanded(flex: 3, child: _StoryLabel()),
-                    SizedBox(width: 70),
+                    SizedBox(width: 90),
                     Expanded(flex: 7, child: _StoryText()),
                   ],
                 ),
@@ -266,12 +323,23 @@ class _StoryLabel extends StatelessWidget {
         _Eyebrow('03 · THE STORY'),
         SizedBox(height: 18),
         Text(
-          'THE EYE\nBEHIND\nTHE IMAGE.',
+          'THE EYE\nBEHIND THE\nIMAGE.',
           style: TextStyle(
             fontFamily: 'CormorantGaramond',
-            fontSize: 43,
-            height: .9,
+            fontSize: 38,
+            height: .88,
+            letterSpacing: -1,
             color: AppColors.espresso,
+          ),
+        ),
+        SizedBox(height: 30),
+        Text(
+          'K · R',
+          style: TextStyle(
+            fontFamily: 'CormorantGaramond',
+            fontSize: 32,
+            fontStyle: FontStyle.italic,
+            color: AppColors.mocha,
           ),
         ),
       ],
@@ -294,36 +362,43 @@ class _StoryText extends StatelessWidget {
           style: TextStyle(
             fontFamily: 'CormorantGaramond',
             fontSize: 32,
-            height: 1.25,
+            height: 1.22,
             color: AppColors.darkBrown,
           ),
         ),
-        SizedBox(height: 30),
-        Text(
+        SizedBox(height: 34),
+        _StoryParagraph(
           'My work is built around observation. The expression that happens '
           'for half a second. The quiet before everyone arrives. The way '
           'people look at each other when they forget the camera is there.',
-          style: TextStyle(
-            fontFamily: 'Manrope',
-            fontSize: 14,
-            height: 1.85,
-            color: AppColors.brown,
-          ),
         ),
-        SizedBox(height: 22),
-        Text(
+        SizedBox(height: 24),
+        _StoryParagraph(
           'From weddings and traditional celebrations to portraits, '
           'introductions, fashion and everyday moments, I approach each '
           'story with intention — creating photographs that remain '
           'personal long after the day is over.',
-          style: TextStyle(
-            fontFamily: 'Manrope',
-            fontSize: 14,
-            height: 1.85,
-            color: AppColors.brown,
-          ),
         ),
       ],
+    );
+  }
+}
+
+class _StoryParagraph extends StatelessWidget {
+  const _StoryParagraph(this.text);
+
+  final String text;
+
+  @override
+  Widget build(BuildContext context) {
+    return Text(
+      text,
+      style: const TextStyle(
+        fontFamily: 'Manrope',
+        fontSize: 13.5,
+        height: 1.9,
+        color: AppColors.brown,
+      ),
     );
   }
 }
@@ -360,29 +435,29 @@ class _Disciplines extends StatelessWidget {
       color: AppColors.sand,
       padding: EdgeInsets.fromLTRB(
         mobile ? 24 : 72,
-        mobile ? 78 : 110,
+        mobile ? 76 : 108,
         mobile ? 24 : 72,
-        mobile ? 82 : 120,
+        mobile ? 82 : 118,
       ),
       child: Center(
         child: ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: 1180),
+          constraints: const BoxConstraints(maxWidth: 1220),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const _Eyebrow('04 · WHAT I CREATE'),
-              const SizedBox(height: 25),
+              const SizedBox(height: 22),
               Text(
                 'MORE THAN\nA CAMERA.',
                 style: TextStyle(
                   fontFamily: 'CormorantGaramond',
-                  fontSize: mobile ? 58 : 82,
-                  height: .87,
+                  fontSize: mobile ? 46 : 64,
+                  height: .86,
                   letterSpacing: -1.5,
                   color: AppColors.espresso,
                 ),
               ),
-              const SizedBox(height: 58),
+              const SizedBox(height: 55),
               if (mobile)
                 Column(
                   children: [
@@ -440,28 +515,36 @@ class _DisciplineItem extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          number,
-          style: const TextStyle(
-            fontFamily: 'Manrope',
-            fontSize: 10,
-            fontWeight: FontWeight.w700,
-            letterSpacing: 2,
-            color: AppColors.mocha,
+        Container(
+          width: 38,
+          height: 38,
+          alignment: Alignment.center,
+          decoration: BoxDecoration(
+            border: Border.all(color: AppColors.mocha, width: 1),
+            shape: BoxShape.circle,
+          ),
+          child: Text(
+            number,
+            style: const TextStyle(
+              fontFamily: 'Manrope',
+              fontSize: 9,
+              fontWeight: FontWeight.w700,
+              color: AppColors.mocha,
+            ),
           ),
         ),
-        const SizedBox(height: 20),
+        const SizedBox(height: 22),
         Text(
           title,
           style: const TextStyle(
             fontFamily: 'Manrope',
-            fontSize: 12,
-            fontWeight: FontWeight.w700,
+            fontSize: 11,
+            fontWeight: FontWeight.w800,
             letterSpacing: 1.8,
             color: AppColors.espresso,
           ),
         ),
-        const SizedBox(height: 17),
+        const SizedBox(height: 15),
         Text(
           body,
           style: const TextStyle(
@@ -483,21 +566,37 @@ class _VisualInterlude extends StatelessWidget {
   Widget build(BuildContext context) {
     final mobile = MediaQuery.sizeOf(context).width < 850;
 
-    return Padding(
+    return Container(
+      color: AppColors.cream,
       padding: EdgeInsets.fromLTRB(
         mobile ? 18 : 40,
         mobile ? 18 : 40,
         mobile ? 18 : 40,
-        mobile ? 18 : 40,
+        mobile ? 28 : 55,
       ),
       child: mobile
           ? Column(
               children: [
                 _Frame(image: ProfileScreen._workImages[0], aspectRatio: .82),
-                const SizedBox(height: 18),
-                _Frame(image: ProfileScreen._workImages[1], aspectRatio: .82),
-                const SizedBox(height: 18),
-                _Frame(image: ProfileScreen._workImages[2], aspectRatio: .82),
+                const SizedBox(height: 14),
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Expanded(
+                      child: _Frame(
+                        image: ProfileScreen._workImages[1],
+                        aspectRatio: .78,
+                      ),
+                    ),
+                    const SizedBox(width: 14),
+                    Expanded(
+                      child: _Frame(
+                        image: ProfileScreen._workImages[2],
+                        aspectRatio: .78,
+                      ),
+                    ),
+                  ],
+                ),
               ],
             )
           : Row(
@@ -512,9 +611,9 @@ class _VisualInterlude extends StatelessWidget {
                 ),
                 const SizedBox(width: 22),
                 Expanded(
-                  flex: 9,
+                  flex: 8,
                   child: Padding(
-                    padding: const EdgeInsets.only(top: 95),
+                    padding: const EdgeInsets.only(top: 92),
                     child: _Frame(
                       image: ProfileScreen._workImages[1],
                       aspectRatio: .78,
@@ -547,7 +646,15 @@ class _Frame extends StatelessWidget {
       color: AppColors.sand,
       child: AspectRatio(
         aspectRatio: aspectRatio,
-        child: Image.asset(image, fit: BoxFit.contain),
+        child: Image.asset(
+          image,
+          fit: BoxFit.contain,
+          errorBuilder: (context, error, stackTrace) {
+            return const Center(
+              child: Icon(Icons.image_outlined, color: AppColors.brown),
+            );
+          },
+        ),
       ),
     );
   }
@@ -561,55 +668,59 @@ class _Approach extends StatelessWidget {
     final mobile = MediaQuery.sizeOf(context).width < 800;
 
     return Container(
-      color: AppColors.espresso,
+      color: AppColors.darkBrown,
       padding: EdgeInsets.fromLTRB(
         mobile ? 24 : 72,
-        mobile ? 82 : 120,
+        mobile ? 80 : 118,
         mobile ? 24 : 72,
-        mobile ? 90 : 135,
+        mobile ? 88 : 128,
       ),
       child: Center(
         child: ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: 1120),
+          constraints: const BoxConstraints(maxWidth: 1220),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const _Eyebrow('05 · THE APPROACH', color: AppColors.sand),
               const SizedBox(height: 30),
               Text(
-                'I WANT THE\nPHOTOGRAPH TO\nFEEL LIKE THE\nMOMENT.',
+                'I WANT THE PHOTOGRAPH\nTO FEEL LIKE THE MOMENT.',
                 style: TextStyle(
                   fontFamily: 'CormorantGaramond',
-                  fontSize: mobile ? 52 : 76,
-                  height: .89,
-                  letterSpacing: -1,
+                  fontSize: mobile ? 40 : 58,
+                  height: .9,
+                  letterSpacing: -1.1,
                   color: AppColors.cream,
                 ),
               ),
-              const SizedBox(height: 42),
-              ConstrainedBox(
-                constraints: const BoxConstraints(maxWidth: 650),
-                child: const Text(
-                  'Beautiful is important. But feeling is everything. '
-                  'I look for the details that make a photograph personal — '
-                  'the people, the atmosphere, the movement and the small '
-                  'things you may not notice until later.',
-                  style: TextStyle(
-                    fontFamily: 'Manrope',
-                    fontSize: 14,
-                    height: 1.9,
-                    color: AppColors.sand,
+              const SizedBox(height: 45),
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(width: 2, height: 88, color: AppColors.mocha),
+                  const SizedBox(width: 22),
+                  const Expanded(
+                    child: Text(
+                      'Beautiful is important. But feeling is everything. '
+                      'I look for the details that make a photograph personal — '
+                      'the people, the atmosphere, the movement and the small '
+                      'things you may not notice until later.',
+                      style: TextStyle(
+                        fontFamily: 'Manrope',
+                        fontSize: 13.5,
+                        height: 1.9,
+                        color: AppColors.sand,
+                      ),
+                    ),
                   ),
-                ),
+                ],
               ),
-              const SizedBox(height: 35),
-              Container(width: 55, height: 1, color: AppColors.mocha),
-              const SizedBox(height: 25),
+              const SizedBox(height: 38),
               const Text(
                 'OBSERVE · CREATE · PRESERVE',
                 style: TextStyle(
                   fontFamily: 'Manrope',
-                  fontSize: 10,
+                  fontSize: 9.5,
                   fontWeight: FontWeight.w700,
                   letterSpacing: 2.2,
                   color: AppColors.cream,
@@ -635,52 +746,52 @@ class _AboutClosing extends StatelessWidget {
       color: AppColors.brown,
       padding: EdgeInsets.fromLTRB(
         mobile ? 24 : 72,
-        mobile ? 82 : 115,
+        mobile ? 78 : 112,
         mobile ? 24 : 72,
-        mobile ? 95 : 130,
+        mobile ? 92 : 128,
       ),
       child: Center(
         child: ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: 1120),
+          constraints: const BoxConstraints(maxWidth: 1220),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const _Eyebrow('06 · YOUR STORY', color: AppColors.sand),
-              const SizedBox(height: 28),
+              const SizedBox(height: 26),
               Text(
-                'YOUR MOMENT\nDESERVES TO BE\nREMEMBERED.',
+                'YOUR MOMENT\nDESERVES TO BE REMEMBERED.',
                 style: TextStyle(
                   fontFamily: 'CormorantGaramond',
-                  fontSize: mobile ? 53 : 78,
+                  fontSize: mobile ? 41 : 60,
                   height: .9,
                   letterSpacing: -1,
                   color: AppColors.cream,
                 ),
               ),
-              const SizedBox(height: 32),
+              const SizedBox(height: 30),
               const SizedBox(
-                width: 570,
+                width: 590,
                 child: Text(
                   'Whether it is a wedding, portrait session, celebration '
                   'or an idea waiting to become real, let’s create '
                   'something that still feels like you years from now.',
                   style: TextStyle(
                     fontFamily: 'Manrope',
-                    fontSize: 14,
+                    fontSize: 13.5,
                     height: 1.85,
                     color: AppColors.sand,
                   ),
                 ),
               ),
-              const SizedBox(height: 38),
+              const SizedBox(height: 36),
               FilledButton(
                 onPressed: () => context.go('/booking'),
                 style: FilledButton.styleFrom(
                   backgroundColor: AppColors.mocha,
                   foregroundColor: AppColors.cream,
                   padding: const EdgeInsets.symmetric(
-                    horizontal: 30,
-                    vertical: 18,
+                    horizontal: 28,
+                    vertical: 17,
                   ),
                   shape: const StadiumBorder(),
                 ),
@@ -688,7 +799,7 @@ class _AboutClosing extends StatelessWidget {
                   'START A CONVERSATION',
                   style: TextStyle(
                     fontFamily: 'Manrope',
-                    fontSize: 10,
+                    fontSize: 9.5,
                     fontWeight: FontWeight.w700,
                     letterSpacing: 1.7,
                   ),
@@ -696,6 +807,29 @@ class _AboutClosing extends StatelessWidget {
               ),
             ],
           ),
+        ),
+      ),
+    );
+  }
+}
+
+class _VerticalMark extends StatelessWidget {
+  const _VerticalMark(this.text);
+
+  final String text;
+
+  @override
+  Widget build(BuildContext context) {
+    return RotatedBox(
+      quarterTurns: 1,
+      child: Text(
+        text,
+        style: const TextStyle(
+          fontFamily: 'Manrope',
+          fontSize: 8,
+          fontWeight: FontWeight.w700,
+          letterSpacing: 3,
+          color: AppColors.muted,
         ),
       ),
     );
@@ -714,9 +848,9 @@ class _Eyebrow extends StatelessWidget {
       text,
       style: TextStyle(
         fontFamily: 'Manrope',
-        fontSize: 10,
+        fontSize: 9.5,
         fontWeight: FontWeight.w700,
-        letterSpacing: 2.2,
+        letterSpacing: 2.1,
         color: color,
       ),
     );

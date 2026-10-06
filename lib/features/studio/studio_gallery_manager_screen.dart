@@ -1,4 +1,8 @@
 import 'package:file_picker/file_picker.dart';
+
+import 'dart:typed_data';
+
+import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 
 import '../../core/constants/app_colors.dart';
@@ -311,6 +315,7 @@ class _StudioGalleryManagerScreenState
                     _PhotoSection(
                       photos: _photos,
                       gallery: _gallery!,
+                      session: widget.session,
                       isMobile: isMobile,
                       isUploading: _isUploading,
                       onUpload: _uploadPhotos,
@@ -423,10 +428,46 @@ class _ManagerHeader extends StatelessWidget {
   }
 }
 
+class _ErrorState extends StatelessWidget {
+  const _ErrorState({required this.message, required this.onRetry});
+
+  final String message;
+  final Future<void> Function() onRetry;
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(32),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Icon(
+              Icons.error_outline_rounded,
+              size: 44,
+              color: AppColors.error,
+            ),
+            const SizedBox(height: 16),
+            Text(
+              message,
+              textAlign: TextAlign.center,
+              style: Theme.of(context).textTheme.bodyLarge
+                  ?.copyWith(color: AppColors.darkBrown),
+            ),
+            const SizedBox(height: 20),
+            OutlinedButton(onPressed: onRetry, child: const Text('TRY AGAIN')),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
 class _PhotoSection extends StatelessWidget {
   const _PhotoSection({
     required this.photos,
     required this.gallery,
+    required this.session,
     required this.isMobile,
     required this.isUploading,
     required this.onUpload,
@@ -437,6 +478,7 @@ class _PhotoSection extends StatelessWidget {
 
   final List<PortfolioPhoto> photos;
   final Gallery gallery;
+  final AuthSession session;
   final bool isMobile;
   final bool isUploading;
   final VoidCallback onUpload;
@@ -481,149 +523,13 @@ class _PhotoSection extends StatelessWidget {
           ReorderableWrap(
             photos: photos,
             gallery: gallery,
+            session: session,
             isMobile: isMobile,
             onRemove: onRemove,
             onSetCover: onSetCover,
             onReorder: onReorder,
           ),
       ],
-    );
-  }
-}
-
-class ReorderableWrap extends StatelessWidget {
-  const ReorderableWrap({
-    super.key,
-    required this.photos,
-    required this.gallery,
-    required this.isMobile,
-    required this.onRemove,
-    required this.onSetCover,
-    required this.onReorder,
-  });
-
-  final List<PortfolioPhoto> photos;
-  final Gallery gallery;
-  final bool isMobile;
-  final Future<void> Function(PortfolioPhoto photo) onRemove;
-  final Future<void> Function(PortfolioPhoto photo) onSetCover;
-  final Future<void> Function(int oldIndex, int newIndex) onReorder;
-
-  @override
-  Widget build(BuildContext context) {
-    return ReorderableListView.builder(
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
-      buildDefaultDragHandles: false,
-      itemCount: photos.length,
-      onReorder: onReorder,
-      itemBuilder: (context, index) {
-        final photo = photos[index];
-        final isCover = gallery.coverPhotoId == photo.id;
-
-        return Container(
-          key: ValueKey(photo.id),
-          margin: const EdgeInsets.only(bottom: 14),
-          padding: const EdgeInsets.all(12),
-          decoration: BoxDecoration(
-            color: AppColors.ivory,
-            border: Border.all(
-              color: isCover ? AppColors.mocha : AppColors.border,
-              width: isCover ? 1.5 : 1,
-            ),
-          ),
-          child: Row(
-            children: [
-              ReorderableDragStartListener(
-                index: index,
-                child: const Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 10),
-                  child: Icon(
-                    Icons.drag_indicator_rounded,
-                    color: AppColors.muted,
-                  ),
-                ),
-              ),
-              SizedBox(
-                width: isMobile ? 90 : 140,
-                height: isMobile ? 90 : 110,
-                child: _PhotoImage(photo: photo),
-              ),
-              const SizedBox(width: 18),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    if (isCover)
-                      Text(
-                        'COVER PHOTOGRAPH',
-                        style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                          color: AppColors.mocha,
-                          fontWeight: FontWeight.w800,
-                          letterSpacing: 1.4,
-                        ),
-                      ),
-                    const SizedBox(height: 5),
-                    Text(
-                      photo.title,
-                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        color: AppColors.darkBrown,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                    const SizedBox(height: 5),
-                    Text(
-                      'POSITION ${index + 1}',
-                      style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                        color: AppColors.muted,
-                        letterSpacing: 1.2,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              if (!isMobile)
-                TextButton(
-                  onPressed: isCover ? null : () => onSetCover(photo),
-                  child: const Text('SET COVER'),
-                ),
-              IconButton(
-                tooltip: 'Remove',
-                onPressed: () => onRemove(photo),
-                icon: const Icon(Icons.close_rounded),
-              ),
-            ],
-          ),
-        );
-      },
-    );
-  }
-}
-
-class _PhotoImage extends StatelessWidget {
-  const _PhotoImage({required this.photo});
-
-  final PortfolioPhoto photo;
-
-  @override
-  Widget build(BuildContext context) {
-    final url = photo.previewUrl;
-
-    if (url == null || url.isEmpty) {
-      return const ColoredBox(
-        color: AppColors.sand,
-        child: Icon(Icons.image_not_supported_outlined, color: AppColors.brown),
-      );
-    }
-
-    return ColoredBox(
-      color: AppColors.sand,
-      child: Image.network(
-        '${ApiConfig.baseUrl}$url',
-        fit: BoxFit.contain,
-        errorBuilder: (_, _, _) =>
-            const Icon(Icons.broken_image_outlined, color: AppColors.brown),
-      ),
     );
   }
 }
@@ -637,7 +543,7 @@ class _EmptyPhotos extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 70),
+      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 56),
       decoration: BoxDecoration(
         color: AppColors.ivory,
         border: Border.all(color: AppColors.border),
@@ -647,22 +553,29 @@ class _EmptyPhotos extends StatelessWidget {
           const Icon(
             Icons.photo_library_outlined,
             size: 42,
-            color: AppColors.mocha,
+            color: AppColors.muted,
           ),
-          const SizedBox(height: 18),
+          const SizedBox(height: 16),
           Text(
-            'THIS GALLERY IS WAITING FOR ITS PHOTOGRAPHS.',
-            textAlign: TextAlign.center,
+            'NO PHOTOGRAPHS YET',
             style: Theme.of(context).textTheme.titleMedium?.copyWith(
               color: AppColors.darkBrown,
               fontWeight: FontWeight.w700,
-              letterSpacing: 1,
+              letterSpacing: 1.2,
             ),
           ),
-          const SizedBox(height: 20),
-          OutlinedButton(
+          const SizedBox(height: 8),
+          Text(
+            'Upload the photographs you want this client to receive.',
+            textAlign: TextAlign.center,
+            style: Theme.of(context).textTheme.bodyMedium
+                ?.copyWith(color: AppColors.muted),
+          ),
+          const SizedBox(height: 22),
+          OutlinedButton.icon(
             onPressed: onUpload,
-            child: const Text('ADD PHOTOGRAPHS'),
+            icon: const Icon(Icons.add_photo_alternate_outlined),
+            label: const Text('ADD PHOTOS'),
           ),
         ],
       ),
@@ -670,45 +583,407 @@ class _EmptyPhotos extends StatelessWidget {
   }
 }
 
-class _ErrorState extends StatelessWidget {
-  const _ErrorState({required this.message, required this.onRetry});
+class ReorderableWrap extends StatefulWidget {
+  const ReorderableWrap({
+    super.key,
+    required this.photos,
+    required this.gallery,
+    required this.session,
+    required this.isMobile,
+    required this.onRemove,
+    required this.onSetCover,
+    required this.onReorder,
+  });
 
-  final String message;
-  final VoidCallback onRetry;
+  final List<PortfolioPhoto> photos;
+  final Gallery gallery;
+  final AuthSession session;
+  final bool isMobile;
+  final Future<void> Function(PortfolioPhoto photo) onRemove;
+  final Future<void> Function(PortfolioPhoto photo) onSetCover;
+  final Future<void> Function(int oldIndex, int newIndex) onReorder;
+
+  @override
+  State<ReorderableWrap> createState() => _ReorderableWrapState();
+}
+
+class _ReorderableWrapState extends State<ReorderableWrap> {
+  int? _draggingIndex;
+  int? _hoveredIndex;
+
+  void _dropOn(int targetIndex) {
+    final oldIndex = _draggingIndex;
+
+    setState(() {
+      _draggingIndex = null;
+      _hoveredIndex = null;
+    });
+
+    if (oldIndex == null || oldIndex == targetIndex) {
+      return;
+    }
+
+    var newIndex = targetIndex;
+
+    if (oldIndex < targetIndex) {
+      newIndex -= 1;
+    }
+
+    widget.onReorder(oldIndex, newIndex);
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(32),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
+    final width = MediaQuery.sizeOf(context).width;
+
+    final columns = widget.isMobile
+        ? 2
+        : width >= 1500
+        ? 4
+        : width >= 1050
+        ? 3
+        : 2;
+
+    const gap = 16.0;
+
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final cardWidth =
+            (constraints.maxWidth - (gap * (columns - 1))) / columns;
+
+        return Wrap(
+          spacing: gap,
+          runSpacing: gap,
           children: [
-            const Icon(
-              Icons.error_outline_rounded,
-              size: 42,
-              color: AppColors.error,
-            ),
-            const SizedBox(height: 16),
-            Text(
-              'WE COULD NOT LOAD THIS GALLERY.',
-              textAlign: TextAlign.center,
-              style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                color: AppColors.darkBrown,
-                fontWeight: FontWeight.w700,
+            for (var index = 0; index < widget.photos.length; index++)
+              SizedBox(
+                width: cardWidth,
+                child: DragTarget<int>(
+                  onWillAcceptWithDetails: (details) {
+                    if (details.data == index) {
+                      return false;
+                    }
+
+                    setState(() {
+                      _hoveredIndex = index;
+                    });
+
+                    return true;
+                  },
+                  onLeave: (_) {
+                    if (_hoveredIndex == index) {
+                      setState(() {
+                        _hoveredIndex = null;
+                      });
+                    }
+                  },
+                  onAcceptWithDetails: (details) {
+                    _draggingIndex = details.data;
+                    _dropOn(index);
+                  },
+                  builder: (context, candidateData, rejectedData) {
+                    final photo = widget.photos[index];
+                    final isCover = widget.gallery.coverPhotoId == photo.id;
+                    final isDragging = _draggingIndex == index;
+                    final isHovered = _hoveredIndex == index;
+
+                    return AnimatedContainer(
+                      duration: const Duration(milliseconds: 160),
+                      decoration: BoxDecoration(
+                        color: AppColors.ivory,
+                        border: Border.all(
+                          color: isHovered || isCover
+                              ? AppColors.mocha
+                              : AppColors.border,
+                          width: isHovered || isCover ? 1.5 : 1,
+                        ),
+                      ),
+                      child: Opacity(
+                        opacity: isDragging ? 0.35 : 1,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            AspectRatio(
+                              aspectRatio: 1,
+                              child: Stack(
+                                fit: StackFit.expand,
+                                children: [
+                                  _PhotoImage(
+                                    photo: photo,
+                                    session: widget.session,
+                                  ),
+                                  Positioned(
+                                    top: 10,
+                                    left: 10,
+                                    child: Container(
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 9,
+                                        vertical: 6,
+                                      ),
+                                      color: AppColors.espresso.withValues(
+                                        alpha: 0.88,
+                                      ),
+                                      child: Text(
+                                        '${index + 1}'.padLeft(2, '0'),
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .labelSmall
+                                            ?.copyWith(
+                                              color: AppColors.cream,
+                                              fontWeight: FontWeight.w800,
+                                              letterSpacing: 1.2,
+                                            ),
+                                      ),
+                                    ),
+                                  ),
+                                  if (isCover)
+                                    Positioned(
+                                      top: 10,
+                                      right: 10,
+                                      child: Container(
+                                        padding: const EdgeInsets.symmetric(
+                                          horizontal: 9,
+                                          vertical: 6,
+                                        ),
+                                        color: AppColors.mocha,
+                                        child: Text(
+                                          'COVER',
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .labelSmall
+                                              ?.copyWith(
+                                                color: AppColors.cream,
+                                                fontWeight: FontWeight.w800,
+                                                letterSpacing: 1.1,
+                                              ),
+                                        ),
+                                      ),
+                                    ),
+                                  Positioned(
+                                    right: 10,
+                                    bottom: 10,
+                                    child: Draggable<int>(
+                                      data: index,
+                                      onDragStarted: () {
+                                        setState(() {
+                                          _draggingIndex = index;
+                                        });
+                                      },
+                                      onDragEnd: (_) {
+                                        if (mounted) {
+                                          setState(() {
+                                            _draggingIndex = null;
+                                            _hoveredIndex = null;
+                                          });
+                                        }
+                                      },
+                                      feedback: Material(
+                                        color: Colors.transparent,
+                                        child: SizedBox(
+                                          width: cardWidth * 0.75,
+                                          height: cardWidth * 0.75,
+                                          child: Opacity(
+                                            opacity: 0.9,
+                                            child: _PhotoImage(
+                                              photo: photo,
+                                              session: widget.session,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                      child: Container(
+                                        padding: const EdgeInsets.all(9),
+                                        color: AppColors.espresso.withValues(
+                                          alpha: 0.88,
+                                        ),
+                                        child: const Icon(
+                                          Icons.drag_indicator_rounded,
+                                          color: AppColors.cream,
+                                          size: 20,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.fromLTRB(
+                                14,
+                                14,
+                                10,
+                                12,
+                              ),
+                              child: Row(
+                                children: [
+                                  Expanded(
+                                    child: Text(
+                                      photo.title,
+                                      maxLines: 2,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .titleSmall
+                                          ?.copyWith(
+                                            color: AppColors.darkBrown,
+                                            fontWeight: FontWeight.w600,
+                                          ),
+                                    ),
+                                  ),
+                                  IconButton(
+                                    tooltip: isCover
+                                        ? 'Cover photo'
+                                        : 'Set as cover',
+                                    visualDensity: VisualDensity.compact,
+                                    onPressed: isCover
+                                        ? null
+                                        : () => widget.onSetCover(photo),
+                                    icon: Icon(
+                                      isCover
+                                          ? Icons.star_rounded
+                                          : Icons.star_border_rounded,
+                                      size: 19,
+                                    ),
+                                  ),
+                                  IconButton(
+                                    tooltip: 'Remove photo',
+                                    visualDensity: VisualDensity.compact,
+                                    onPressed: () => widget.onRemove(photo),
+                                    icon: const Icon(
+                                      Icons.close_rounded,
+                                      size: 19,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    );
+                  },
+                ),
               ),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              message,
-              textAlign: TextAlign.center,
-              style: Theme.of(context).textTheme.bodyMedium
-                  ?.copyWith(color: AppColors.muted),
-            ),
-            const SizedBox(height: 20),
-            OutlinedButton(onPressed: onRetry, child: const Text('TRY AGAIN')),
           ],
+        );
+      },
+    );
+  }
+}
+
+class _PhotoImage extends StatefulWidget {
+  const _PhotoImage({required this.photo, required this.session});
+
+  final PortfolioPhoto photo;
+  final AuthSession session;
+
+  @override
+  State<_PhotoImage> createState() => _PhotoImageState();
+}
+
+class _PhotoImageState extends State<_PhotoImage> {
+  Uint8List? _bytes;
+  Object? _error;
+  bool _loading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _load();
+  }
+
+  Future<void> _load() async {
+    try {
+      final response = await http.get(
+        Uri.parse('${ApiConfig.baseUrl}${widget.photo.previewUrl}'),
+        headers: {'Authorization': 'Bearer ${widget.session.accessToken}'},
+      );
+
+      if (response.statusCode < 200 || response.statusCode >= 300) {
+        throw Exception('Preview request failed with ${response.statusCode}.');
+      }
+
+      if (!mounted) {
+        return;
+      }
+
+      setState(() {
+        _bytes = response.bodyBytes;
+        _loading = false;
+      });
+    } catch (error) {
+      if (!mounted) {
+        return;
+      }
+
+      setState(() {
+        _error = error;
+        _loading = false;
+      });
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (_loading) {
+      return const ColoredBox(
+        color: AppColors.sand,
+        child: Center(child: CircularProgressIndicator(color: AppColors.mocha)),
+      );
+    }
+
+    if (_bytes == null) {
+      return ColoredBox(
+        color: AppColors.sand,
+        child: Center(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Icon(
+                Icons.broken_image_outlined,
+                color: AppColors.brown,
+                size: 32,
+              ),
+              const SizedBox(height: 8),
+              Text(
+                'PREVIEW UNAVAILABLE',
+                style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                  color: AppColors.brown,
+                  fontWeight: FontWeight.w700,
+                  letterSpacing: 1.1,
+                ),
+              ),
+              if (_error != null) ...[
+                const SizedBox(height: 4),
+                Text(
+                  'Tap refresh to try again.',
+                  style: Theme.of(context).textTheme.bodySmall
+                      ?.copyWith(color: AppColors.muted),
+                ),
+              ],
+            ],
+          ),
         ),
+      );
+    }
+
+    return ColoredBox(
+      color: AppColors.sand,
+      child: Image.memory(
+        _bytes!,
+        fit: BoxFit.contain,
+        width: double.infinity,
+        height: double.infinity,
+        gaplessPlayback: true,
+        errorBuilder: (context, error, stackTrace) {
+          return const Center(
+            child: Icon(
+              Icons.broken_image_outlined,
+              color: AppColors.brown,
+              size: 32,
+            ),
+          );
+        },
       ),
     );
   }
